@@ -217,9 +217,9 @@ sources/8 = SubResource("TileSetAtlasSource_mojx5")
 
 [node name="TWorldManager" type="Node2D"]
 script = ExtResource("1_500xo")
-WorldSize = Vector2i(3, 1)
-TileMapOffset = Vector2i(3, 0)
-ChunkSize = Vector2i(1, 1)
+WorldSize = Vector2i(64, 64)
+TileMapOffset = Vector2i(0, 0)
+SquareSize = Vector2i(1, 1)
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_fqw7f")
@@ -289,7 +289,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Chunk size:		"
+text = "Square size:		"
 
 [node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
 layout_mode = 2

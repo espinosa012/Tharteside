@@ -30,6 +30,7 @@ public partial class TWorld : GodotObject
 		// Init noise
 		WorldNoises = new Dictionary<string, MFNL>();
 		
+		// Formamos los objetos de ruido desde los .json correspondientes
 		MFNL BaseElevation = new MFNL("BaseElevation");
 		BaseElevation.LoadFromJSON("BaseElevation");
 		AddWorldNoise("BaseElevation", BaseElevation);
@@ -144,7 +145,6 @@ public partial class TWorld : GodotObject
 	{
 		return IsOutToSea(x, y) && IsVolcanicLand(x, y);
 	}
-
 
 
 

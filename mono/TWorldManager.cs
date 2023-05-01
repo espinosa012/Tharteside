@@ -5,7 +5,7 @@ public partial class TWorldManager : Node2D
 {	
 	[Export] public Vector2I WorldSize;
 	[Export] public Vector2I TileMapOffset = new Vector2I(320, 317);
-	[Export] public Vector2I ChunkSize;
+	[Export] public Vector2I SquareSize;
 
 	public TWorld TWorld;
 	public TileMap TileMap;
@@ -15,7 +15,9 @@ public partial class TWorldManager : Node2D
 
 		TWorld = new TWorld(WorldSize.X, WorldSize.Y);
 		TileMap = GetNode<TileMap>("TileMap");
-		TileMapTest();
+		TileMapSetup();
+		// formar tilemap y tileset desde código
+
 
 		// UI
 		BasicWorldPanel panel = GetNode<BasicWorldPanel>("%BasicWorldPanel");
@@ -25,28 +27,28 @@ public partial class TWorldManager : Node2D
 	}
 
 
-	public void TileMapTest()
+	public void TileMapSetup()
 	{	
 		int valueTier;
 		Vector2I worldPosition;
 
-		for (int x = 0; x < WorldSize.X * ChunkSize.X; x+=ChunkSize.X)
+		for (int x = 0; x < WorldSize.X * SquareSize.X; x+=SquareSize.X)
 		{
-			for (int y = 0; y < WorldSize.Y * ChunkSize.Y; y+=ChunkSize.Y)
+			for (int y = 0; y < WorldSize.Y * SquareSize.Y; y+=SquareSize.Y)
 			{
-                worldPosition = new Vector2I((x/ChunkSize.X)+TileMapOffset.X, (y/ChunkSize.Y)+TileMapOffset.Y);
+                worldPosition = new Vector2I((x/SquareSize.X)+TileMapOffset.X, (y/SquareSize.Y)+TileMapOffset.Y);
 				valueTier = TWorld.GetValueTier(TWorld.GetElevation(worldPosition.X, worldPosition.Y));
 
-				// SetCell(new Vector2I(x, y), valueTier);
-				FulfillChunk(new Vector2I(x, y), valueTier);
+				FulfillSquare(new Vector2I(x, y), valueTier);
 			}
 		}
 	}	
 
+
 	public void UpdateTileMap()
 	{
 		TileMap.Clear();
-		TileMapTest();
+		TileMapSetup();
 	}
 
 
@@ -89,11 +91,11 @@ public partial class TWorldManager : Node2D
 
 		TileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, tileSetAtlasCoordinates);
 	}
-	public void FulfillChunk(Vector2I chunkPosition, int valueTier)
+	public void FulfillSquare(Vector2I chunkPosition, int valueTier)
 	{		
-		for (int i = 0; i < ChunkSize.X; i++)
+		for (int i = 0; i < SquareSize.X; i++)
 		{
-			for (int j = 0; j < ChunkSize.Y; j++)
+			for (int j = 0; j < SquareSize.Y; j++)
 			{
 				SetCell(new Vector2I(chunkPosition.X+i, chunkPosition.Y+j), valueTier);
 			}

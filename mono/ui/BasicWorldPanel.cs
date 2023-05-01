@@ -24,8 +24,8 @@ public partial class BasicWorldPanel : Panel
 		GetNode<LineEdit>("Container/WorldSize/x").Text = TWorldManager.WorldSize.X.ToString();
 		GetNode<LineEdit>("Container/WorldSize/y").Text = TWorldManager.WorldSize.Y.ToString();
 
-		GetNode<LineEdit>("Container/ChunkSize/x").Text = TWorldManager.ChunkSize.X.ToString();
-		GetNode<LineEdit>("Container/ChunkSize/y").Text = TWorldManager.ChunkSize.Y.ToString();
+		GetNode<LineEdit>("Container/ChunkSize/x").Text = TWorldManager.SquareSize.X.ToString();
+		GetNode<LineEdit>("Container/ChunkSize/y").Text = TWorldManager.SquareSize.Y.ToString();
 
 		GetNode<LineEdit>("Container/Offset/x").Text = TWorldManager.TileMapOffset.X.ToString();
 		GetNode<LineEdit>("Container/Offset/y").Text = TWorldManager.TileMapOffset.Y.ToString();
@@ -41,7 +41,7 @@ public partial class BasicWorldPanel : Panel
 			
 			TWorldManager.WorldSize = newWorldSize;
 			TWorldManager.TileMapOffset = offset;
-			TWorldManager.ChunkSize = chunkSize;
+			TWorldManager.SquareSize = chunkSize;
 			
 
 
