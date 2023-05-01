@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://tswy1h6sun4r"]
+[gd_scene load_steps=23 format=3 uid="uid://tswy1h6sun4r"]
 
 [ext_resource type="Script" path="res://mono/TWorldManager.cs" id="1_500xo"]
 [ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_n7f2w"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://vdffsg2h1h22" path="res://resources/MiniWorldSprites/Ground/Cliff-Water.png" id="7_mepev"]
 [ext_resource type="Texture2D" uid="uid://dqeqdmyqm8noq" path="res://resources/MiniWorldSprites/Ground/green.png" id="9_gv73x"]
 [ext_resource type="Texture2D" uid="uid://bnmugrorvl3xw" path="res://resources/MiniWorldSprites/Ground/palette.png" id="10_bcph6"]
+[ext_resource type="Script" path="res://scenes/TileMapCamera2D.gd" id="11_2apvo"]
 [ext_resource type="Script" path="res://mono/ui/BasicWorldPanel.cs" id="11_hu8nr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gudb5"]
@@ -220,13 +221,13 @@ script = ExtResource("1_500xo")
 WorldSize = Vector2i(64, 64)
 TileMapOffset = Vector2i(0, 0)
 SquareSize = Vector2i(1, 1)
+ChunkSize = Vector2i(16, 16)
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_fqw7f")
 format = 2
 
 [node name="Window" type="Window" parent="TileMap"]
-position = Vector2i(256, 256)
 size = Vector2i(256, 132)
 
 [node name="BasicWorldPanel" type="Panel" parent="TileMap/Window"]
@@ -309,3 +310,6 @@ layout_mode = 2
 layout_mode = 2
 text = "Update
 "
+
+[node name="Camera2D" type="Camera2D" parent="TileMap"]
+script = ExtResource("11_2apvo")

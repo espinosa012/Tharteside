@@ -1,11 +1,14 @@
 using Godot;
-using System;
+using Godot.Collections;
 
 public partial class TWorldManager : Node2D
 {	
 	[Export] public Vector2I WorldSize;
 	[Export] public Vector2I TileMapOffset = new Vector2I(320, 317);
 	[Export] public Vector2I SquareSize;
+	[Export] public Vector2I ChunkSize;
+    Array<Vector2I> Chunks = new Array<Vector2I>();     
+
 
 	public TWorld TWorld;
 	public TileMap TileMap;
@@ -32,19 +35,37 @@ public partial class TWorldManager : Node2D
 		int valueTier;
 		Vector2I worldPosition;
 
-		for (int x = 0; x < WorldSize.X * SquareSize.X; x+=SquareSize.X)
-		{
-			for (int y = 0; y < WorldSize.Y * SquareSize.Y; y+=SquareSize.Y)
-			{
-                worldPosition = new Vector2I((x/SquareSize.X)+TileMapOffset.X, (y/SquareSize.Y)+TileMapOffset.Y);
-				valueTier = TWorld.GetValueTier(TWorld.GetElevation(worldPosition.X, worldPosition.Y));
+		// añadimos un chunk de tamaño world size y origen en 0,0
+		AddChunk(new Vector2I(0, 0));
+		// AddChunk(new Vector2I(1, 0));
+		AddChunk(new Vector2I(2, 0));
 
-				FulfillSquare(new Vector2I(x, y), valueTier);
-			}
-		}
 	}	
+	
+	public void AddChunk(Vector2I chunkPosition)
+	{
+		if (!ChunkExists(chunkPosition))
+		{
+			int valueTier;
+			Vector2I worldPosition;
+			
+			
+			for (int x = chunkPosition.X * ChunkSize.X * SquareSize.X; x < ChunkSize.X * SquareSize.X + chunkPosition.X * ChunkSize.X; x+=SquareSize.X)
+			{
+				for (int y = chunkPosition.Y * ChunkSize.Y * SquareSize.X; y < ChunkSize.Y * SquareSize.Y + chunkPosition.Y * ChunkSize.X; y+=SquareSize.Y)
+				{
+					worldPosition = new Vector2I((x/SquareSize.X)+TileMapOffset.X, (y/SquareSize.Y)+TileMapOffset.Y); 	// posición en el generador
+					valueTier = TWorld.GetValueTierAt(worldPosition.X, worldPosition.Y);
+
+					FulfillSquare(new Vector2I(x, y), valueTier);
+				}
+			}
 
 
+			Chunks.Add(chunkPosition);
+		}
+	}
+	
 	public void UpdateTileMap()
 	{
 		TileMap.Clear();
@@ -91,14 +112,31 @@ public partial class TWorldManager : Node2D
 
 		TileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, tileSetAtlasCoordinates);
 	}
-	public void FulfillSquare(Vector2I chunkPosition, int valueTier)
-	{		
+	public void FulfillSquare(Vector2I squarePosition, int valueTier)
+	{	
+		// Comprobamos si tiene frontera con un tier distinto
+		bool isFrontier = (valueTier != TWorld.GetValueTierAt(squarePosition.X + 1, squarePosition.Y) || valueTier != TWorld.GetValueTierAt(squarePosition.X, squarePosition.Y + 1)) || valueTier != TWorld.GetValueTierAt(squarePosition.X - 1, squarePosition.Y) || valueTier != TWorld.GetValueTierAt(squarePosition.X, squarePosition.Y-1);
 		for (int i = 0; i < SquareSize.X; i++)
 		{
 			for (int j = 0; j < SquareSize.Y; j++)
 			{
-				SetCell(new Vector2I(chunkPosition.X+i, chunkPosition.Y+j), valueTier);
+				SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier);
 			}
 		}
 	}
+
+
+
+
+
+
+
+	// CHUNKS
+
+
+	public bool ChunkExists(Vector2I chunkPosition)
+	{
+		return Chunks.Contains(chunkPosition);
+	}
+	
 }

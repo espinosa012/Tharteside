@@ -149,11 +149,18 @@ public partial class TWorld : GodotObject
 
 
 
+
+
 	public int GetValueTier(float value, int nTiers=48)
 	{
 		//  para valores en el rango 0-1
 		for (int i = 0; i < nTiers; i++){if (value < ((float) i + 1.0f)/(float) nTiers){return i;}}
 		return nTiers-1;
+	}
+
+	public int GetValueTierAt(int x, int y, int nTiers=48)
+	{
+		return GetValueTier(GetElevation(x, y), nTiers);
 	}
 
 }
