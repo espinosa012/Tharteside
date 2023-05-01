@@ -4,7 +4,7 @@ using Godot.Collections;
 public partial class TWorldManager : Node2D
 {	
 	[Export] public Vector2I WorldSize;
-	[Export] public Vector2I TileMapOffset = new Vector2I(320, 317);
+	[Export] public Vector2I TileMapOffset;
 	[Export] public Vector2I SquareSize;
 	[Export] public Vector2I ChunkSize;
     Array<Vector2I> Chunks = new Array<Vector2I>();     
@@ -34,38 +34,19 @@ public partial class TWorldManager : Node2D
 	{	
 		int valueTier;
 		Vector2I worldPosition;
-
-		// añadimos un chunk de tamaño world size y origen en 0,0
-		AddChunk(new Vector2I(0, 0));
-		// AddChunk(new Vector2I(1, 0));
-		AddChunk(new Vector2I(2, 0));
-
-	}	
-	
-	public void AddChunk(Vector2I chunkPosition)
-	{
-		if (!ChunkExists(chunkPosition))
+		
+		for (int x = 0; x < WorldSize.X * SquareSize.X; x+=SquareSize.X)
 		{
-			int valueTier;
-			Vector2I worldPosition;
-			
-			
-			for (int x = chunkPosition.X * ChunkSize.X * SquareSize.X; x < ChunkSize.X * SquareSize.X + chunkPosition.X * ChunkSize.X; x+=SquareSize.X)
+			for (int y = 0; y < WorldSize.Y * SquareSize.Y; y+=SquareSize.Y)
 			{
-				for (int y = chunkPosition.Y * ChunkSize.Y * SquareSize.X; y < ChunkSize.Y * SquareSize.Y + chunkPosition.Y * ChunkSize.X; y+=SquareSize.Y)
-				{
-					worldPosition = new Vector2I((x/SquareSize.X)+TileMapOffset.X, (y/SquareSize.Y)+TileMapOffset.Y); 	// posición en el generador
-					valueTier = TWorld.GetValueTierAt(worldPosition.X, worldPosition.Y);
+				worldPosition = new Vector2I((x/SquareSize.X)+TileMapOffset.X, (y/SquareSize.Y)+TileMapOffset.Y); 	// posición en el generador
+				valueTier = TWorld.GetValueTierAt(worldPosition.X, worldPosition.Y);
 
-					FulfillSquare(new Vector2I(x, y), valueTier);
-				}
+				FulfillSquare(new Vector2I(x, y), valueTier);	// escalado del mapa
 			}
-
-
-			Chunks.Add(chunkPosition);
 		}
-	}
-	
+	}	
+
 	public void UpdateTileMap()
 	{
 		TileMap.Clear();
@@ -127,16 +108,4 @@ public partial class TWorldManager : Node2D
 
 
 
-
-
-
-
-	// CHUNKS
-
-
-	public bool ChunkExists(Vector2I chunkPosition)
-	{
-		return Chunks.Contains(chunkPosition);
-	}
-	
 }
