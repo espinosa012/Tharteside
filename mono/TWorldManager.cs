@@ -62,29 +62,24 @@ public partial class TWorldManager : Node2D
 	public void FulfillSquare(Vector2I squarePosition, int valueTier)
 	{	
 		// Comprobamos si tiene frontera con un tier distinto
-		var isFrontier = (valueTier == _world.GetValueTierAt(squarePosition.X + 1, squarePosition.Y)) || valueTier == _world.GetValueTierAt(squarePosition.X - 1, squarePosition.Y);
-
+		var isFrontier = valueTier == _world.GetValueTierAt(squarePosition.X + 1, squarePosition.Y) || 
+		                 valueTier == _world.GetValueTierAt(squarePosition.X - 1, squarePosition.Y) ||
+		                 valueTier == _world.GetValueTierAt(squarePosition.X, squarePosition.Y + 1) ||
+		                 valueTier == _world.GetValueTierAt(squarePosition.X, squarePosition.Y - 1);
 		for (var i = 0; i < SquareSize.X; i++)
 		{
 			for (var j = 0; j < SquareSize.Y; j++)
 			{
-				if (isFrontier)
-				{
-					SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier);	
-				}
-				else{
-					SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier);
-				}
+				SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier, isFrontier);	
 			}
 		}
 	}
 
-	private void SetCell(Vector2I tileMapPosition, int valueTier)
+	private void SetCell(Vector2I tileMapPosition, int valueTier, bool isFrontier = false)
 	{
 		var tileMapLayer = 0;
 		var tileSetSourceId = 9;
-		var tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
-		
+		var tileSetAtlasCoordinates = new Vector2I(valueTier, 0);	// aqui calculamos si somos frontera y en qué dirección
 		_tileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, tileSetAtlasCoordinates);
 	}
 
