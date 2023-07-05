@@ -15,10 +15,6 @@ public partial class TWorldManager : Node2D
 
 	public override void _Ready()
 	{
-
-		var pc = new PaletteCreator();
-		pc.CreateGradientPalette(16, "green16.png");
-
 		_world = new TWorld();
 		_tileMap = GetNode<TileMap>("TileMap");
 		TileMapSetup();
@@ -86,42 +82,8 @@ public partial class TWorldManager : Node2D
 	private void SetCell(Vector2I tileMapPosition, int valueTier)
 	{
 		var tileMapLayer = 0;
-		int tileSetSourceId;
-		Vector2I tileSetAtlasCoordinates;
-
-		// if (valueTier == 0)	// sea
-		// {
-		// 	tileSetSourceId = 8;
-		// 	tileSetAtlasCoordinates = new Vector2I(0, 0);
-		// }
-		// else if (valueTier == 1 || valueTier == 2)
-		// {
-		// 	tileSetSourceId = 8;
-		// 	tileSetAtlasCoordinates = new Vector2I(5, 0);
-		// }
-		// else if (valueTier == 3)
-		// {
-		// 	tileSetSourceId = 8;
-		// 	tileSetAtlasCoordinates = new Vector2I(2, 0);
-		// }
-		// else if (valueTier == 4 || valueTier == 5 || valueTier == 6)
-		// {
-		// 	tileSetSourceId = 0;
-		// 	tileSetAtlasCoordinates = new Vector2I(2, 0);
-		// }
-		// else if (valueTier == 7 || valueTier == 8 || valueTier == 9)
-		// {
-		// 	tileSetSourceId = 8;
-		// 	tileSetAtlasCoordinates = new Vector2I(3, 0);
-		// }
-		// else
-		// {
-		// 	tileSetSourceId = 7;
-		// 	tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
-		// }
-
-		tileSetSourceId = 9;
-		tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
+		var tileSetSourceId = 9;
+		var tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
 		
 		_tileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, tileSetAtlasCoordinates);
 	}

@@ -40,7 +40,7 @@ public partial class TWorld : GodotObject
 		// Init parameters (cargar desde json)
 		_worldParameters = new Dictionary<string, Variant>();
 		
-		AddWorldParameter("NTiers", 48);
+		AddWorldParameter("NTiers", 16);
 		AddWorldParameter("MinContinentalHeight", 0.023f);
 		AddWorldParameter("ContinentalScaleValue", 1.22f);
 		AddWorldParameter("SeaScaleValue", 1f/0.85f);
@@ -59,7 +59,8 @@ public partial class TWorld : GodotObject
 	{
 		if (_worldParameters.ContainsKey(param)) {_worldParameters[param] = value;}
 	}
-	public Variant GetWorldParameter(string param)
+
+	private Variant GetWorldParameter(string param)
 	{
 		return _worldParameters[param];
 	}
