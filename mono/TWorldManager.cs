@@ -1,111 +1,129 @@
 using Godot;
-using Godot.Collections;
+
+namespace Tartheside.mono;
 
 public partial class TWorldManager : Node2D
 {	
 	[Export] public Vector2I WorldSize;
 	[Export] public Vector2I TileMapOffset;
-	[Export] public Vector2I SquareSize;
 	[Export] public Vector2I ChunkSize;
-    Array<Vector2I> Chunks = new Array<Vector2I>();     
+	[Export] public Vector2I SquareSize;
+	[Export] public Vector2I InitChunks;	// Chunks que se inicializarán al principio
 
-
-	public TWorld TWorld;
-	public TileMap TileMap;
+	private TWorld _world;
+	private TileMap _tileMap;
 
 	public override void _Ready()
 	{
 
-		TWorld = new TWorld(WorldSize.X, WorldSize.Y);
-		TileMap = GetNode<TileMap>("TileMap");
+		var pc = new PaletteCreator();
+		pc.CreateGradientPalette(16, "green16.png");
+
+		_world = new TWorld();
+		_tileMap = GetNode<TileMap>("TileMap");
 		TileMapSetup();
+		
 		// formar tilemap y tileset desde código
 
-
 		// UI
-		BasicWorldPanel panel = GetNode<BasicWorldPanel>("%BasicWorldPanel");
+		var panel = GetNode<BasicWorldPanel>("%BasicWorldPanel");
 		panel.SetTWorldManager(this);
 		panel.InitializeUI();
 		panel.ConnectButtonSignal();
 	}
 
 
-	public void TileMapSetup()
+	private void TileMapSetup()
 	{	
-		int valueTier;
-		Vector2I worldPosition;
-		
-		for (int x = 0; x < WorldSize.X * SquareSize.X; x+=SquareSize.X)
+		for (int i = 0; i < InitChunks.X; i++)
 		{
-			for (int y = 0; y < WorldSize.Y * SquareSize.Y; y+=SquareSize.Y)
+			for (int j = 0; j < InitChunks.Y; j++)
 			{
-				worldPosition = new Vector2I((x/SquareSize.X)+TileMapOffset.X, (y/SquareSize.Y)+TileMapOffset.Y); 	// posición en el generador
-				valueTier = TWorld.GetValueTierAt(worldPosition.X, worldPosition.Y);
+				RenderChunk(new Vector2I(i, j));		
+			}
+		}
+	}
+
+	private void RenderChunk(Vector2I chunkPosition)
+	{
+		for (var x = chunkPosition.X * ChunkSize.X * SquareSize.X; x < ChunkSize.X * SquareSize.X + chunkPosition.X * ChunkSize.X * SquareSize.X; x+=SquareSize.X)
+		{
+			for (var y = chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y < ChunkSize.Y * SquareSize.Y + chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y+=SquareSize.Y)
+			{
+				var worldPosition = new Vector2I((x/SquareSize.X)+TileMapOffset.X, (y/SquareSize.Y)+TileMapOffset.Y);
+				var valueTier = _world.GetValueTierAt(worldPosition.X, worldPosition.Y);
 
 				FulfillSquare(new Vector2I(x, y), valueTier);	// escalado del mapa
 			}
 		}
-	}	
-
+	}
 	public void UpdateTileMap()
 	{
-		TileMap.Clear();
+		_tileMap.Clear();
 		TileMapSetup();
 	}
 
-
-	public void SetCell(Vector2I tileMapPosition, int valueTier)
-	{
-		int tileMapLayer = 0;
-		int tileSetSourceId;
-		Vector2I tileSetAtlasCoordinates;
-
-		if (valueTier == 0)	// sea
-		{
-			tileSetSourceId = 8;
-			tileSetAtlasCoordinates = new Vector2I(0, 0);
-		}
-		else if (valueTier == 1 || valueTier == 2)
-		{
-			tileSetSourceId = 8;
-			tileSetAtlasCoordinates = new Vector2I(5, 0);
-		}
-		else if (valueTier == 3)
-		{
-			tileSetSourceId = 8;
-			tileSetAtlasCoordinates = new Vector2I(2, 0);
-		}
-		else if (valueTier == 4 || valueTier == 5 || valueTier == 6)
-		{
-			tileSetSourceId = 0;
-			tileSetAtlasCoordinates = new Vector2I(2, 0);
-		}
-		else if (valueTier == 7 || valueTier == 8 || valueTier == 9)
-		{
-			tileSetSourceId = 8;
-			tileSetAtlasCoordinates = new Vector2I(3, 0);
-		}
-		else
-		{
-			tileSetSourceId = 7;
-			tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
-		}
-
-		TileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, tileSetAtlasCoordinates);
-	}
 	public void FulfillSquare(Vector2I squarePosition, int valueTier)
 	{	
 		// Comprobamos si tiene frontera con un tier distinto
-		bool isFrontier = (valueTier != TWorld.GetValueTierAt(squarePosition.X + 1, squarePosition.Y) || valueTier != TWorld.GetValueTierAt(squarePosition.X, squarePosition.Y + 1)) || valueTier != TWorld.GetValueTierAt(squarePosition.X - 1, squarePosition.Y) || valueTier != TWorld.GetValueTierAt(squarePosition.X, squarePosition.Y-1);
-		for (int i = 0; i < SquareSize.X; i++)
+		var isFrontier = (valueTier == _world.GetValueTierAt(squarePosition.X + 1, squarePosition.Y)) || valueTier == _world.GetValueTierAt(squarePosition.X - 1, squarePosition.Y);
+
+		for (var i = 0; i < SquareSize.X; i++)
 		{
-			for (int j = 0; j < SquareSize.Y; j++)
+			for (var j = 0; j < SquareSize.Y; j++)
 			{
-				SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier);
+				if (isFrontier)
+				{
+					SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier);	
+				}
+				else{
+					SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier);
+				}
 			}
 		}
 	}
 
+	private void SetCell(Vector2I tileMapPosition, int valueTier)
+	{
+		var tileMapLayer = 0;
+		int tileSetSourceId;
+		Vector2I tileSetAtlasCoordinates;
 
+		// if (valueTier == 0)	// sea
+		// {
+		// 	tileSetSourceId = 8;
+		// 	tileSetAtlasCoordinates = new Vector2I(0, 0);
+		// }
+		// else if (valueTier == 1 || valueTier == 2)
+		// {
+		// 	tileSetSourceId = 8;
+		// 	tileSetAtlasCoordinates = new Vector2I(5, 0);
+		// }
+		// else if (valueTier == 3)
+		// {
+		// 	tileSetSourceId = 8;
+		// 	tileSetAtlasCoordinates = new Vector2I(2, 0);
+		// }
+		// else if (valueTier == 4 || valueTier == 5 || valueTier == 6)
+		// {
+		// 	tileSetSourceId = 0;
+		// 	tileSetAtlasCoordinates = new Vector2I(2, 0);
+		// }
+		// else if (valueTier == 7 || valueTier == 8 || valueTier == 9)
+		// {
+		// 	tileSetSourceId = 8;
+		// 	tileSetAtlasCoordinates = new Vector2I(3, 0);
+		// }
+		// else
+		// {
+		// 	tileSetSourceId = 7;
+		// 	tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
+		// }
+
+		tileSetSourceId = 9;
+		tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
+		
+		_tileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, tileSetAtlasCoordinates);
+	}
 
 }

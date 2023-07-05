@@ -6,14 +6,16 @@ using System.Drawing.Imaging;
 public partial class PaletteCreator : GodotObject
 {
     int TileSize = 16;
-    public void CreateGradientPalette(int nColors = 48, string initialColor = "#FFFFFF", string finalColor = "#000000", string middleColor = "#749140")
+    public void CreateGradientPalette(int nColors = 48, string filename="palette.png", string initialColor = "#FFFFFF", string finalColor = "#000000", string middleColor = "#749140")
     {
         // Obtenemos la lista de colores
         Godot.Collections.Array<string> paletteArray = GetGradientPaletteString(nColors, initialColor, finalColor, middleColor);
 
         // Creamos la imagen
-        CreatePalettePng(paletteArray);
+        CreatePalettePng(paletteArray, filename);
     }
+
+    
     public Godot.Collections.Array<string> GetGradientPaletteString(int nColors = 48, string initialColor = "#FFFFFF", string finalColor = "#000000", string middleColor = "#749140")   // verde
     {
         // (el color intermedio determina el tono de la paleta)

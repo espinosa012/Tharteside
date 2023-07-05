@@ -31,7 +31,7 @@ public partial class MFNL : FastNoiseLite
     }
 
     public void CreateNoiseChunk(Vector2I position, Vector2I chunkSize)
-    {
+    {//TODO
         int startX = position.X * chunkSize.X;
         int endX = startX + chunkSize.X;
         int startY = position.Y * chunkSize.Y;
@@ -102,7 +102,7 @@ public partial class MFNL : FastNoiseLite
 
 
     // AUX FUNCTIONS
-    public string CamelCaseToSnakeCase(string str)  
+    public string CamelCaseToSnakeCase(string str)  // static function
     {
         // Reemplaza los caracteres en mayúsculas con un guión bajo seguido de la misma letra en minúscula
         return Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();

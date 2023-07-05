@@ -1,93 +1,85 @@
-using Godot;
 using System;
 using System.Collections.Generic;
+using Godot;
 
 public partial class TWorld : GodotObject
 {
 	// WORLD PARAMETERS AND NOISES
-	// public Vector2I WorldSize;
-	public Dictionary<string, Variant> WorldParameters;
-	public Dictionary<string, MFNL> WorldNoises;
-
+	private Dictionary<string, Variant> _worldParameters;
+	private Dictionary<string, MFNL> _worldNoises;
 
 
 	// CONSTRUCTOR
-	public TWorld(int worldsizeX, int worldSizeY)
+	public TWorld()
 	{
-		// SetWorldSize(worldsizeX, worldSizeY);
-        InitNoisesAndParameters();
+		InitNoisesAndParameters();
 	}
 
-	//  INIT METHODS
-	// public void SetWorldSize(int newWorldsizeX, int newWorldSizeY)
-	// {
-	// 	WorldSize = new Vector2I(newWorldsizeX, newWorldSizeY);
-	// }
-
-	public void InitNoisesAndParameters()
+	private void InitNoisesAndParameters()
 	{
-		
 		// Init noise
-		WorldNoises = new Dictionary<string, MFNL>();
+		_worldNoises = new Dictionary<string, MFNL>();
 		
 		// Formamos los objetos de ruido desde los .json correspondientes
-		MFNL BaseElevation = new MFNL("BaseElevation");
-		BaseElevation.LoadFromJSON("BaseElevation");
-		AddWorldNoise("BaseElevation", BaseElevation);
+		var baseElevation = new MFNL("BaseElevation");
+		baseElevation.LoadFromJSON("BaseElevation");
+		AddWorldNoise("BaseElevation", baseElevation);
 
-		MFNL Continentalness = new MFNL("Continentalness");
-		Continentalness.LoadFromJSON("Continentalness");
-		AddWorldNoise("Continentalness", Continentalness);
+		var continentalness = new MFNL("Continentalness");
+		continentalness.LoadFromJSON("Continentalness");
+		AddWorldNoise("Continentalness", continentalness);
 
-		MFNL PeaksAndValleys = new MFNL("PeaksAndValleys");
-		PeaksAndValleys.LoadFromJSON("PeaksAndValleys");
-		AddWorldNoise("PeaksAndValleys", PeaksAndValleys);
+		var peaksAndValleys = new MFNL("PeaksAndValleys");
+		peaksAndValleys.LoadFromJSON("PeaksAndValleys");
+		AddWorldNoise("PeaksAndValleys", peaksAndValleys);
 
-		MFNL VolcanicIslands = new MFNL("VolcanicIslands");
-		VolcanicIslands.LoadFromJSON("VolcanicIslands");
-		AddWorldNoise("VolcanicIslands", VolcanicIslands);
-
+		var volcanicIslands = new MFNL("VolcanicIslands");
+		volcanicIslands.LoadFromJSON("VolcanicIslands");
+		AddWorldNoise("VolcanicIslands", volcanicIslands);
 
 		// Init parameters (cargar desde json)
-		WorldParameters = new Dictionary<string, Variant>();
+		_worldParameters = new Dictionary<string, Variant>();
 		
+		AddWorldParameter("NTiers", 48);
 		AddWorldParameter("MinContinentalHeight", 0.023f);
 		AddWorldParameter("ContinentalScaleValue", 1.22f);
 		AddWorldParameter("SeaScaleValue", 1f/0.85f);
 		AddWorldParameter("IslandScaleValue", 0.81f);
 		AddWorldParameter("IslandThresholdLevel", 0.76f); 
 		AddWorldParameter("OutToSeaFactor", 0.7f);  
-
 	}
 
 	//  WORLD PARAMETERS
-	public void AddWorldParameter(string param, Variant value)
+	private void AddWorldParameter(string param, Variant value)
 	{
-		WorldParameters.Add(param, value);
+		_worldParameters.Add(param, value);
 	}
-	public void UpdateWorldParameter(string param, Variant value)
+
+	private void UpdateWorldParameter(string param, Variant value)
 	{
-		if (WorldParameters.ContainsKey(param)) {WorldParameters[param] = value;}
+		if (_worldParameters.ContainsKey(param)) {_worldParameters[param] = value;}
 	}
 	public Variant GetWorldParameter(string param)
 	{
-		return WorldParameters[param];
+		return _worldParameters[param];
 	}
 
 	//  WORLD NOISE
-	public void AddWorldNoise(string name, MFNL noise)
+	private void AddWorldNoise(string name, MFNL noise)
 	{
-		WorldNoises.Add(name, noise);
+		_worldNoises.Add(name, noise);
 	}
-	public MFNL GetWorldNoise(string name)
+
+	private MFNL GetWorldNoise(string name)
 	{
-		if (!WorldNoises.ContainsKey(name)) {return null;}
-		return WorldNoises[name];
+		if (!_worldNoises.ContainsKey(name)) {return null;}
+		return _worldNoises[name];
 	}
-	public void RandomizeWorld()
+
+	private void RandomizeWorld()
 	{
 		// randomiza las semillas de todos los objetos de ruido
-		foreach (MFNL noise in WorldNoises.Values)
+		foreach (MFNL noise in _worldNoises.Values)
 		{
 			noise.RandomizeSeed();  // se le puede pasar una semilla en concreto
 		}
@@ -96,71 +88,74 @@ public partial class TWorld : GodotObject
 
 
 	// ELEVATION
-	public float GetElevation(int x, int y)
+	private float GetElevation(int x, int y)
 	{
 		// algoritmo marzo '23
 		if (IsOverSeaLevel(x, y))
-		{   
-			if (IsVolcanicIsland(x, y)) // celdas de islas volcánicas
-			{
-				return GetVolcanicIslandElevation(x, y);
-			}
-			else // celdas continentales
-			{
-				return GetContinentalElevation(x, y);            
-			}
+		{
+			return IsVolcanicIsland(x, y) ? GetVolcanicIslandElevation(x, y) : 
+				GetContinentalElevation(x, y);
 		}
-		else{   // celdas de mar
-			return 0.0f;
-		}
+		return 0.0f;	// el valor de elevación de las celdas marítimas debe ser dinámico, permitiendo distintas profundidades
 	}
-	
-	public float GetVolcanicIslandElevation(int x, int y)
+
+	private float GetVolcanicIslandElevation(int x, int y)
 	{
-		return (GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * (float) GetWorldParameter("ContinentalScaleValue") * GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) * GetWorldNoise("VolcanicIslands").GetNormalizedNoise2D(x, y) * (float) GetWorldParameter("IslandScaleValue"));
+		return (GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * 
+		        (float) GetWorldParameter("ContinentalScaleValue") * 
+		        GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) * 
+		        GetWorldNoise("VolcanicIslands").GetNormalizedNoise2D(x, y) * 
+		        (float) GetWorldParameter("IslandScaleValue"));
 	}
-	public float GetContinentalElevation(int x, int y)
+
+	private float GetContinentalElevation(int x, int y)
 	{
-		return Math.Min(1f, Math.Max((float) GetWorldParameter("MinContinentalHeight"), GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * (float) GetWorldParameter("ContinentalScaleValue") * (GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) - (float) GetWorldParameter("SeaScaleValue") * GetWorldNoise("Continentalness").GetNormalizedNoise2D(x, y))));    // devolvemos un valor en el rango [MinContinentalHeight, 1.0]
+		return Math.Min(1f, Math.Max((float) GetWorldParameter("MinContinentalHeight"), 
+			GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * 
+			(float) GetWorldParameter("ContinentalScaleValue") * 
+			(GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) - 
+			 (float) GetWorldParameter("SeaScaleValue") * 
+			 GetWorldNoise("Continentalness").GetNormalizedNoise2D(x, y))));    
+		// devolvemos un valor en el rango [MinContinentalHeight, 1.0]
 	}
-	
-	public bool IsOverSeaLevel(int x, int y)
+
+	private bool IsOverSeaLevel(int x, int y)
 	{
 		return IsVolcanicIsland(x, y) || IsContinentalOverSeaLevel(x, y);
 	}
-	public bool IsContinentalOverSeaLevel(int x, int y)
+
+	private bool IsContinentalOverSeaLevel(int x, int y)
 	{
 		return GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) - (float) GetWorldParameter("MinContinentalHeight") > (float) GetWorldParameter("SeaScaleValue") * GetWorldNoise("Continentalness").GetNormalizedNoise2D(x, y);
 	}
-	public bool IsOutToSea(int x, int y)
+
+	private bool IsOutToSea(int x, int y)
 	{
 		// devuelve si está lo suficientemente mar adentro según el factor OutToSeaFactor
 		return GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) - (float) GetWorldParameter("MinContinentalHeight") < (float) GetWorldParameter("SeaScaleValue") * GetWorldNoise("Continentalness").GetNormalizedNoise2D(x, y) * (float) GetWorldParameter("OutToSeaFactor");
 	}
-	public bool IsVolcanicLand(int x, int y)
+
+	private bool IsVolcanicLand(int x, int y)
 	{
 		return (GetWorldNoise("VolcanicIslands").GetNormalizedNoise2D(x, y) > (float) GetWorldParameter("IslandThresholdLevel"));
 	}
-	public bool IsVolcanicIsland(int x, int y)
+
+	private bool IsVolcanicIsland(int x, int y)
 	{
 		return IsOutToSea(x, y) && IsVolcanicLand(x, y);
 	}
 
 
-
-
-
-
-	public int GetValueTier(float value, int nTiers=48)
+	private int GetValueTier(float value)
 	{
-		//  para valores en el rango 0-1
-		for (int i = 0; i < nTiers; i++){if (value < ((float) i + 1.0f)/(float) nTiers){return i;}}
-		return nTiers-1;
+		//  para valores en el rango 0-1, los tiers pueden verse como las capas del tilemap
+		for (var i = 0; i < (int) GetWorldParameter("NTiers"); i++){if (value < (i + 1.0f)/(float) GetWorldParameter("NTiers")){return i;}}
+		return (int) GetWorldParameter("NTiers") - 1;
 	}
 
-	public int GetValueTierAt(int x, int y, int nTiers=48)
+	public int GetValueTierAt(int x, int y)
 	{
-		return GetValueTier(GetElevation(x, y), nTiers);
+		return GetValueTier(GetElevation(x, y));
 	}
 
 }

@@ -3,7 +3,7 @@ using System;
 
 public partial class BasicWorldPanel : Panel
 {
-	TWorldManager TWorldManager;
+	Tartheside.mono.TWorldManager TWorldManager;
 	Button UpdateButton;
 
 	public override void _Ready()
@@ -11,7 +11,7 @@ public partial class BasicWorldPanel : Panel
 		// ConnectButtonSignal();
 	}
 
-	public void SetTWorldManager(TWorldManager worldManager)
+	public void SetTWorldManager(Tartheside.mono.TWorldManager worldManager)
 	{
 		TWorldManager = worldManager;
 	}
@@ -24,8 +24,11 @@ public partial class BasicWorldPanel : Panel
 		GetNode<LineEdit>("Container/WorldSize/x").Text = TWorldManager.WorldSize.X.ToString();
 		GetNode<LineEdit>("Container/WorldSize/y").Text = TWorldManager.WorldSize.Y.ToString();
 
-		GetNode<LineEdit>("Container/ChunkSize/x").Text = TWorldManager.SquareSize.X.ToString();
-		GetNode<LineEdit>("Container/ChunkSize/y").Text = TWorldManager.SquareSize.Y.ToString();
+		GetNode<LineEdit>("Container/SquareSize/x").Text = TWorldManager.SquareSize.X.ToString();
+		GetNode<LineEdit>("Container/SquareSize/y").Text = TWorldManager.SquareSize.Y.ToString();
+		
+		GetNode<LineEdit>("Container/ChunkSize/x").Text = TWorldManager.ChunkSize.X.ToString();
+		GetNode<LineEdit>("Container/ChunkSize/y").Text = TWorldManager.ChunkSize.Y.ToString();
 
 		GetNode<LineEdit>("Container/Offset/x").Text = TWorldManager.TileMapOffset.X.ToString();
 		GetNode<LineEdit>("Container/Offset/y").Text = TWorldManager.TileMapOffset.Y.ToString();
@@ -37,14 +40,14 @@ public partial class BasicWorldPanel : Panel
 		UpdateButton.Pressed += () => {
 			Vector2I newWorldSize = new Vector2I(GetNode<LineEdit>("Container/WorldSize/x").Text.ToInt(), GetNode<LineEdit>("Container/WorldSize/y").Text.ToInt());
 			Vector2I offset = new Vector2I(GetNode<LineEdit>("Container/Offset/x").Text.ToInt(), GetNode<LineEdit>("Container/Offset/y").Text.ToInt());
+			Vector2I squareSize = new Vector2I(GetNode<LineEdit>("Container/SquareSize/x").Text.ToInt(), GetNode<LineEdit>("Container/SquareSize/y").Text.ToInt());
 			Vector2I chunkSize = new Vector2I(GetNode<LineEdit>("Container/ChunkSize/x").Text.ToInt(), GetNode<LineEdit>("Container/ChunkSize/y").Text.ToInt());
 			
 			TWorldManager.WorldSize = newWorldSize;
 			TWorldManager.TileMapOffset = offset;
-			TWorldManager.SquareSize = chunkSize;
+			TWorldManager.SquareSize = squareSize;
+			TWorldManager.ChunkSize = chunkSize;
 			
-
-
 			TWorldManager.UpdateTileMap();
 		};
 	}

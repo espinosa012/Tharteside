@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://tswy1h6sun4r"]
+[gd_scene load_steps=25 format=3 uid="uid://tswy1h6sun4r"]
 
 [ext_resource type="Script" path="res://mono/TWorldManager.cs" id="1_500xo"]
 [ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_n7f2w"]
@@ -10,8 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://vdffsg2h1h22" path="res://resources/MiniWorldSprites/Ground/Cliff-Water.png" id="7_mepev"]
 [ext_resource type="Texture2D" uid="uid://dqeqdmyqm8noq" path="res://resources/MiniWorldSprites/Ground/green.png" id="9_gv73x"]
 [ext_resource type="Texture2D" uid="uid://bnmugrorvl3xw" path="res://resources/MiniWorldSprites/Ground/palette.png" id="10_bcph6"]
-[ext_resource type="Script" path="res://scenes/TileMapCamera2D.gd" id="11_2apvo"]
+[ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://green16.png" id="11_how2y"]
 [ext_resource type="Script" path="res://mono/ui/BasicWorldPanel.cs" id="11_hu8nr"]
+[ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="13_pnybr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gudb5"]
 texture = ExtResource("1_n7f2w")
@@ -205,6 +206,25 @@ texture = ExtResource("10_bcph6")
 4:0/0 = 0
 5:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_43v17"]
+texture = ExtResource("11_how2y")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_fqw7f"]
 sources/0 = SubResource("TileSetAtlasSource_gudb5")
 sources/1 = SubResource("TileSetAtlasSource_smlec")
@@ -215,19 +235,21 @@ sources/5 = SubResource("TileSetAtlasSource_wb4yw")
 sources/6 = SubResource("TileSetAtlasSource_5dwpk")
 sources/7 = SubResource("TileSetAtlasSource_o44wn")
 sources/8 = SubResource("TileSetAtlasSource_mojx5")
+sources/9 = SubResource("TileSetAtlasSource_43v17")
 
 [node name="TWorldManager" type="Node2D"]
 script = ExtResource("1_500xo")
-WorldSize = Vector2i(64, 64)
-SquareSize = Vector2i(1, 1)
+WorldSize = Vector2i(1024, 1024)
 ChunkSize = Vector2i(16, 16)
+SquareSize = Vector2i(1, 1)
+InitChunks = Vector2i(4, 4)
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_fqw7f")
 format = 2
 
 [node name="Window" type="Window" parent="TileMap"]
-size = Vector2i(256, 132)
+size = Vector2i(256, 170)
 
 [node name="BasicWorldPanel" type="Panel" parent="TileMap/Window"]
 unique_name_in_owner = true
@@ -283,13 +305,35 @@ text = "y"
 [node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Offset"]
 layout_mode = 2
 
+[node name="SquareSize" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Square size:		"
+
+[node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+text = "x"
+
+[node name="x" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+text = "y"
+
+[node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+
 [node name="ChunkSize" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Square size:		"
+text = "Chunk size:		"
 
 [node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
 layout_mode = 2
@@ -311,4 +355,4 @@ text = "Update
 "
 
 [node name="Camera2D" type="Camera2D" parent="TileMap"]
-script = ExtResource("11_2apvo")
+script = ExtResource("13_pnybr")
