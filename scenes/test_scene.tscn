@@ -241,7 +241,7 @@ sources/9 = SubResource("TileSetAtlasSource_43v17")
 script = ExtResource("1_bymoe")
 WorldSize = Vector2i(1024, 1024)
 ChunkSize = Vector2i(16, 16)
-SquareSize = Vector2i(1, 1)
+SquareSize = Vector2i(4, 4)
 InitChunks = Vector2i(2, 2)
 
 [node name="TileMap" type="TileMap" parent="."]
