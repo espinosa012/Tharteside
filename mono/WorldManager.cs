@@ -2,7 +2,7 @@ using Godot;
 
 namespace Tartheside.mono;
 
-public partial class TWorldManager : Node2D
+public partial class WorldManager : Node2D
 {	
 	[Export] public Vector2I WorldSize;
 	[Export] public Vector2I TileMapOffset;
@@ -10,12 +10,12 @@ public partial class TWorldManager : Node2D
 	[Export] public Vector2I SquareSize;
 	[Export] public Vector2I InitChunks;	// Chunks que se inicializarán al principio
 
-	private TWorld _world;
+	private World _world;
 	private TileMap _tileMap;
 
 	public override void _Ready()
 	{
-		_world = new TWorld();
+		_world = new World();
 		_tileMap = GetNode<TileMap>("TileMap");
 		TileMapSetup();
 		
@@ -59,19 +59,17 @@ public partial class TWorldManager : Node2D
 		TileMapSetup();
 	}
 
-	public void FulfillSquare(Vector2I squarePosition, int valueTier)
-	{	
-		// Comprobamos si tiene frontera con un tier distinto
-		var isFrontier = valueTier == _world.GetValueTierAt(squarePosition.X + 1, squarePosition.Y) || 
-		                 valueTier == _world.GetValueTierAt(squarePosition.X - 1, squarePosition.Y) ||
-		                 valueTier == _world.GetValueTierAt(squarePosition.X, squarePosition.Y + 1) ||
-		                 valueTier == _world.GetValueTierAt(squarePosition.X, squarePosition.Y - 1);
-		for (var i = 0; i < SquareSize.X; i++)
+	private void FulfillSquare(Vector2I worldPos, int valueTier)
+	{
+		if (!IsFrontier(worldPos))
 		{
-			for (var j = 0; j < SquareSize.Y; j++)
+			for (var i = 0; i < SquareSize.X; i++)
 			{
-				SetCell(new Vector2I(squarePosition.X+i, squarePosition.Y+j), valueTier, isFrontier);	
-			}
+				for (var j = 0; j < SquareSize.Y; j++)
+				{
+					SetCell(new Vector2I(worldPos.X+i, worldPos.Y+j), valueTier);	
+				}
+			}	
 		}
 	}
 
@@ -82,5 +80,32 @@ public partial class TWorldManager : Node2D
 		var tileSetAtlasCoordinates = new Vector2I(valueTier, 0);	// aqui calculamos si somos frontera y en qué dirección
 		_tileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, tileSetAtlasCoordinates);
 	}
+	
+	// FRONTIER
+	private bool IsFrontier(Vector2I squarePos)
+	{
+		var valueTier = _world.GetValueTierAt(squarePos.X/SquareSize.X, squarePos.Y/SquareSize.X);
+		return IsFrontierUp(squarePos, valueTier) || IsFrontierDown(squarePos, valueTier)
+				|| IsFrontierRight(squarePos, valueTier) || IsFrontierLeft(squarePos, valueTier);
+	}
 
+	private bool IsFrontierUp(Vector2I squarePos, int valueTier)
+	{
+		return valueTier != _world.GetValueTierAt(squarePos.X/SquareSize.X, squarePos.Y/SquareSize.Y - 1);
+	}
+	
+	private bool IsFrontierDown(Vector2I squarePos, int valueTier)
+	{
+		return valueTier != _world.GetValueTierAt(squarePos.X/SquareSize.X, squarePos.Y/SquareSize.Y + 1);
+	}
+	
+	private bool IsFrontierRight(Vector2I squarePos, int valueTier)
+	{
+		return valueTier != _world.GetValueTierAt(squarePos.X/SquareSize.X + 1, squarePos.Y/SquareSize.Y);
+	}
+	
+	private bool IsFrontierLeft(Vector2I squarePos, int valueTier)
+	{
+		return valueTier != _world.GetValueTierAt(squarePos.X/SquareSize.X - 1, squarePos.Y/SquareSize.Y);
+	}
 }

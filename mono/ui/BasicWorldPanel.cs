@@ -3,7 +3,7 @@ using System;
 
 public partial class BasicWorldPanel : Panel
 {
-	Tartheside.mono.TWorldManager TWorldManager;
+	Tartheside.mono.WorldManager TWorldManager;
 	Button UpdateButton;
 
 	public override void _Ready()
@@ -11,7 +11,7 @@ public partial class BasicWorldPanel : Panel
 		// ConnectButtonSignal();
 	}
 
-	public void SetTWorldManager(Tartheside.mono.TWorldManager worldManager)
+	public void SetTWorldManager(Tartheside.mono.WorldManager worldManager)
 	{
 		TWorldManager = worldManager;
 	}

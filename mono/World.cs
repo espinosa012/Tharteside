@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-public partial class TWorld : GodotObject
+namespace Tartheside.mono;
+
+public partial class World : GodotObject
 {
 	// WORLD PARAMETERS AND NOISES
 	private Dictionary<string, Variant> _worldParameters;
@@ -10,7 +12,7 @@ public partial class TWorld : GodotObject
 
 
 	// CONSTRUCTOR
-	public TWorld()
+	public World()
 	{
 		InitNoisesAndParameters();
 	}

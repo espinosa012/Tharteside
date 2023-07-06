@@ -1,6 +1,6 @@
 [gd_scene load_steps=25 format=3 uid="uid://tswy1h6sun4r"]
 
-[ext_resource type="Script" path="res://mono/TWorldManager.cs" id="1_500xo"]
+[ext_resource type="Script" path="res://mono/WorldManager.cs" id="1_bymoe"]
 [ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_n7f2w"]
 [ext_resource type="Texture2D" uid="uid://h45rq6wtrrg2" path="res://resources/MiniWorldSprites/Ground/Shore.png" id="2_ifbyn"]
 [ext_resource type="Texture2D" uid="uid://c7r057wjkhcxt" path="res://resources/MiniWorldSprites/Ground/TexturedGrass.png" id="3_vsnis"]
@@ -238,10 +238,10 @@ sources/8 = SubResource("TileSetAtlasSource_mojx5")
 sources/9 = SubResource("TileSetAtlasSource_43v17")
 
 [node name="TWorldManager" type="Node2D"]
-script = ExtResource("1_500xo")
+script = ExtResource("1_bymoe")
 WorldSize = Vector2i(1024, 1024)
 ChunkSize = Vector2i(16, 16)
-SquareSize = Vector2i(16, 16)
+SquareSize = Vector2i(1, 1)
 InitChunks = Vector2i(2, 2)
 
 [node name="TileMap" type="TileMap" parent="."]
