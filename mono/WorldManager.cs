@@ -31,9 +31,9 @@ public partial class WorldManager : Node2D
 
 	private void TileMapSetup()
 	{	
-		for (int i = 0; i < InitChunks.X; i++)
+		for (var i = 0; i < InitChunks.X; i++)
 		{
-			for (int j = 0; j < InitChunks.Y; j++)
+			for (var j = 0; j < InitChunks.Y; j++)
 			{
 				RenderChunk(new Vector2I(i, j));		
 			}
@@ -71,6 +71,25 @@ public partial class WorldManager : Node2D
 
 	private void FulfillSquare(Vector2I worldPos, int valueTier)
 	{
+		// world pos: la posición del mundo recibida coincide con la de comienzo del square
+		for (var i = 0; i < SquareSize.X; i++)
+		{
+			for (var j = 0; j < SquareSize.Y; j++)
+			{
+				var tileSetSource = 10;
+				var tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
+				SetCell(new Vector2I(worldPos.X+i, worldPos.Y+j), tileSetAtlasCoordinates, tileSetSource);
+				FillTerrainObstacle(i, j, valueTier, worldPos);
+			}
+		}
+	}
+
+	private void FillTerrainObstacle(int i, int j, int valueTier, Vector2I worldPos)
+	{
+		var tileSetAtlasCoordinates = new Vector2I(-1, -1);
+		var tileSetSource = 5;
+		
+		// poco eficiente ...
 		var isStepDownNorth = IsStepDownNorth(worldPos, valueTier);
 		var isStepDownSouth = IsStepDownSouth(worldPos, valueTier);
 		var isStepDownWest = IsStepDownWest(worldPos, valueTier);
@@ -83,139 +102,131 @@ public partial class WorldManager : Node2D
 
 		var isSideBorder = IsSideBorder(worldPos, valueTier);
 		
-		for (var i = 0; i < SquareSize.X; i++)
+		if (isStepDownNorth && j == 0)
 		{
-			for (var j = 0; j < SquareSize.Y; j++)
+			tileSetAtlasCoordinates = new Vector2I(1, 3);
+			tileSetSource = 5;
+		}
+
+		if (isStepDownSouth && j == SquareSize.Y - 1)
+		{
+			tileSetAtlasCoordinates = new Vector2I(1, 5);
+			tileSetSource = 5;
+		}
+
+		if (isStepDownWest && i == 0)
+		{
+			tileSetAtlasCoordinates = new Vector2I(0, 4);
+			tileSetSource = 5;
+			if (IsStepDownNorth(worldPos, valueTier) && j == 0)
 			{
-				var tileSetSource = 5;
-				var tileSetAtlasCoordinates = new Vector2I(1, 1);
-
-				if (isStepDownNorth && j == 0)
-				{
-					tileSetAtlasCoordinates = new Vector2I(1, 3);
-					tileSetSource = 5;
-				}
-
-				if (isStepDownSouth && j == SquareSize.Y - 1)
-				{
-					tileSetAtlasCoordinates = new Vector2I(1, 5);
-					tileSetSource = 5;
-				}
-
-				if (isStepDownWest && i == 0)
-				{
-					tileSetAtlasCoordinates = new Vector2I(0, 4);
-					tileSetSource = 5;
-					if (IsStepDownNorth(worldPos, valueTier) && j == 0)
-					{
-						tileSetAtlasCoordinates = new Vector2I(0, 3);
-					}
-					if (IsStepDownSouth(worldPos, valueTier) && j == SquareSize.Y - 1)
-					{
-						tileSetAtlasCoordinates = new Vector2I(0, 5);
-					}
-				}
-
-				if (isStepDownEast && i == SquareSize.X - 1)
-				{
-					tileSetAtlasCoordinates = new Vector2I(2, 4);
-					tileSetSource = 5;
-					if (IsStepDownNorth(worldPos, valueTier) && j == 0)
-					{
-						tileSetAtlasCoordinates = new Vector2I(2, 3);
-					}
-					if (IsStepDownSouth(worldPos, valueTier) && j == SquareSize.Y - 1)
-					{
-						tileSetAtlasCoordinates = new Vector2I(2, 5);
-					}
-				}
-
-				if (!isSideBorder)
-				{
-					if (isStepDownNorthWest && i == 0 && j == 0)
-					{
-						tileSetAtlasCoordinates = new Vector2I(3, 2);
-						tileSetSource = 5;
-					}
-				
-					if (isStepDownSouthWest && i == 0 && j == SquareSize.Y - 1)
-					{
-						tileSetAtlasCoordinates = new Vector2I(3, 3);
-						tileSetSource = 5;
-					}
-				
-					if (isStepDownNorthEast && i == SquareSize.X - 1 && j == 0)
-					{
-						tileSetAtlasCoordinates = new Vector2I(4, 2);
-						tileSetSource = 5;
-					}
-
-					if (isStepDownSouthEast && i == SquareSize.X - 1 && j == SquareSize.Y - 1)
-					{
-						tileSetAtlasCoordinates = new Vector2I(4, 3);
-						tileSetSource = 5;
-					}
-				}
-				
-				
-				SetCell(new Vector2I(worldPos.X+i, worldPos.Y+j), tileSetAtlasCoordinates, tileSetSource);	
+				tileSetAtlasCoordinates = new Vector2I(0, 3);
+			}
+			if (IsStepDownSouth(worldPos, valueTier) && j == SquareSize.Y - 1)
+			{
+				tileSetAtlasCoordinates = new Vector2I(0, 5);
 			}
 		}
-	}
 
-	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId = 9)
+		if (isStepDownEast && i == SquareSize.X - 1)
+		{
+			tileSetAtlasCoordinates = new Vector2I(2, 4);
+			tileSetSource = 5;
+			if (IsStepDownNorth(worldPos, valueTier) && j == 0)
+			{
+				tileSetAtlasCoordinates = new Vector2I(2, 3);
+			}
+			if (IsStepDownSouth(worldPos, valueTier) && j == SquareSize.Y - 1)
+			{
+				tileSetAtlasCoordinates = new Vector2I(2, 5);
+			}
+		}
+
+		if (!isSideBorder)
+		{
+			if (isStepDownNorthWest && i == 0 && j == 0)
+			{
+				tileSetAtlasCoordinates = new Vector2I(3, 2);
+				tileSetSource = 5;
+			}
+				
+			if (isStepDownSouthWest && i == 0 && j == SquareSize.Y - 1)
+			{
+				tileSetAtlasCoordinates = new Vector2I(3, 3);
+				tileSetSource = 5;
+			}
+				
+			if (isStepDownNorthEast && i == SquareSize.X - 1 && j == 0)
+			{
+				tileSetAtlasCoordinates = new Vector2I(4, 2);
+				tileSetSource = 5;
+			}
+
+			if (isStepDownSouthEast && i == SquareSize.X - 1 && j == SquareSize.Y - 1)
+			{
+				tileSetAtlasCoordinates = new Vector2I(4, 3);
+				tileSetSource = 5;
+			}
+		}
+
+		if (!tileSetAtlasCoordinates.Equals(new Vector2I(-1, -1)))
+		{
+			SetCell(new Vector2I(worldPos.X+i, worldPos.Y+j), tileSetAtlasCoordinates, tileSetSource, 1);
+		}
+	}
+	
+	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId = 9, int tileMapLayer = 0)
 	{
-		var tileMapLayer = 0;
 		_tileMap.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, 
 			tileSetAtlasCoordinates);
 	}
 	
+	
+	
 	// FRONTIER
 	private bool IsSideBorder(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X, squarePos.Y/SquareSize.Y - 1) ||
-		       valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X, squarePos.Y/SquareSize.Y + 1) ||
-		       valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X - 1, squarePos.Y/SquareSize.Y) ||
-		       valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + 1, squarePos.Y/SquareSize.Y);
+		return IsStepDownNorth(squarePos, valueTier) || IsStepDownSouth(squarePos, valueTier) ||
+		       IsStepDownWest(squarePos, valueTier) || IsStepDownEast(squarePos, valueTier);
 	}
 	
 	private bool IsStepDownNorth(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X, squarePos.Y/SquareSize.Y - 1);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + TileMapOffset.X, squarePos.Y/SquareSize.Y - 1 + TileMapOffset.Y);
 	}
 	
 	private bool IsStepDownSouth(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X, squarePos.Y/SquareSize.Y + 1);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + TileMapOffset.X, squarePos.Y/SquareSize.Y + 1 + TileMapOffset.Y);
 	}
 	
 	private bool IsStepDownWest(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X - 1, squarePos.Y/SquareSize.Y);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X - 1 + TileMapOffset.X, squarePos.Y/SquareSize.Y + TileMapOffset.Y);
 	}
 	
 	private bool IsStepDownEast(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + 1, squarePos.Y/SquareSize.Y);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + 1 + TileMapOffset.X, squarePos.Y/SquareSize.Y + TileMapOffset.Y);
 	}
 
 	private bool IsStepDownNorthWest(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X - 1, squarePos.Y/SquareSize.Y - 1);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X - 1 + TileMapOffset.X, squarePos.Y/SquareSize.Y - 1 + TileMapOffset.Y);
 	}
 	
 	private bool IsStepDownNorthEast(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + 1, squarePos.Y/SquareSize.Y - 1);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + 1 + TileMapOffset.X, squarePos.Y/SquareSize.Y - 1 + TileMapOffset.Y);
 	}
 	
 	private bool IsStepDownSouthWest(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X - 1, squarePos.Y/SquareSize.Y + 1);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X - 1 + TileMapOffset.X, squarePos.Y/SquareSize.Y + 1 + TileMapOffset.Y);
 	}
 
 	private bool IsStepDownSouthEast(Vector2I squarePos, int valueTier)
 	{
-		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + 1, squarePos.Y/SquareSize.Y + 1);
+		return valueTier > _world.GetValueTierAt(squarePos.X/SquareSize.X + 1 + TileMapOffset.X, squarePos.Y/SquareSize.Y + 1 + TileMapOffset.Y);
 	}
 }

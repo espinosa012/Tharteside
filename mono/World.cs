@@ -42,7 +42,7 @@ public partial class World : GodotObject
 		// Init parameters (cargar desde json)
 		_worldParameters = new Dictionary<string, Variant>();
 		
-		AddWorldParameter("NTiers", 16);
+		AddWorldParameter("NTiers", 24);
 		AddWorldParameter("MinContinentalHeight", 0.023f);
 		AddWorldParameter("ContinentalScaleValue", 1.22f);
 		AddWorldParameter("SeaScaleValue", 1f/0.85f);

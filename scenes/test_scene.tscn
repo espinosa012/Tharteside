@@ -1,17 +1,18 @@
-[gd_scene load_steps=25 format=3 uid="uid://tswy1h6sun4r"]
+[gd_scene load_steps=27 format=3 uid="uid://tswy1h6sun4r"]
 
 [ext_resource type="Script" path="res://mono/WorldManager.cs" id="1_bymoe"]
 [ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_n7f2w"]
 [ext_resource type="Texture2D" uid="uid://h45rq6wtrrg2" path="res://resources/MiniWorldSprites/Ground/Shore.png" id="2_ifbyn"]
 [ext_resource type="Texture2D" uid="uid://c7r057wjkhcxt" path="res://resources/MiniWorldSprites/Ground/TexturedGrass.png" id="3_vsnis"]
+[ext_resource type="Texture2D" uid="uid://eyk8oreoy2fk" path="res://resources/MiniWorldSprites/p24.png" id="4_g5u51"]
 [ext_resource type="Texture2D" uid="uid://b31ihx4beedq8" path="res://resources/MiniWorldSprites/Ground/Winter.png" id="4_iw0fs"]
 [ext_resource type="Texture2D" uid="uid://b74obn5pufulf" path="res://resources/MiniWorldSprites/Ground/DeadGrass.png" id="5_v8cs1"]
 [ext_resource type="Texture2D" uid="uid://df11gjce04ldq" path="res://resources/MiniWorldSprites/Ground/Cliff.png" id="6_recap"]
 [ext_resource type="Texture2D" uid="uid://vdffsg2h1h22" path="res://resources/MiniWorldSprites/Ground/Cliff-Water.png" id="7_mepev"]
 [ext_resource type="Texture2D" uid="uid://dqeqdmyqm8noq" path="res://resources/MiniWorldSprites/Ground/green.png" id="9_gv73x"]
 [ext_resource type="Texture2D" uid="uid://bnmugrorvl3xw" path="res://resources/MiniWorldSprites/Ground/palette.png" id="10_bcph6"]
-[ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://green16.png" id="11_how2y"]
 [ext_resource type="Script" path="res://mono/ui/BasicWorldPanel.cs" id="11_hu8nr"]
+[ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://resources/MiniWorldSprites/green16.png" id="11_rmevl"]
 [ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="13_pnybr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gudb5"]
@@ -29,6 +30,33 @@ texture = ExtResource("2_ifbyn")
 2:0/0 = 0
 3:0/0 = 0
 4:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fkms1"]
+texture = ExtResource("4_g5u51")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+16:0/0 = 0
+17:0/0 = 0
+18:0/0 = 0
+19:0/0 = 0
+20:0/0 = 0
+21:0/0 = 0
+22:0/0 = 0
+23:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_d2gag"]
 texture = ExtResource("3_vsnis")
@@ -207,7 +235,7 @@ texture = ExtResource("10_bcph6")
 5:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_43v17"]
-texture = ExtResource("11_how2y")
+texture = ExtResource("11_rmevl")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -236,19 +264,28 @@ sources/6 = SubResource("TileSetAtlasSource_5dwpk")
 sources/7 = SubResource("TileSetAtlasSource_o44wn")
 sources/8 = SubResource("TileSetAtlasSource_mojx5")
 sources/9 = SubResource("TileSetAtlasSource_43v17")
+sources/10 = SubResource("TileSetAtlasSource_fkms1")
 
 [node name="TWorldManager" type="Node2D"]
 script = ExtResource("1_bymoe")
 WorldSize = Vector2i(1024, 1024)
-ChunkSize = Vector2i(16, 16)
+ChunkSize = Vector2i(32, 32)
 SquareSize = Vector2i(4, 4)
 InitChunks = Vector2i(2, 2)
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_fqw7f")
 format = 2
+layer_1/name = ""
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 0
+layer_1/tile_data = PackedInt32Array()
 
 [node name="Window" type="Window" parent="TileMap"]
+position = Vector2i(0, 36)
 size = Vector2i(256, 170)
 
 [node name="BasicWorldPanel" type="Panel" parent="TileMap/Window"]
