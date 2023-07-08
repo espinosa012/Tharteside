@@ -16,7 +16,7 @@ public partial class BasicWorldPanel : Panel
 		TWorldManager = worldManager;
 	}
 
-	public void InitializeUI()
+	public void InitializeUi()
 	{
 		UpdateButton = GetNode<Button>("Container/Button");
 
@@ -43,10 +43,11 @@ public partial class BasicWorldPanel : Panel
 			Vector2I squareSize = new Vector2I(GetNode<LineEdit>("Container/SquareSize/x").Text.ToInt(), GetNode<LineEdit>("Container/SquareSize/y").Text.ToInt());
 			Vector2I chunkSize = new Vector2I(GetNode<LineEdit>("Container/ChunkSize/x").Text.ToInt(), GetNode<LineEdit>("Container/ChunkSize/y").Text.ToInt());
 			
-			TWorldManager.WorldSize = newWorldSize;
-			TWorldManager.TileMapOffset = offset;
-			TWorldManager.SquareSize = squareSize;
-			TWorldManager.ChunkSize = chunkSize;
+			TWorldManager.SetWorldSize(newWorldSize);
+			TWorldManager.SetTileMapOffset(offset);
+			TWorldManager.SetSquareSize(squareSize);
+			TWorldManager.SetChunkSize(chunkSize);
+			TWorldManager.SetWorldSize(newWorldSize);
 			
 			TWorldManager.UpdateTileMap();
 		};

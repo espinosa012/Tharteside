@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://tswy1h6sun4r"]
+[gd_scene load_steps=28 format=3 uid="uid://tswy1h6sun4r"]
 
 [ext_resource type="Script" path="res://mono/WorldManager.cs" id="1_bymoe"]
 [ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_n7f2w"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://bnmugrorvl3xw" path="res://resources/MiniWorldSprites/Ground/palette.png" id="10_bcph6"]
 [ext_resource type="Script" path="res://mono/ui/BasicWorldPanel.cs" id="11_hu8nr"]
 [ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://resources/MiniWorldSprites/green16.png" id="11_rmevl"]
+[ext_resource type="Script" path="res://mono/WorldTileMap.cs" id="13_ko68t"]
 [ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="13_pnybr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gudb5"]
@@ -269,7 +270,8 @@ sources/10 = SubResource("TileSetAtlasSource_fkms1")
 [node name="TWorldManager" type="Node2D"]
 script = ExtResource("1_bymoe")
 WorldSize = Vector2i(1024, 1024)
-ChunkSize = Vector2i(32, 32)
+TileMapOffset = Vector2i(-15, 51)
+ChunkSize = Vector2i(16, 16)
 SquareSize = Vector2i(4, 4)
 InitChunks = Vector2i(2, 2)
 
@@ -283,6 +285,7 @@ layer_1/y_sort_enabled = false
 layer_1/y_sort_origin = 0
 layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
+script = ExtResource("13_ko68t")
 
 [node name="Window" type="Window" parent="TileMap"]
 position = Vector2i(0, 36)
