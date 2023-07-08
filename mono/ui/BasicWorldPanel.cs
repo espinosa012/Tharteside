@@ -42,12 +42,14 @@ public partial class BasicWorldPanel : Panel
 			Vector2I offset = new Vector2I(GetNode<LineEdit>("Container/Offset/x").Text.ToInt(), GetNode<LineEdit>("Container/Offset/y").Text.ToInt());
 			Vector2I squareSize = new Vector2I(GetNode<LineEdit>("Container/SquareSize/x").Text.ToInt(), GetNode<LineEdit>("Container/SquareSize/y").Text.ToInt());
 			Vector2I chunkSize = new Vector2I(GetNode<LineEdit>("Container/ChunkSize/x").Text.ToInt(), GetNode<LineEdit>("Container/ChunkSize/y").Text.ToInt());
+			CheckBox displayBorders = GetNode<CheckBox>("Container/DisplayBorders/CheckBox");
 			
 			TWorldManager.SetWorldSize(newWorldSize);
 			TWorldManager.SetTileMapOffset(offset);
 			TWorldManager.SetSquareSize(squareSize);
 			TWorldManager.SetChunkSize(chunkSize);
 			TWorldManager.SetWorldSize(newWorldSize);
+			TWorldManager.DisplayBorders = displayBorders.ButtonPressed;
 			
 			TWorldManager.UpdateTileMap();
 		};

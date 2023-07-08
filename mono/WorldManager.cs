@@ -8,6 +8,7 @@ public partial class WorldManager : Node2D
 	[Export] public Vector2I TileMapOffset;
 	[Export] public Vector2I ChunkSize;
 	[Export] public Vector2I SquareSize;
+	[Export] public bool DisplayBorders;
 	[Export] public Vector2I InitChunks;	// Chunks que se inicializarán al principio
 
 	private World _world;
@@ -18,7 +19,7 @@ public partial class WorldManager : Node2D
 		_world = new World();
 		_tileMap = (WorldTileMap) GetNode<TileMap>("TileMap"); // en el futuro, formar desde código
 		_tileMap.SetWorld(_world);
-		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, InitChunks);
+		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, InitChunks, DisplayBorders);
 
 		// UI
 		var panel = GetNode<BasicWorldPanel>("%BasicWorldPanel");
@@ -49,7 +50,7 @@ public partial class WorldManager : Node2D
 
 	public void UpdateTileMap()
 	{
-		_tileMap.UpdateTileMap();
+		_tileMap.UpdateTileMap(DisplayBorders);
 	}
 
 }

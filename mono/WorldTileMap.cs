@@ -43,7 +43,8 @@ public partial class WorldTileMap : TileMap
 		_world = world;
 	}
 	
-	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize, Vector2I initChunks)
+	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize, 
+		Vector2I initChunks, bool displayBorders = false)
 	{
 		WorldSize = worldSize;
 		TileMapOffset = offset;
@@ -54,30 +55,30 @@ public partial class WorldTileMap : TileMap
 		InitializeChunks();
 	}
 
-	private void InitializeChunks()
+	private void InitializeChunks(bool displayBorders = false)
 	{
 		for (var i = 0; i < InitChunks.X; i++)
 		{
 			for (var j = 0; j < InitChunks.Y; j++)
 			{
-				RenderChunk(new Vector2I(i, j));		
+				RenderChunk(new Vector2I(i, j), displayBorders);		
 			}
 		}
 	}
 	
-	private void RenderChunk(Vector2I chunkPosition)
+	private void RenderChunk(Vector2I chunkPosition, bool displayBorders = false)
 	{
 		for (var x = chunkPosition.X * ChunkSize.X * SquareSize.X; x < ChunkSize.X * SquareSize.X + chunkPosition.X * ChunkSize.X * SquareSize.X; x+=SquareSize.X)
 		{
 			for (var y = chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y < ChunkSize.Y * SquareSize.Y + chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y+=SquareSize.Y)
 			{
 				var squarePos = new Vector2I(x, y);	// posición en el mundo de la celda superior izquierda del cuadro
-				FulfillSquare(squarePos);	// escalado del mapa
+				FulfillSquare(squarePos, displayBorders);	// escalado del mapa
 			}
 		}
 	}
 	
-	private void FulfillSquare(Vector2I worldPos)
+	private void FulfillSquare(Vector2I worldPos, bool displayBorders = false)
 	{
 		// world pos: la posición del mundo recibida coincide con la de comienzo del square
 		var valueTier = GetValueTierByWorldPos(GetWorldPosBySquare(worldPos));
@@ -89,7 +90,10 @@ public partial class WorldTileMap : TileMap
 				var tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
 				var newWorldPosition = new Vector2I(worldPos.X + i, worldPos.Y + j);
 				SetCell(newWorldPosition, tileSetAtlasCoordinates, tileSetSource);
-				FulfillSquareObstacles(newWorldPosition);
+				if (displayBorders)
+				{
+					FulfillSquareObstacles(newWorldPosition);
+				}
 			}
 		}
 	}
@@ -112,24 +116,31 @@ public partial class WorldTileMap : TileMap
 		return _world.GetValueTierAt(worldPosition.X, worldPosition.Y);
 	}
 	
-	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId = 9, int tileMapLayer = 0)
+	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId = 9, 
+		int tileMapLayer = 0)
 	{
 		base.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, 
 			tileSetAtlasCoordinates);
 	}
-	
 
+	private Vector2I GetWorldPositionByTileMapPosition(Vector2I tileMapCell)
+	{
+		// devuelve la posición de la esquina superior izq del cuadro al que pertenece la tile
+		return new Vector2I((int)Math.Floor(((decimal)tileMapCell.X/SquareSize.X)), 
+			(int)Math.Floor(((decimal)tileMapCell.Y/SquareSize.Y)));
+	}
 	
 	// Borders
 	private bool TileMapCellIsBorder(Vector2I tileMapCell)
 	{
 		
-		// tomamos la posición del square al que pertenece la tile (esa posición coincide con la esquina superior izq del cuadro)
-		var squarePos = new Vector2I((int)Math.Floor(((decimal)tileMapCell.X/SquareSize.X)), 
-			(int)Math.Floor(((decimal)tileMapCell.Y/SquareSize.Y))); 
+		// tomamos la posición del square al que pertenece la tile (esa posición coincide con la esquina superior
+		// izq del cuadro)
+		var squarePos = GetWorldPositionByTileMapPosition(tileMapCell); 
 		
 		// calculamos posición relativa de la celda dentro del square
-		var relativeTileMapCellPos = tileMapCell - new Vector2I(squarePos.X * SquareSize.X, squarePos.Y * SquareSize.Y);
+		var relativeTileMapCellPos = tileMapCell - new Vector2I(squarePos.X * SquareSize.X, 
+			squarePos.Y * SquareSize.Y);
 		
 		// comprobamos los bordes del square correspondiente
 		var isStepDownNorth = IsStepDownAtOffset(squarePos, new Vector2I(0, -1));
@@ -145,23 +156,33 @@ public partial class WorldTileMap : TileMap
 		       (isStepDownSouth && relativeTileMapCellPos.Y == SquareSize.Y - 1) ||
 		       (isStepDownWest && relativeTileMapCellPos.X == 0) ||
 		       (isStepDownEast && relativeTileMapCellPos.X == SquareSize.X - 1) ||
-		       (isStepDownNorthWest && relativeTileMapCellPos.X == 0 && relativeTileMapCellPos.Y == 0) ||
+		       (isStepDownNorthWest && relativeTileMapCellPos is { X: 0, Y: 0 }) ||
 		       (isStepDownNorthEast && relativeTileMapCellPos.X == SquareSize.X - 1 && relativeTileMapCellPos.Y == 0) ||
 		       (isStepDownSouthWest && relativeTileMapCellPos.X == 0 && relativeTileMapCellPos.Y == SquareSize.Y - 1) ||
-		       (isStepDownSouthEast && relativeTileMapCellPos.X == SquareSize.X - 1 && relativeTileMapCellPos.Y == SquareSize.Y - 1);
+		       (isStepDownSouthEast && relativeTileMapCellPos.X == SquareSize.X - 1 
+		                            && relativeTileMapCellPos.Y == SquareSize.Y - 1);
 		
 	}
-
+	
 	private bool IsStepDownAtOffset(Vector2I squarePos, Vector2I offset)
 	{
 		return GetValueTierByWorldPos(squarePos + TileMapOffset) > GetValueTierByWorldPos(squarePos + offset + TileMapOffset);
 	}
+
+	private bool IsStepUpAtOffset(Vector2I squarePos, Vector2I offset)
+	{
+		return GetValueTierByWorldPos(squarePos + TileMapOffset) < GetValueTierByWorldPos(squarePos + offset + TileMapOffset);
+	}
 	
+	private bool IsStepAtOffset(Vector2I squarePos, Vector2I offset)
+	{
+		return GetValueTierByWorldPos(squarePos + TileMapOffset) != GetValueTierByWorldPos(squarePos + offset + TileMapOffset);
+	}
 	
-	public void UpdateTileMap()
+	public void UpdateTileMap(bool displayBorders = false)
 	{
 		Clear();
-		InitializeChunks();
+		InitializeChunks(displayBorders);
 	}
 	
 }
