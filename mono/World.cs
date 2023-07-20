@@ -10,7 +10,6 @@ public partial class World : GodotObject
 	private Dictionary<string, Variant> _worldParameters;
 	private Dictionary<string, MFNL> _worldNoises;
 
-
 	// CONSTRUCTOR
 	public World()
 	{
@@ -87,14 +86,25 @@ public partial class World : GodotObject
 			noise.RandomizeSeed();  // se le puede pasar una semilla en concreto
 		}
 	}
-
-
+	
+	// TEMPERATURE
+	private float GetTemperature(int x, int y, int worldYLength = 512)
+	{
+		return GetNormalizedDistanceToEquator(y, worldYLength);
+	}
+	
+	private float GetNormalizedDistanceToEquator(int y, int worldYLength = 512)
+	{
+		return (float) Math.Abs(y - worldYLength) / worldYLength;
+	}
+	
+	
 
 	// ELEVATION
-	private float GetElevation(int x, int y)
+	public float GetElevation(int x, int y)
 	{
 		// algoritmo marzo '23
-		if (IsOverSeaLevel(x, y))
+		if (IsLand(x, y))
 		{
 			return IsVolcanicIsland(x, y) ? GetVolcanicIslandElevation(x, y) : 
 				GetContinentalElevation(x, y);
@@ -102,7 +112,7 @@ public partial class World : GodotObject
 		return 0.0f;	// el valor de elevación de las celdas marítimas debe ser dinámico, permitiendo distintas profundidades
 	}
 
-	private float GetVolcanicIslandElevation(int x, int y)
+	public float GetVolcanicIslandElevation(int x, int y)
 	{
 		return (GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * 
 		        (float) GetWorldParameter("ContinentalScaleValue") * 
@@ -111,7 +121,7 @@ public partial class World : GodotObject
 		        (float) GetWorldParameter("IslandScaleValue"));
 	}
 
-	private float GetContinentalElevation(int x, int y)
+	public float GetContinentalElevation(int x, int y)
 	{
 		return Math.Min(1f, Math.Max((float) GetWorldParameter("MinContinentalHeight"), 
 			GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * 
@@ -122,41 +132,51 @@ public partial class World : GodotObject
 		// devolvemos un valor en el rango [MinContinentalHeight, 1.0]
 	}
 
-	private bool IsOverSeaLevel(int x, int y)
+	public bool IsLand(int x, int y)
 	{
-		return IsVolcanicIsland(x, y) || IsContinentalOverSeaLevel(x, y);
+		return IsVolcanicIsland(x, y) || IsContinentalLand(x, y);
 	}
 
-	private bool IsContinentalOverSeaLevel(int x, int y)
+	public bool IsContinentalLand(int x, int y)
 	{
 		return GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) - (float) GetWorldParameter("MinContinentalHeight") > (float) GetWorldParameter("SeaScaleValue") * GetWorldNoise("Continentalness").GetNormalizedNoise2D(x, y);
 	}
 
-	private bool IsOutToSea(int x, int y)
+	public bool IsOutToSea(int x, int y)
 	{
 		// devuelve si está lo suficientemente mar adentro según el factor OutToSeaFactor
 		return GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) - (float) GetWorldParameter("MinContinentalHeight") < (float) GetWorldParameter("SeaScaleValue") * GetWorldNoise("Continentalness").GetNormalizedNoise2D(x, y) * (float) GetWorldParameter("OutToSeaFactor");
 	}
 
-	private bool IsVolcanicLand(int x, int y)
+	public bool IsVolcanicLand(int x, int y)
 	{
 		return (GetWorldNoise("VolcanicIslands").GetNormalizedNoise2D(x, y) > (float) GetWorldParameter("IslandThresholdLevel"));
 	}
 
-	private bool IsVolcanicIsland(int x, int y)
+	public bool IsVolcanicIsland(int x, int y)
 	{
 		return IsOutToSea(x, y) && IsVolcanicLand(x, y);
 	}
 
 
-	private int GetValueTier(float value)
+	// NEIGHBOUR EVALUATION
+	
+	// BIOME
+	public bool IsBiomeSea(int x, int y)
 	{
-		//  para valores en el rango 0-1, los tiers pueden verse como las capas del tilemap
+		float seaLevel = 0.045f;
+		return GetElevation(x, y) <= seaLevel;
+	}
+	
+	// TIERS
+	public int GetValueTier(float value)
+	{
+		//  para valores en el rango 0-1
 		for (var i = 0; i < (int) GetWorldParameter("NTiers"); i++){if (value < (i + 1.0f)/(float) GetWorldParameter("NTiers")){return i;}}
 		return (int) GetWorldParameter("NTiers") - 1;
 	}
 
-	public int GetValueTierAt(int x, int y)
+	public int GetValueTierAt(int x, int y, string property = "")
 	{
 		return GetValueTier(GetElevation(x, y));
 	}

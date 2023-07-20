@@ -269,11 +269,12 @@ sources/10 = SubResource("TileSetAtlasSource_fkms1")
 
 [node name="TWorldManager" type="Node2D"]
 script = ExtResource("1_bymoe")
-WorldSize = Vector2i(1024, 1024)
-TileMapOffset = Vector2i(-15, 51)
-ChunkSize = Vector2i(16, 16)
+WorldSize = Vector2i(512, 512)
+TileMapOffset = Vector2i(800, 100)
+ChunkSize = Vector2i(32, 32)
 SquareSize = Vector2i(4, 4)
-InitChunks = Vector2i(2, 2)
+DisplayBorders = true
+Chunks = Vector2i(1, 1)
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_fqw7f")
@@ -289,7 +290,7 @@ script = ExtResource("13_ko68t")
 
 [node name="Window" type="Window" parent="TileMap"]
 position = Vector2i(0, 36)
-size = Vector2i(256, 200)
+size = Vector2i(256, 266)
 
 [node name="BasicWorldPanel" type="Panel" parent="TileMap/Window"]
 unique_name_in_owner = true
@@ -345,6 +346,28 @@ text = "y"
 [node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Offset"]
 layout_mode = 2
 
+[node name="Chunks" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Chunks:		"
+
+[node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+text = "x"
+
+[node name="x" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+text = "y"
+
+[node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+
 [node name="SquareSize" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
 layout_mode = 2
 
@@ -398,6 +421,17 @@ layout_mode = 2
 [node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/DisplayBorders"]
 layout_mode = 2
 text = "Display borders"
+
+[node name="ShowWholeWorld" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="TileMap/Window/BasicWorldPanel/Container/ShowWholeWorld"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ShowWholeWorld"]
+layout_mode = 2
+text = "Show whole world
+"
 
 [node name="Button" type="Button" parent="TileMap/Window/BasicWorldPanel/Container"]
 layout_mode = 2

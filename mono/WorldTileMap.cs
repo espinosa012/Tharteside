@@ -9,14 +9,10 @@ public partial class WorldTileMap : TileMap
 	private Vector2I TileMapOffset { get; set; }
 	private Vector2I ChunkSize { get; set; }
 	private Vector2I SquareSize { get; set; }
-	private Vector2I InitChunks { get; set; }	// Chunks que se inicializarán al principio
+	private Vector2I Chunks { get; set; }	// Chunks que se inicializarán al principio
 
 	private World _world;
 	
-	
-	public override void _Ready()
-	{
-	}
 
 	public void SetWorldSize(Vector2I newSize)
 	{
@@ -28,6 +24,11 @@ public partial class WorldTileMap : TileMap
 		TileMapOffset = newOffset;
 	}
 
+	public void SetTileMapChunks(Vector2I newSize)
+	{
+		Chunks = newSize;
+	}
+	
 	public void SetChunkSize(Vector2I newSize)
 	{
 		ChunkSize = newSize;
@@ -50,16 +51,16 @@ public partial class WorldTileMap : TileMap
 		TileMapOffset = offset;
 		ChunkSize = chunkSize;
 		SquareSize = squareSize;
-		InitChunks = initChunks;
+		Chunks = initChunks;
 		
-		InitializeChunks();
+		InitializeChunks(displayBorders);
 	}
 
 	private void InitializeChunks(bool displayBorders = false)
 	{
-		for (var i = 0; i < InitChunks.X; i++)
+		for (var i = 0; i < Chunks.X; i++)
 		{
-			for (var j = 0; j < InitChunks.Y; j++)
+			for (var j = 0; j < Chunks.Y; j++)
 			{
 				RenderChunk(new Vector2I(i, j), displayBorders);		
 			}
@@ -86,10 +87,10 @@ public partial class WorldTileMap : TileMap
 		{
 			for (var j = 0; j < SquareSize.Y; j++)
 			{
-				var tileSetSource = 10;
-				var tileSetAtlasCoordinates = new Vector2I(valueTier, 0);
+				var terrainTileToPlace = GetTerrainTileToPlace(worldPos);
 				var newWorldPosition = new Vector2I(worldPos.X + i, worldPos.Y + j);
-				SetCell(newWorldPosition, tileSetAtlasCoordinates, tileSetSource);
+				SetCell(newWorldPosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y), 
+					terrainTileToPlace.Z);
 				if (displayBorders)
 				{
 					FulfillSquareObstacles(newWorldPosition);
@@ -98,6 +99,20 @@ public partial class WorldTileMap : TileMap
 		}
 	}
 
+	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
+	{
+		var tileSetSourceId = 10;
+		var valueTier = GetValueTierByWorldPos(GetWorldPosBySquare(worldPos));
+		
+		//if (_world.IsBiomeSea(worldPos.X, worldPos.Y))
+		if (valueTier == 0)
+		{
+			return new Vector3I(3, 0, 1);
+		}
+		
+		return new Vector3I(valueTier, 0, tileSetSourceId);
+	}
+	
 	private void FulfillSquareObstacles(Vector2I worldPos)
 	{
 		if (TileMapCellIsBorder(worldPos))
@@ -122,15 +137,25 @@ public partial class WorldTileMap : TileMap
 		base.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, 
 			tileSetAtlasCoordinates);
 	}
-
+	
+	/// <summary>
+	/// Indica con qué posición del WORLD se corresponde la posición del TILEMAP que indiquemos.
+	/// Es decir, devuelve la posición del SQUARE al que pertenece tileMapCell
+	/// </summary>
+	/// <param name="tileMapCell"></param>
+	/// <returns></returns>
 	private Vector2I GetWorldPositionByTileMapPosition(Vector2I tileMapCell)
 	{
 		// devuelve la posición de la esquina superior izq del cuadro al que pertenece la tile
 		return new Vector2I((int)Math.Floor(((decimal)tileMapCell.X/SquareSize.X)), 
 			(int)Math.Floor(((decimal)tileMapCell.Y/SquareSize.Y)));
 	}
-	
-	// Borders
+
+	/// <summary>
+	/// Determina si la posición del TILEMAP que indiquemos se corresponde con una frontera entre niveles de elevación
+	/// </summary>
+	/// <param name="tileMapCell">TILEMAP position (not WORLD position)</param>
+	/// <returns></returns>
 	private bool TileMapCellIsBorder(Vector2I tileMapCell)
 	{
 		
@@ -178,6 +203,8 @@ public partial class WorldTileMap : TileMap
 	{
 		return GetValueTierByWorldPos(squarePos + TileMapOffset) != GetValueTierByWorldPos(squarePos + offset + TileMapOffset);
 	}
+	
+	
 	
 	public void UpdateTileMap(bool displayBorders = false)
 	{
