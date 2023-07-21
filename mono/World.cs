@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace Tartheside.mono;
@@ -76,6 +77,11 @@ public partial class World : GodotObject
 	{
 		if (!_worldNoises.ContainsKey(name)) {return null;}
 		return _worldNoises[name];
+	}
+
+	public Dictionary<String, MFNL> GetWorldNoises()
+	{
+		return _worldNoises;
 	}
 
 	private void RandomizeWorld()
@@ -169,7 +175,7 @@ public partial class World : GodotObject
 	}
 	
 	// TIERS
-	public int GetValueTier(float value)
+	private int GetValueTier(float value)
 	{
 		//  para valores en el rango 0-1
 		for (var i = 0; i < (int) GetWorldParameter("NTiers"); i++){if (value < (i + 1.0f)/(float) GetWorldParameter("NTiers")){return i;}}
@@ -178,7 +184,22 @@ public partial class World : GodotObject
 
 	public int GetValueTierAt(int x, int y, string property = "")
 	{
+		// si property coincide con alguno de los noises, devolvemos el valor de dicho noise
+		if (_worldNoises.Keys.Contains(property))
+		{
+			return GetValueTier(GetWorldNoise(property).GetNormalizedNoise2D(x, y));
+		} 
+		// si coincide con alguno de los metodos Is_ o Get_, devolvemos el valor
+		
+		
 		return GetValueTier(GetElevation(x, y));
 	}
 
+	public int GetValueTierAt(Vector2I pos, string property = "")
+	{
+		return GetValueTierAt(pos.X, pos.Y, property);
+	}
+	
+	
+	// no debería ser GetValueTier, sino GetElevationTier, GetTemperatureTier, etc.
 }

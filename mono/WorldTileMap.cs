@@ -56,38 +56,37 @@ public partial class WorldTileMap : TileMap
 		InitializeChunks(displayBorders);
 	}
 
-	private void InitializeChunks(bool displayBorders = false)
+	private void InitializeChunks(bool displayBorders = false, String property = "")
 	{
 		for (var i = 0; i < Chunks.X; i++)
 		{
 			for (var j = 0; j < Chunks.Y; j++)
 			{
-				RenderChunk(new Vector2I(i, j), displayBorders);		
+				RenderChunk(new Vector2I(i, j), displayBorders, property);		
 			}
 		}
 	}
 	
-	private void RenderChunk(Vector2I chunkPosition, bool displayBorders = false)
+	private void RenderChunk(Vector2I chunkPosition, bool displayBorders = false, String property = "")
 	{
 		for (var x = chunkPosition.X * ChunkSize.X * SquareSize.X; x < ChunkSize.X * SquareSize.X + chunkPosition.X * ChunkSize.X * SquareSize.X; x+=SquareSize.X)
 		{
 			for (var y = chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y < ChunkSize.Y * SquareSize.Y + chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y+=SquareSize.Y)
 			{
 				var squarePos = new Vector2I(x, y);	// posición en el mundo de la celda superior izquierda del cuadro
-				FulfillSquare(squarePos, displayBorders);	// escalado del mapa
+				FulfillSquare(squarePos, displayBorders, property);	// escalado del mapa
 			}
 		}
 	}
 	
-	private void FulfillSquare(Vector2I worldPos, bool displayBorders = false)
+	private void FulfillSquare(Vector2I worldPos, bool displayBorders = false, String property = "")
 	{
 		// world pos: la posición del mundo recibida coincide con la de comienzo del square
-		var valueTier = GetValueTierByWorldPos(GetWorldPosBySquare(worldPos));
 		for (var i = 0; i < SquareSize.X; i++)
 		{
 			for (var j = 0; j < SquareSize.Y; j++)
 			{
-				var terrainTileToPlace = GetTerrainTileToPlace(worldPos);
+				var terrainTileToPlace = GetTileToPlace(worldPos, property);
 				var newWorldPosition = new Vector2I(worldPos.X + i, worldPos.Y + j);
 				SetCell(newWorldPosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y), 
 					terrainTileToPlace.Z);
@@ -99,10 +98,21 @@ public partial class WorldTileMap : TileMap
 		}
 	}
 
+	private Vector3I GetTileToPlace(Vector2I worldPos, String property = "")
+	{
+		if (property != "")
+		{
+			const int tileSetSourceId = 10;
+			return new Vector3I(_world.GetValueTierAt(worldPos, property), 0, tileSetSourceId);
+		}
+
+		return GetTerrainTileToPlace(worldPos);
+	}
+	
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
 		var tileSetSourceId = 10;
-		var valueTier = GetValueTierByWorldPos(GetWorldPosBySquare(worldPos));
+		var valueTier = GetElevationTierByWorldPos(GetWorldPosBySquare(worldPos));
 		
 		//if (_world.IsBiomeSea(worldPos.X, worldPos.Y))
 		if (valueTier == 0)
@@ -126,7 +136,7 @@ public partial class WorldTileMap : TileMap
 		return new Vector2I((squarePos.X/SquareSize.X)+TileMapOffset.X, (squarePos.Y/SquareSize.Y)+TileMapOffset.Y);
 	}
 	
-	private int GetValueTierByWorldPos(Vector2I worldPosition)
+	private int GetElevationTierByWorldPos(Vector2I worldPosition)
 	{
 		return _world.GetValueTierAt(worldPosition.X, worldPosition.Y);
 	}
@@ -191,25 +201,25 @@ public partial class WorldTileMap : TileMap
 	
 	private bool IsStepDownAtOffset(Vector2I squarePos, Vector2I offset)
 	{
-		return GetValueTierByWorldPos(squarePos + TileMapOffset) > GetValueTierByWorldPos(squarePos + offset + TileMapOffset);
+		return GetElevationTierByWorldPos(squarePos + TileMapOffset) > GetElevationTierByWorldPos(squarePos + offset + TileMapOffset);
 	}
 
 	private bool IsStepUpAtOffset(Vector2I squarePos, Vector2I offset)
 	{
-		return GetValueTierByWorldPos(squarePos + TileMapOffset) < GetValueTierByWorldPos(squarePos + offset + TileMapOffset);
+		return GetElevationTierByWorldPos(squarePos + TileMapOffset) < GetElevationTierByWorldPos(squarePos + offset + TileMapOffset);
 	}
 	
 	private bool IsStepAtOffset(Vector2I squarePos, Vector2I offset)
 	{
-		return GetValueTierByWorldPos(squarePos + TileMapOffset) != GetValueTierByWorldPos(squarePos + offset + TileMapOffset);
+		return GetElevationTierByWorldPos(squarePos + TileMapOffset) != GetElevationTierByWorldPos(squarePos + offset + TileMapOffset);
 	}
 	
 	
 	
-	public void UpdateTileMap(bool displayBorders = false)
+	public void ReloadTileMap(string property = "", bool displayBorders = false)
 	{
 		Clear();
-		InitializeChunks(displayBorders);
+		InitializeChunks(displayBorders, property);
 	}
 	
 }

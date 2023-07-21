@@ -53,9 +53,9 @@ public partial class WorldManager : Node2D
 		_tileMap.SetSquareSize(newSize);
 	}
 
-	public void UpdateTileMap()
+	public void ReloadTileMap(string property = "")
 	{
-		_tileMap.UpdateTileMap(DisplayBorders);
+		_tileMap.ReloadTileMap(property, DisplayBorders);
 	}
 
 }

@@ -35,6 +35,7 @@ public partial class BasicWorldPanel : Panel
 		GetNode<LineEdit>("Container/Offset/x").Text = TWorldManager.TileMapOffset.X.ToString();
 		GetNode<LineEdit>("Container/Offset/y").Text = TWorldManager.TileMapOffset.Y.ToString();
 
+		GetNode<LineEdit>("Container/Noise/LineEdit").Text = "";
 		GetNode<CheckBox>("Container/DisplayBorders/CheckBox").ButtonPressed = TWorldManager.DisplayBorders;
 	}
 
@@ -48,7 +49,8 @@ public partial class BasicWorldPanel : Panel
 			var chunkSize = new Vector2I(GetNode<LineEdit>("Container/ChunkSize/x").Text.ToInt(), GetNode<LineEdit>("Container/ChunkSize/y").Text.ToInt());
 			var displayBorders = GetNode<CheckBox>("Container/DisplayBorders/CheckBox");
 			var showWholeWorld = GetNode<CheckBox>("Container/ShowWholeWorld/CheckBox");
-
+			var noiseToDisplay = GetNode<LineEdit>("Container/Noise/LineEdit");
+			
 			TWorldManager.SetWorldSize(newWorldSize);
 			TWorldManager.SetWorldSize(newWorldSize);
 			TWorldManager.SetTileMapOffset(offset);
@@ -60,14 +62,15 @@ public partial class BasicWorldPanel : Panel
 				TWorldManager.SetChunkSize(new Vector2I(newWorldSize.X / TWorldManager.Chunks.X, newWorldSize.Y / TWorldManager.Chunks.Y));
 				GetNode<CheckBox>("Container/DisplayBorders/CheckBox").ButtonPressed = false;
 				TWorldManager.DisplayBorders = false;
-				TWorldManager.UpdateTileMap();
+				TWorldManager.ReloadTileMap(noiseToDisplay.Text.StripEdges());
 				return;
 			}
+			
 			TWorldManager.DisplayBorders = displayBorders.ButtonPressed;
 			TWorldManager.SetSquareSize(squareSize);
 			TWorldManager.SetChunkSize(chunkSize);
 			
-			TWorldManager.UpdateTileMap();
+			TWorldManager.ReloadTileMap(noiseToDisplay.Text.StripEdges());
 		};
 	}
 

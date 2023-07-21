@@ -290,7 +290,7 @@ script = ExtResource("13_ko68t")
 
 [node name="Window" type="Window" parent="TileMap"]
 position = Vector2i(0, 36)
-size = Vector2i(256, 266)
+size = Vector2i(256, 300)
 
 [node name="BasicWorldPanel" type="Panel" parent="TileMap/Window"]
 unique_name_in_owner = true
@@ -411,6 +411,19 @@ text = "y"
 
 [node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
 layout_mode = 2
+
+[node name="Noise" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Noise"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Noise to display:
+"
+
+[node name="LineEdit" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Noise"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="DisplayBorders" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
 layout_mode = 2
