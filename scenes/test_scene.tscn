@@ -269,10 +269,10 @@ sources/10 = SubResource("TileSetAtlasSource_fkms1")
 
 [node name="TWorldManager" type="Node2D"]
 script = ExtResource("1_bymoe")
-WorldSize = Vector2i(512, 512)
+WorldSize = Vector2i(1024, 1024)
 TileMapOffset = Vector2i(1024, 100)
 ChunkSize = Vector2i(32, 32)
-SquareSize = Vector2i(4, 4)
+SquareSize = Vector2i(1, 1)
 DisplayBorders = true
 Chunks = Vector2i(1, 1)
 

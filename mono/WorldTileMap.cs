@@ -111,18 +111,26 @@ public partial class WorldTileMap : TileMap
 	
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
+		worldPos = GetWorldPosBySquare(worldPos); 	
 		var tileSetSourceId = 10;
-		var valueTier = GetElevationTierByWorldPos(GetWorldPosBySquare(worldPos));
+		var valueTier = GetElevationTierByWorldPos(worldPos);
 		
-		//if (_world.IsBiomeSea(worldPos.X, worldPos.Y))
-		if (valueTier == 0)
+		if (_world.IsTerrainSea(worldPos.X, worldPos.Y))
 		{
 			return new Vector3I(3, 0, 1);
 		}
-		
+		if (_world.IsTerrainBeach(worldPos.X, worldPos.Y))
+		{
+			return new Vector3I(0, 0, 1);
+		}
+		if (_world.IsTerrainRock(worldPos.X, worldPos.Y))
+		{
+			return new Vector3I(5, 5, 5);
+		}
+
 		return new Vector3I(valueTier, 0, tileSetSourceId);
 	}
-	
+
 	private void FulfillSquareObstacles(Vector2I worldPos)
 	{
 		if (TileMapCellIsBorder(worldPos))
@@ -148,6 +156,7 @@ public partial class WorldTileMap : TileMap
 			tileSetAtlasCoordinates);
 	}
 	
+
 	/// <summary>
 	/// Indica con qué posición del WORLD se corresponde la posición del TILEMAP que indiquemos.
 	/// Es decir, devuelve la posición del SQUARE al que pertenece tileMapCell

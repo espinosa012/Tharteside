@@ -64,6 +64,7 @@ public partial class BasicWorldPanel : Panel
 			TWorldManager.SetTileMapOffset(offset);
 			TWorldManager.SetTileMapChunks(chunks);
 
+			showWholeWorld.ButtonPressed = true;
 			if (showWholeWorld.ButtonPressed)
 			{
 				TWorldManager.SetSquareSize(new Vector2I(1, 1));

@@ -18,6 +18,9 @@ public partial class World : GodotObject
 		InitNoisesAndParameters();
 	}
 	
+	// podriamos usar un rng para obtener valores uniformes aleatorios pero determinsitas para un x,y
+
+
 	private void InitNoisesAndParameters()
 	{
 		// Init noise
@@ -44,6 +47,7 @@ public partial class World : GodotObject
 		_worldParameters = new Dictionary<string, Variant>();
 		
 		AddWorldParameter("NTiers", 24);
+		AddWorldParameter("ChunkSize", new Vector2I(16, 16));
 		AddWorldParameter("MinContinentalHeight", 0.023f);
 		AddWorldParameter("ContinentalScaleValue", 1.22f);
 		AddWorldParameter("SeaScaleValue", 1f/0.85f);
@@ -193,12 +197,61 @@ public partial class World : GodotObject
 	}
 
 
-	// BIOME
-	public bool IsBiomeSea(int x, int y)
+	// TERRAIN
+	public bool IsTerrainSea(int x, int y)
 	{
-		return !IsLand(x, y);
+		// podríamos desomponer el tier 0 para distinguir varios niveles de profundidad de mar, obtener bioma orilla (mareas), etc
+		return GetValueTierAt(x, y, "GetElevation") == 0;
 	}
+
+	public bool IsTerrainBeach(int x, int y)
+	{
+		return GetValueTierAt(x, y, "GetElevation") == 1;
+	}
+
+	public bool IsTerrainRock(int x, int y)
+	{
+		return IsTerrainMountainRock(x, y);
+	}
+
+	public bool IsTerrainMountainRock(int x, int y)
+	{
+		bool isAboveMinimunElevation = GetValueTierAt(x, y) > 5;
+		bool isAboveMinimumPeaksAndValleys = GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) > 0.3;
+		bool isSlopeRight = (IsStepDownAtOffset(x, y, 1, 0) && IsStepDownAtOffset(x, y, 2, 0));
+		bool isSlopeLeft = (IsStepDownAtOffset(x, y, -1, 0) && IsStepDownAtOffset(x, y, -2, 0));
+		bool isSlopeUp = (IsStepDownAtOffset(x, y, 0, -1) && IsStepDownAtOffset(x, y, 0, -2));
+		bool isSlopeDown = (IsStepDownAtOffset(x, y, 0, 1) && IsStepDownAtOffset(x, y, 0, 2));	// con la pendiente que se exija podemos regular la densidad
+
+		return isAboveMinimunElevation && isAboveMinimumPeaksAndValleys && ((isSlopeRight || isSlopeLeft) && (isSlopeDown || isSlopeUp));
+	}
+
+	public bool IsTerrainRiver(int x, int y)
+	{
+		// Si un punto cumple con los requisitos para ser el nacimiento de unr ío, lo será (entre otras cosas, que no haya muchos nacimientos cerca)
+
+		// Para cada punto de nacimiento, se obtendrá el punto de desembocadura de forma determinista, en función de condiciones de pendiente y cercanía del mar
 	
+		// El camino del río se obtendrá también de forma determinista, utilizando A* y con criterios deterministas para establecer los obstáculos.
+
+		return false;
+	}
+
+	// RIVERS
+	public bool IsValidRiverBirth(int x, int y)
+	{
+
+	}
+
+	
+	// CHUNKS
+	public Vector2I GetChunkByWorldPosition(int x, int y)
+	{
+		return new Vector2I((int) Math.Floor((double) (x / ((Vector2I) GetWorldParameter("ChunkSize")).X)), (int) Math.Floor((double) (y / ((Vector2I) GetWorldParameter("ChunkSize")).Y)));
+	}
+
+
+
 	// TIERS
 	private int GetValueTier(float value)
 	{
