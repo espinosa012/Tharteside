@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using System.Reflection;
 
 namespace Tartheside.mono;
 
@@ -16,7 +17,7 @@ public partial class World : GodotObject
 	{
 		InitNoisesAndParameters();
 	}
-
+	
 	private void InitNoisesAndParameters()
 	{
 		// Init noise
@@ -82,6 +83,11 @@ public partial class World : GodotObject
 	public Dictionary<String, MFNL> GetWorldNoises()
 	{
 		return _worldNoises;
+	}
+
+	public Dictionary<string, Variant> GetWorldParameters()
+	{
+		return _worldParameters;
 	}
 
 	private void RandomizeWorld()
@@ -165,13 +171,32 @@ public partial class World : GodotObject
 	}
 
 
-	// NEIGHBOUR EVALUATION
-	
+	// NEIGHBOUR EVALUATION (untested)
+	public bool IsStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	{
+		return GetValueTierAt(x, y, property) > GetValueTierAt(x + xOffset, y + yOffset, property);
+	}
+
+	public bool IsStepUpAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	{
+		return GetValueTierAt(x, y, property) < GetValueTierAt(x + xOffset, y + yOffset, property);
+	}
+
+	public bool IsStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	{
+		return !IsNoStepAtOffset(x, y, xOffset, yOffset, property);
+	}
+
+	public bool IsNoStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	{
+		return GetValueTierAt(x, y, property) == GetValueTierAt(x + xOffset, y + yOffset, property);
+	}
+
+
 	// BIOME
 	public bool IsBiomeSea(int x, int y)
 	{
-		float seaLevel = 0.045f;
-		return GetElevation(x, y) <= seaLevel;
+		return !IsLand(x, y);
 	}
 	
 	// TIERS
@@ -190,8 +215,24 @@ public partial class World : GodotObject
 			return GetValueTier(GetWorldNoise(property).GetNormalizedNoise2D(x, y));
 		} 
 		// si coincide con alguno de los metodos Is_ o Get_, devolvemos el valor
-		
-		
+		if (property.Contains("Get"))
+		{
+			try {
+				return GetValueTier((float) typeof(World).GetMethod(property).Invoke(this, new object[] { x, y }));
+			} catch (NullReferenceException) {
+				return GetValueTier(GetElevation(x, y));
+			}
+		}
+
+		if (property.Contains("Is"))
+		{
+			try
+			{
+				return GetValueTier(((bool) typeof(World).GetMethod(property).Invoke(this, new object[] { x, y }) ? 0.70f : 0.0f ));
+			} catch (NullReferenceException) {
+				return GetValueTier(GetElevation(x, y));
+			}
+		}
 		return GetValueTier(GetElevation(x, y));
 	}
 

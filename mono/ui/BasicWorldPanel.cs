@@ -37,6 +37,14 @@ public partial class BasicWorldPanel : Panel
 
 		GetNode<LineEdit>("Container/Noise/LineEdit").Text = "";
 		GetNode<CheckBox>("Container/DisplayBorders/CheckBox").ButtonPressed = TWorldManager.DisplayBorders;
+
+		// me falta conectar una señal para que cuando cambie el item seleccionado se actualice el lineedit con el valor			GetNode<OptionButton>("Container/WorldParam/MenuButton").AddItem(param) ;
+		// además, necesitamos actualizar el parametro al pulsar intro para poder actualizar varios parametros antes de renderizar
+		foreach (string param in TWorldManager.GetWorldParameters().Keys)
+		{
+			GetNode<OptionButton>("Container/WorldParam/MenuButton").AddItem(param) ;
+		}
+		GetNode<OptionButton>("Container/WorldParam/MenuButton").AddItem("None") ;
 	}
 
 	public void ConnectButtonSignal()

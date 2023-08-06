@@ -270,11 +270,192 @@ sources/10 = SubResource("TileSetAtlasSource_fkms1")
 [node name="TWorldManager" type="Node2D"]
 script = ExtResource("1_bymoe")
 WorldSize = Vector2i(512, 512)
-TileMapOffset = Vector2i(800, 100)
+TileMapOffset = Vector2i(1024, 100)
 ChunkSize = Vector2i(32, 32)
 SquareSize = Vector2i(4, 4)
 DisplayBorders = true
 Chunks = Vector2i(1, 1)
+
+[node name="Window" type="Window" parent="."]
+position = Vector2i(0, 36)
+size = Vector2i(403, 333)
+
+[node name="BasicWorldPanel" type="Panel" parent="Window"]
+unique_name_in_owner = true
+offset_right = 282.0
+offset_bottom = 141.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("11_hu8nr")
+
+[node name="Container" type="VBoxContainer" parent="Window/BasicWorldPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="WorldSize" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/WorldSize"]
+layout_mode = 2
+text = "World size:		"
+
+[node name="Label2" type="Label" parent="Window/BasicWorldPanel/Container/WorldSize"]
+layout_mode = 2
+text = "x"
+
+[node name="x" type="LineEdit" parent="Window/BasicWorldPanel/Container/WorldSize"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Window/BasicWorldPanel/Container/WorldSize"]
+layout_mode = 2
+text = "y"
+
+[node name="y" type="LineEdit" parent="Window/BasicWorldPanel/Container/WorldSize"]
+layout_mode = 2
+
+[node name="Offset" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/Offset"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Offset:		"
+
+[node name="Label2" type="Label" parent="Window/BasicWorldPanel/Container/Offset"]
+layout_mode = 2
+text = "x"
+
+[node name="x" type="LineEdit" parent="Window/BasicWorldPanel/Container/Offset"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Window/BasicWorldPanel/Container/Offset"]
+layout_mode = 2
+text = "y"
+
+[node name="y" type="LineEdit" parent="Window/BasicWorldPanel/Container/Offset"]
+layout_mode = 2
+
+[node name="Chunks" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Chunks:		"
+
+[node name="Label2" type="Label" parent="Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+text = "x"
+
+[node name="x" type="LineEdit" parent="Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+text = "y"
+
+[node name="y" type="LineEdit" parent="Window/BasicWorldPanel/Container/Chunks"]
+layout_mode = 2
+
+[node name="SquareSize" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Square size:		"
+
+[node name="Label2" type="Label" parent="Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+text = "x"
+
+[node name="x" type="LineEdit" parent="Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+text = "y"
+
+[node name="y" type="LineEdit" parent="Window/BasicWorldPanel/Container/SquareSize"]
+layout_mode = 2
+
+[node name="ChunkSize" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/ChunkSize"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Chunk size:		"
+
+[node name="Label2" type="Label" parent="Window/BasicWorldPanel/Container/ChunkSize"]
+layout_mode = 2
+text = "x"
+
+[node name="x" type="LineEdit" parent="Window/BasicWorldPanel/Container/ChunkSize"]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Window/BasicWorldPanel/Container/ChunkSize"]
+layout_mode = 2
+text = "y"
+
+[node name="y" type="LineEdit" parent="Window/BasicWorldPanel/Container/ChunkSize"]
+layout_mode = 2
+
+[node name="Noise" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/Noise"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Property:
+"
+
+[node name="LineEdit" type="LineEdit" parent="Window/BasicWorldPanel/Container/Noise"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WorldParam" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/WorldParam"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "World param.:
+"
+
+[node name="MenuButton" type="OptionButton" parent="Window/BasicWorldPanel/Container/WorldParam"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LineEdit" type="LineEdit" parent="Window/BasicWorldPanel/Container/WorldParam"]
+layout_mode = 2
+
+[node name="DisplayBorders" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="Window/BasicWorldPanel/Container/DisplayBorders"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/DisplayBorders"]
+layout_mode = 2
+text = "Display borders"
+
+[node name="ShowWholeWorld" type="HBoxContainer" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="Window/BasicWorldPanel/Container/ShowWholeWorld"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Window/BasicWorldPanel/Container/ShowWholeWorld"]
+layout_mode = 2
+text = "Show whole world
+"
+
+[node name="Button" type="Button" parent="Window/BasicWorldPanel/Container"]
+layout_mode = 2
+text = "Update
+"
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_fqw7f")
@@ -287,169 +468,6 @@ layer_1/y_sort_origin = 0
 layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("13_ko68t")
-
-[node name="Window" type="Window" parent="TileMap"]
-position = Vector2i(0, 36)
-size = Vector2i(256, 300)
-
-[node name="BasicWorldPanel" type="Panel" parent="TileMap/Window"]
-unique_name_in_owner = true
-offset_right = 282.0
-offset_bottom = 141.0
-script = ExtResource("11_hu8nr")
-
-[node name="Container" type="VBoxContainer" parent="TileMap/Window/BasicWorldPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="WorldSize" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/WorldSize"]
-layout_mode = 2
-text = "World size:		"
-
-[node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/WorldSize"]
-layout_mode = 2
-text = "x"
-
-[node name="x" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/WorldSize"]
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/WorldSize"]
-layout_mode = 2
-text = "y"
-
-[node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/WorldSize"]
-layout_mode = 2
-
-[node name="Offset" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Offset"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Offset:		"
-
-[node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Offset"]
-layout_mode = 2
-text = "x"
-
-[node name="x" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Offset"]
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Offset"]
-layout_mode = 2
-text = "y"
-
-[node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Offset"]
-layout_mode = 2
-
-[node name="Chunks" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Chunks:		"
-
-[node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
-layout_mode = 2
-text = "x"
-
-[node name="x" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
-layout_mode = 2
-text = "y"
-
-[node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Chunks"]
-layout_mode = 2
-
-[node name="SquareSize" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Square size:		"
-
-[node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
-layout_mode = 2
-text = "x"
-
-[node name="x" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
-layout_mode = 2
-text = "y"
-
-[node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/SquareSize"]
-layout_mode = 2
-
-[node name="ChunkSize" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Chunk size:		"
-
-[node name="Label2" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
-layout_mode = 2
-text = "x"
-
-[node name="x" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
-layout_mode = 2
-text = "y"
-
-[node name="y" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/ChunkSize"]
-layout_mode = 2
-
-[node name="Noise" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/Noise"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Noise to display:
-"
-
-[node name="LineEdit" type="LineEdit" parent="TileMap/Window/BasicWorldPanel/Container/Noise"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="DisplayBorders" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="CheckBox" type="CheckBox" parent="TileMap/Window/BasicWorldPanel/Container/DisplayBorders"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/DisplayBorders"]
-layout_mode = 2
-text = "Display borders"
-
-[node name="ShowWholeWorld" type="HBoxContainer" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-
-[node name="CheckBox" type="CheckBox" parent="TileMap/Window/BasicWorldPanel/Container/ShowWholeWorld"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TileMap/Window/BasicWorldPanel/Container/ShowWholeWorld"]
-layout_mode = 2
-text = "Show whole world
-"
-
-[node name="Button" type="Button" parent="TileMap/Window/BasicWorldPanel/Container"]
-layout_mode = 2
-text = "Update
-"
 
 [node name="Camera2D" type="Camera2D" parent="TileMap"]
 script = ExtResource("13_pnybr")

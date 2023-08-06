@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 namespace Tartheside.mono;
@@ -57,5 +58,13 @@ public partial class WorldManager : Node2D
 	{
 		_tileMap.ReloadTileMap(property, DisplayBorders);
 	}
+	
+	
+	// info
+	public Dictionary<string, Variant> GetWorldParameters()
+	{
+		return _world.GetWorldParameters();
+	}
+	
 
 }
