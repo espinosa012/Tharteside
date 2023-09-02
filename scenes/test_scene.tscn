@@ -469,5 +469,6 @@ layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("13_ko68t")
 
-[node name="Camera2D" type="Camera2D" parent="TileMap"]
+[node name="TileMapCamera2D" type="Camera2D" parent="TileMap"]
+unique_name_in_owner = true
 script = ExtResource("13_pnybr")

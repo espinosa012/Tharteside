@@ -10,7 +10,7 @@ public partial class WorldManager : Node2D
 	[Export] public Vector2I ChunkSize;
 	[Export] public Vector2I SquareSize;
 	[Export] public bool DisplayBorders;
-	[Export] public Vector2I Chunks;	// Chunks que se inicializarán al principio
+	[Export] public Vector2I Chunks;	
 
 	private World _world;
 	private WorldTileMap _tileMap;
@@ -65,6 +65,11 @@ public partial class WorldManager : Node2D
 	{
 		return _world.GetWorldParameters();
 	}
-	
+
+	public Dictionary<string, MFNL> GetWorldNoises()
+	{
+        return _world.GetWorldNoises();
+    }
+
 
 }

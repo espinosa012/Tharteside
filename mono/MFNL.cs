@@ -63,6 +63,10 @@ public partial class MFNL : FastNoiseLite
         UpdateParam("Seed", Rng.RandiRange(0, 999999999));        
     }
 
+    public void SetSeed(int seed)
+    {
+        UpdateParam("Seed", seed);
+    }
 
 
 

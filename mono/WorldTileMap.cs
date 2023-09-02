@@ -54,6 +54,7 @@ public partial class WorldTileMap : TileMap
 		Chunks = initChunks;
 		
 		InitializeChunks(displayBorders);
+		_world.IsValidRiverBirth(1310, 644);
 	}
 
 	private void InitializeChunks(bool displayBorders = false, String property = "")
@@ -119,15 +120,29 @@ public partial class WorldTileMap : TileMap
 		{
 			return new Vector3I(3, 0, 1);
 		}
+		if (_world.IsTerrainForest(worldPos.X, worldPos.Y))
+		{
+			return new Vector3I(7, 47, 0);
+		}
 		if (_world.IsTerrainBeach(worldPos.X, worldPos.Y))
 		{
 			return new Vector3I(0, 0, 1);
+		}
+		if (_world.IsTerrainLowland(worldPos.X, worldPos.Y))
+		{
+			return new Vector3I(0, 0, 2);
 		}
 		if (_world.IsTerrainRock(worldPos.X, worldPos.Y))
 		{
 			return new Vector3I(5, 5, 5);
 		}
 
+
+
+		// if (_world.IsTerrainMineral(worldPos.X, worldPos.Y))
+		// {
+		// 	return new Vector3I(5, 8, 5);
+		// }
 		return new Vector3I(valueTier, 0, tileSetSourceId);
 	}
 
@@ -230,5 +245,23 @@ public partial class WorldTileMap : TileMap
 		Clear();
 		InitializeChunks(displayBorders, property);
 	}
-	
+
+	/*
+	public override void _Input(InputEvent @event)
+    {
+        // Verifica si se ha hecho clic con el botón izquierdo del mouse
+        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+        {
+            // Obtén las coordenadas del clic en el mundo
+            Vector2I clickPosition = (Vector2I) mouseEvent.Position;
+            GD.Print("clickPosition: " + clickPosition);
+
+            // Convierte las coordenadas del clic a las coordenadas del tile
+            Vector2I tileCoordinates = (Vector2I) LocalToMap(ToLocal(clickPosition - new Vector2I(490, 256)));
+
+            // Imprime las coordenadas del tile en la consola;
+            GD.Print("Clic en el tile de coordenadas: " + (tileCoordinates));
+        }
+    }
+	*/
 }
