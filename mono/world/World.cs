@@ -12,12 +12,13 @@ public partial class World : GodotObject
 	// WORLD PARAMETERS AND NOISES
 	private Dictionary<string, Variant> _worldParameters;
 	private Dictionary<string, MFNL> _worldNoises;
+	private Dictionary<string, WorldGenerator> _worldGenerators;
 
 	// CONSTRUCTOR
 	public World()
 	{
-		GD.Print(GetRandomFloatByPosition(22, 22));
 		InitNoisesAndParameters();
+		InitWorldGenerators();
 	}
 	
 	// podriamos usar un rng para obtener valores uniformes aleatorios pero determinsitas para un x,y
@@ -57,11 +58,56 @@ public partial class World : GodotObject
 		AddWorldParameter("IslandThresholdLevel", 0.76f); 
 		AddWorldParameter("OutToSeaFactor", 0.7f);  
 	}
+	
+	//  WORLD GENERATORS
+	private void InitWorldGenerators()
+    {
+        _worldGenerators = new Dictionary<string, WorldGenerator>();
+		InitElevation();
+	}
 
+	private void InitElevation()
+	{	
+		Elevation elevationGenerator = new Elevation();
+		elevationGenerator.SetNoiseBaseElevation(_worldNoises["BaseElevation"]);
+		elevationGenerator.SetNoiseContinentalness(_worldNoises["Continentalness"]);
+		elevationGenerator.SetNoisePeaksAndValleys(_worldNoises["PeaksAndValleys"]);
+		elevationGenerator.SetNoiseVolcanicIslands(_worldNoises["VolcanicIslands"]);
+		
+		elevationGenerator.SetParameterNTiers((int) _worldParameters["NTiers"]);
+		elevationGenerator.SetParameterMinContinentalHeight((float) _worldParameters["MinContinentalHeight"]);
+		elevationGenerator.SetParameterContinentalScaleValue((float) _worldParameters["ContinentalScaleValue"]);
+		elevationGenerator.SetParameterSeaScaleValue((float) _worldParameters["SeaScaleValue"]);
+		elevationGenerator.SetParameterIslandScaleValue((float) _worldParameters["IslandScaleValue"]);
+		elevationGenerator.SetParameterIslandThresholdLevel((float) _worldParameters["IslandThresholdLevel"]);
+		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
+
+		_worldGenerators.Add("Elevation", elevationGenerator);
+
+	}
+
+	public WorldGenerator GetWorldGenerator(string generator)
+	{
+		if (_worldGenerators.ContainsKey(generator))
+		{
+			return _worldGenerators[generator];
+		}
+		return null;
+	}
+	
 	//  WORLD PARAMETERS
 	public void AddWorldParameter(string param, Variant value)
 	{
 		_worldParameters.Add(param, value);
+	}
+
+	public void RemoveWorldParameter(string param)
+	{
+		if (_worldParameters.ContainsKey(param))
+		{
+            bool v = _worldParameters.Remove(param);
+        }
+		return;
 	}
 
 	public void UpdateWorldParameter(string param, Variant value)
@@ -72,6 +118,11 @@ public partial class World : GodotObject
 	public Variant GetWorldParameter(string param)
 	{
 		return _worldParameters[param];
+	}
+
+	public Dictionary<string, Variant> GetWorldParameters()
+	{
+		return _worldParameters;
 	}
 
 	//  WORLD NOISE
@@ -100,32 +151,14 @@ public partial class World : GodotObject
 		return _worldNoises;
 	}
 
-	public Dictionary<string, Variant> GetWorldParameters()
-	{
-		return _worldParameters;
-	}
-
 	private void RandomizeWorld()
 	{
-		// randomiza las semillas de todos los objetos de ruido
 		foreach (MFNL noise in _worldNoises.Values)
 		{
 			noise.RandomizeSeed();  
 		}
 	}
 	
-	// TEMPERATURE
-	private float GetTemperature(int x, int y, int worldYLength = 512)
-	{
-		return GetNormalizedDistanceToEquator(y, worldYLength);
-	}
-	
-	private float GetNormalizedDistanceToEquator(int y, int worldYLength = 512)
-	{
-		return (float) Math.Abs(y - worldYLength) / worldYLength;
-	}
-	
-
 	// ELEVATION
 	public float GetElevation(int x, int y)
 	{
@@ -138,7 +171,7 @@ public partial class World : GodotObject
 		return 0.0f;	// el valor de elevación de las celdas marítimas debe ser dinámico, permitiendo distintas profundidades
 	}
 
-	public float GetVolcanicIslandElevation(int x, int y)
+	public float GetVolcanicIslandElevation(int x, int y)	// march23
 	{
 		return (GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * 
 		        (float) GetWorldParameter("ContinentalScaleValue") * 
@@ -147,7 +180,7 @@ public partial class World : GodotObject
 		        (float) GetWorldParameter("IslandScaleValue"));
 	}
 
-	public float GetContinentalElevation(int x, int y)
+	public float GetContinentalElevation(int x, int y)	// march23
 	{
 		return Math.Min(1f, Math.Max((float) GetWorldParameter("MinContinentalHeight"), 
 			GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) * 
@@ -160,10 +193,10 @@ public partial class World : GodotObject
 
 	public bool IsLand(int x, int y)
 	{
-		return IsVolcanicIsland(x, y) || IsContinentalLand(x, y);
-	}
+		return IsContinentalLand(x, y) || IsVolcanicIsland(x, y);
+    }
 
-	public bool IsContinentalLand(int x, int y)
+    public bool IsContinentalLand(int x, int y)
 	{
 		return GetWorldNoise("BaseElevation").GetNormalizedNoise2D(x, y) - (float) GetWorldParameter("MinContinentalHeight") > (float) GetWorldParameter("SeaScaleValue") * GetWorldNoise("Continentalness").GetNormalizedNoise2D(x, y);
 	}
@@ -212,7 +245,7 @@ public partial class World : GodotObject
 	}
 
 
-	// TERRAIN
+	// TERRAIN (esto sí va en World)
 	public bool IsTerrainSea(int x, int y)
 	{
 		// podríamos desomponer el tier 0 para distinguir varios niveles de profundidad de mar, obtener bioma orilla (mareas), etc

@@ -54,7 +54,6 @@ public partial class WorldTileMap : TileMap
 		Chunks = initChunks;
 		
 		InitializeChunks(displayBorders);
-		_world.IsValidRiverBirth(1310, 644);
 	}
 
 	private void InitializeChunks(bool displayBorders = false, String property = "")
@@ -104,7 +103,7 @@ public partial class WorldTileMap : TileMap
 		if (property != "")
 		{
 			const int tileSetSourceId = 10;
-			return new Vector3I(_world.GetValueTierAt(worldPos, property), 0, tileSetSourceId);
+			return new Vector3I(_world.GetWorldGenerator("Elevation").GetValueTierAt(worldPos.X, worldPos.Y), 0, tileSetSourceId);
 		}
 
 		return GetTerrainTileToPlace(worldPos);
@@ -161,7 +160,8 @@ public partial class WorldTileMap : TileMap
 	
 	private int GetElevationTierByWorldPos(Vector2I worldPosition)
 	{
-		return _world.GetValueTierAt(worldPosition.X, worldPosition.Y);
+		//return _world.GetValueTierAt(worldPosition.X, worldPosition.Y);
+		return _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y);
 	}
 	
 	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId = 9, 
