@@ -76,8 +76,8 @@ public partial class WorldTileMap : TileMap
 		{
 			for (var j = 0; j < _squareSize.Y; j++)
 			{
-				//Vector3I terrainTileToPlace = GetTerrainTileToPlace(worldPos);
-				Vector3I terrainTileToPlace = new Vector3I(_world.GetWorldGenerator("Temperature").GetValueTierAt(worldPos), 0, 10);
+				Vector3I terrainTileToPlace = GetTerrainTileToPlace(worldPos);
+				//Vector3I terrainTileToPlace = new Vector3I(_world.GetWorldGenerator("Temperature").GetValueTierAt(worldPos), 0, 10);
 				var newWorldPosition = new Vector2I(worldPos.X + i, worldPos.Y + j);
 				SetCell(newWorldPosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y), 
 					terrainTileToPlace.Z);
@@ -90,8 +90,6 @@ public partial class WorldTileMap : TileMap
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos); 	
 		var tileSetSourceId = 10;
 
-		// terrain determination (se podría meter en el world, y aquí centrarnos sólo en qué tile mostramos)
-		
 		if (_world.IsTerrainSea(worldPosition.X, worldPosition.Y))  return new Vector3I(3, 0, 1);
 		
 		if (_world.IsTerrainBeach(worldPosition.X, worldPosition.Y)) return new Vector3I(0, 0, 1);
@@ -107,11 +105,6 @@ public partial class WorldTileMap : TileMap
 	private Vector2I GetWorldPosBySquare(Vector2I squarePos)
 	{
 		return new Vector2I((squarePos.X/_squareSize.X)+_tileMapOffset.X, (squarePos.Y/_squareSize.Y)+_tileMapOffset.Y);
-	}
-	
-	private int GetElevationTierByWorldPos(Vector2I worldPosition)
-	{
-		return _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y);
 	}
 	
 	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId = 9, 

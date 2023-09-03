@@ -95,7 +95,9 @@ public partial class World : GodotObject
 	}
 
 	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
-
+	
+	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
+	
 	//  WORLD PARAMETERS
 	public void AddWorldParameter(string param, Variant value)
 	{
