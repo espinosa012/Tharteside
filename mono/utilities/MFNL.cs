@@ -48,65 +48,51 @@ public partial class MFNL : FastNoiseLite
 
 
     //  NOISE PARAMS
-    public void UpdateParam(string param, Variant value)
-    {
-        Set(CamelCaseToSnakeCase(param), value);
-    }
+    public void UpdateParam(string param, Variant value) => Set(CamelCaseToSnakeCase(param), value);
 
-    public Variant GetParam(string param)
-    {
-        return Get(CamelCaseToSnakeCase(param));
-    }
+    public Variant GetParam(string param) => Get(CamelCaseToSnakeCase(param));
 
-    public void RandomizeSeed()
-    {
-        UpdateParam("Seed", Rng.RandiRange(0, 999999999));        
-    }
+    public void RandomizeSeed() => SetSeed(Rng.RandiRange(0, 999999999));
 
-    public void SetSeed(int seed)
-    {
-        UpdateParam("Seed", seed);
-    }
-
+    public void SetSeed(int seed) => Set("Seed", seed);
 
 
     //  NOISE JSON
     public void SaveToJSON(string filename="")
     {
         Dictionary<string, string> noiseDict = new Dictionary<string, string>();
-        string[] valuesToSave = new string[] {"NoiseType", "Seed", "Frequency", "FractalType", "FractalGain", "FractalLacunarity", "FractalOctaves", "FractalPingPongStrength", "FractalWeightedStrength", "CellularDistanceFunction", "CellularReturnType", "CellularJitter"};
-        foreach (string vts in valuesToSave)
-        {
-            noiseDict.Add(vts, Get(CamelCaseToSnakeCase(vts)).ToString());
-        }
+        string[] valuesToSave = new string[] {
+            "NoiseType", "Seed", "Frequency", "FractalType", "FractalGain", 
+            "FractalLacunarity", "FractalOctaves", "FractalPingPongStrength", "FractalWeightedStrength", 
+            "CellularDistanceFunction", "CellularReturnType", "CellularJitter"
+        };
+        
+        foreach (string vts in valuesToSave) noiseDict.Add(vts, Get(CamelCaseToSnakeCase(vts)).ToString());
 
         string jsonString = JsonSerializer.Serialize(noiseDict);
         
         // Si no indicamos un nombre para el archivo json en que queremos guardar el ruido, establecemos el nombre del ruido
         if (filename == ""){filename = Name;}
 
-        if (!Regex.IsMatch(filename, @"\.json$", RegexOptions.IgnoreCase)){filename += ".json";}    // si no viene la extensión, la indicamos
-		GD.Print(filename);
+        // si no viene la extensión, la indicamos
+        if (!Regex.IsMatch(filename, @"\.json$", RegexOptions.IgnoreCase)){filename += ".json";}    
 
-        File.WriteAllText("resources/noise/" + filename, jsonString);   // hacer con la librería de Godot
+        // hacer con la librería de Godot
+        File.WriteAllText("resources/noise/" + filename, jsonString);   
     }
 
     public void LoadFromJSON(string filename)
     {
         if (!Regex.IsMatch(filename, @"\.json$", RegexOptions.IgnoreCase)){filename += ".json";}    // si no viene la extensión, la indicamos
         var file = Godot.FileAccess.Open("res://resources/noise/" + filename, Godot.FileAccess.ModeFlags.Read);
-		// formamos el diccionario
+		
+        // formamos el diccionario
 		Dictionary<string, string> noiseDict = JsonSerializer.Deserialize<Dictionary<string, string>>(file.GetAsText());
-		foreach (var kvp in noiseDict)
-		{
-			Set(CamelCaseToSnakeCase(kvp.Key), kvp.Value);
-		}
+		foreach (var kvp in noiseDict) Set(CamelCaseToSnakeCase(kvp.Key), kvp.Value);
     }
 
-
-
     // AUX FUNCTIONS
-    public string CamelCaseToSnakeCase(string str)  // static function
+    private string CamelCaseToSnakeCase(string str)  // static function
     {
         // Reemplaza los caracteres en mayúsculas con un guión bajo seguido de la misma letra en minúscula
         return Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();

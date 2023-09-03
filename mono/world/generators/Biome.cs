@@ -34,7 +34,7 @@ public partial class Biome : WorldGenerator     // ¿debe ser realmente heredero
     {
         int minimumMountainRockElevationTier = 3; 	// convertir en parámetro del mundo
         bool isAboveMinimunElevation = _elevation.GetValueTierAt(x, y) >= minimumMountainRockElevationTier;
-        bool isAboveMinimumPeaksAndValleys = _peaksAndValleys.GetNormalizedNoise2D(x, y) > 0.25;	// convertir en parámetro del mundo
+        bool isAboveMinimumPeaksAndValleys = _peaksAndValleys.GetNormalizedNoise2D(x, y) > _minimumPeaksAndValleysMineralSpawnValue;	// convertir en parámetro del mundo
         bool isSlopeRight = (_elevation.IsStepDownAtOffset(x, y, 1, 0) 
                              && _elevation.IsStepDownAtOffset(x, y, 2, 0));
         bool isSlopeLeft = (_elevation.IsStepDownAtOffset(x, y, -1, 0) 
