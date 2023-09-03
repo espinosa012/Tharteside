@@ -9,7 +9,6 @@ public partial class WorldManager : Node2D
 	[Export] public Vector2I TileMapOffset;
 	[Export] public Vector2I ChunkSize;
 	[Export] public Vector2I SquareSize;
-	[Export] public bool DisplayBorders;
 	[Export] public Vector2I Chunks;	
 
 	private World _world;
@@ -20,13 +19,7 @@ public partial class WorldManager : Node2D
 		_world = new World();
 		_tileMap = (WorldTileMap) GetNode<TileMap>("TileMap"); // en el futuro, formar desde código
 		_tileMap.SetWorld(_world);
-		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, Chunks, DisplayBorders);
-
-		// UI
-		var panel = GetNode<BasicWorldPanel>("%BasicWorldPanel");
-		panel.SetTWorldManager(this);
-		panel.InitializeUi();
-		panel.ConnectButtonSignal();
+		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, Chunks);
 	}
 
 	public void SetWorldSize(Vector2I newSize)
@@ -54,9 +47,9 @@ public partial class WorldManager : Node2D
 		_tileMap.SetSquareSize(newSize);
 	}
 
-	public void ReloadTileMap(string property = "")
+	public void ReloadTileMap()
 	{
-		_tileMap.ReloadTileMap(property, DisplayBorders);
+		_tileMap.ReloadTileMap();
 	}
 	
 	

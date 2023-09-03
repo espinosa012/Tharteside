@@ -36,7 +36,6 @@ public partial class BasicWorldPanel : Panel
 		GetNode<LineEdit>("Container/Offset/y").Text = TWorldManager.TileMapOffset.Y.ToString();
 
 		GetNode<LineEdit>("Container/Noise/LineEdit").Text = "";
-		GetNode<CheckBox>("Container/DisplayBorders/CheckBox").ButtonPressed = TWorldManager.DisplayBorders;
 
 		// me falta conectar una señal para que cuando cambie el item seleccionado se actualice el lineedit con el valor			GetNode<OptionButton>("Container/WorldParam/MenuButton").AddItem(param) ;
 		// además, necesitamos actualizar el parametro al pulsar intro para poder actualizar varios parametros antes de renderizar
@@ -70,16 +69,14 @@ public partial class BasicWorldPanel : Panel
 				TWorldManager.SetSquareSize(new Vector2I(1, 1));
 				TWorldManager.SetChunkSize(new Vector2I(newWorldSize.X / TWorldManager.Chunks.X, newWorldSize.Y / TWorldManager.Chunks.Y));
 				GetNode<CheckBox>("Container/DisplayBorders/CheckBox").ButtonPressed = false;
-				TWorldManager.DisplayBorders = false;
-				TWorldManager.ReloadTileMap(noiseToDisplay.Text.StripEdges());
+				TWorldManager.ReloadTileMap();
 				return;
 			}
 			
-			TWorldManager.DisplayBorders = displayBorders.ButtonPressed;
 			TWorldManager.SetSquareSize(squareSize);
 			TWorldManager.SetChunkSize(chunkSize);
 			
-			TWorldManager.ReloadTileMap(noiseToDisplay.Text.StripEdges());
+			TWorldManager.ReloadTileMap();
 		};
 	}
 

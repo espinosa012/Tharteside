@@ -5,142 +5,110 @@ namespace Tartheside.mono;
 
 public partial class WorldTileMap : TileMap
 {
-	private Vector2I WorldSize;
-	private Vector2I TileMapOffset;
-	private Vector2I ChunkSize;
-	private Vector2I SquareSize;
-	private Vector2I Chunks;	// Chunks que se inicializarán al principio
+	private Vector2I _worldSize;
+	private Vector2I _tileMapOffset;
+	private Vector2I _chunkSize;
+	private Vector2I _squareSize;
+	private Vector2I _chunks;	// Chunks que se inicializarán al principio
 	private World _world;
 	
-
-	public Vector2I GetWorldSize() => WorldSize;
-	public void SetWorldSize(Vector2I newSize) => WorldSize = newSize;
-
-	public Vector2I GetTileMapOffset(Vector2I newOffset) => TileMapOffset;
-	public void SetTileMapOffset(Vector2I newOffset) => TileMapOffset = newOffset;
-
-	public Vector2I GetTileMapChunks() => Chunks;
-	public void SetTileMapChunks(Vector2I newSize) => Chunks = newSize;
-
-	public Vector2I GetChunkSize() => ChunkSize;
-	public void SetChunkSize(Vector2I newSize) => ChunkSize = newSize;
-
-	public Vector2I GetSquareSize() => SquareSize;
-	public void SetSquareSize(Vector2I newSize) => SquareSize = newSize;
-	
+	// getters & setters
 	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
+
+	public Vector2I GetWorldSize() => _worldSize;
+	public void SetWorldSize(Vector2I newSize) => _worldSize = newSize;
+
+	public Vector2I GetTileMapOffset() => _tileMapOffset;
+	public void SetTileMapOffset(Vector2I newOffset) => _tileMapOffset = newOffset;
+
+	public Vector2I GetTileMapChunks() => _chunks;
+	public void SetTileMapChunks(Vector2I newSize) => _chunks = newSize;
+
+	public Vector2I GetChunkSize() => _chunkSize;
+	public void SetChunkSize(Vector2I newSize) => _chunkSize = newSize;
+
+	public Vector2I GetSquareSize() => _squareSize;
+	public void SetSquareSize(Vector2I newSize) => _squareSize = newSize;
 	
-	
-	
+	// tilemap
 	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize, 
-		Vector2I initChunks, bool displayBorders = false)
+		Vector2I initChunks)
 	{
-		WorldSize = worldSize;
-		TileMapOffset = offset;
-		ChunkSize = chunkSize;
-		SquareSize = squareSize;
-		Chunks = initChunks;
+		_worldSize = worldSize;
+		_tileMapOffset = offset;
+		_chunkSize = chunkSize;
+		_squareSize = squareSize;
+		_chunks = initChunks;
 		
-		InitializeChunks(displayBorders);
+		InitializeChunks();
 	}
 
-	private void InitializeChunks(bool displayBorders = false, String property = "")
+	private void InitializeChunks()
 	{
-		for (var i = 0; i < Chunks.X; i++)
+		for (var i = 0; i < _chunks.X; i++)
 		{
-			for (var j = 0; j < Chunks.Y; j++)
+			for (var j = 0; j < _chunks.Y; j++)
 			{
-				RenderChunk(new Vector2I(i, j), displayBorders, property);		
+				RenderChunk(new Vector2I(i, j));		
 			}
 		}
 	}
 	
-	private void RenderChunk(Vector2I chunkPosition, bool displayBorders = false, String property = "")
+	private void RenderChunk(Vector2I chunkPosition)
 	{
-		for (var x = chunkPosition.X * ChunkSize.X * SquareSize.X; x < ChunkSize.X * SquareSize.X + chunkPosition.X * ChunkSize.X * SquareSize.X; x+=SquareSize.X)
+		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X; x < _chunkSize.X * _squareSize.X + 
+		     chunkPosition.X * _chunkSize.X * _squareSize.X; x+=_squareSize.X)
 		{
-			for (var y = chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y < ChunkSize.Y * SquareSize.Y + chunkPosition.Y * ChunkSize.Y * SquareSize.Y; y+=SquareSize.Y)
+			for (var y = chunkPosition.Y * _chunkSize.Y * _squareSize.Y; y < _chunkSize.Y * _squareSize.Y + 
+			     chunkPosition.Y * _chunkSize.Y * _squareSize.Y; y+=_squareSize.Y)
 			{
 				var squarePos = new Vector2I(x, y);	// posición en el mundo de la celda superior izquierda del cuadro
-				FulfillSquare(squarePos, displayBorders, property);	// escalado del mapa
+				FulfillSquare(squarePos);	// escalado del mapa
 			}
 		}
 	}
 	
-	private void FulfillSquare(Vector2I worldPos, bool displayBorders = false, String property = "")
+	private void FulfillSquare(Vector2I worldPos)
 	{
 		// world pos: la posición del mundo recibida coincide con la de comienzo del square
-		for (var i = 0; i < SquareSize.X; i++)
+		for (var i = 0; i < _squareSize.X; i++)
 		{
-			for (var j = 0; j < SquareSize.Y; j++)
+			for (var j = 0; j < _squareSize.Y; j++)
 			{
-				var terrainTileToPlace = GetTileToPlace(worldPos, property);
+				Vector3I terrainTileToPlace = GetTerrainTileToPlace(worldPos);
 				var newWorldPosition = new Vector2I(worldPos.X + i, worldPos.Y + j);
 				SetCell(newWorldPosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y), 
 					terrainTileToPlace.Z);
-				if (displayBorders)
-				{
-					FulfillSquareObstacles(newWorldPosition);
-				}
 			}
 		}
 	}
 
-	private Vector3I GetTileToPlace(Vector2I worldPos, String property = "")
-	{
-		if (property != "")
-		{
-			const int tileSetSourceId = 10;
-			return new Vector3I(_world.GetWorldGenerator("Elevation").GetValueTierAt(worldPos.X, worldPos.Y), 0, tileSetSourceId);
-		}
-
-		return GetTerrainTileToPlace(worldPos);
-	}
-	
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
-		worldPos = GetWorldPosBySquare(worldPos); 	
+		Vector2I worldPosition = GetWorldPosBySquare(worldPos); 	
 		var tileSetSourceId = 10;
-		var valueTier = GetElevationTierByWorldPos(worldPos);
+
+		// terrain determination (se podría meter en el world, y aquí centrarnos sólo en qué tile mostramos)
+		if (_world.IsTerrainSea(worldPos.X, worldPos.Y))  return new Vector3I(3, 0, 1);
 		
-		if (_world.IsTerrainSea(worldPos.X, worldPos.Y))
-		{
-			return new Vector3I(3, 0, 1);
-		}
-		if (_world.IsTerrainBeach(worldPos.X, worldPos.Y))
-		{
-			return new Vector3I(0, 0, 1);
-		}
-		if (_world.IsTerrainLowland(worldPos.X, worldPos.Y))
-		{
-			return new Vector3I(0, 0, 2);
-		}
+		if (_world.IsTerrainBeach(worldPos.X, worldPos.Y)) return new Vector3I(0, 0, 1);
+		
+		if (_world.IsTerrainLowland(worldPos.X, worldPos.Y)) return new Vector3I(0, 0, 2);
+		
+		// provisional, el tipo de terreno debe estar determinado para todas las posiciones
+		var valueTier = _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y);
 
-
-		// if (_world.IsTerrainMineral(worldPos.X, worldPos.Y))
-		// {
-		// 	return new Vector3I(5, 8, 5);
-		// }
 		return new Vector3I(valueTier, 0, tileSetSourceId);
 	}
 
-	private void FulfillSquareObstacles(Vector2I worldPos)
-	{
-		if (TileMapCellIsBorder(worldPos))
-		{
-			SetCell(worldPos, new Vector2I(5, 5), 5, 1);
-		}
-	}
-	
 	private Vector2I GetWorldPosBySquare(Vector2I squarePos)
 	{
-		return new Vector2I((squarePos.X/SquareSize.X)+TileMapOffset.X, (squarePos.Y/SquareSize.Y)+TileMapOffset.Y);
+		return new Vector2I((squarePos.X/_squareSize.X)+_tileMapOffset.X, (squarePos.Y/_squareSize.Y)+_tileMapOffset.Y);
 	}
 	
 	private int GetElevationTierByWorldPos(Vector2I worldPosition)
 	{
-		//return _world.GetValueTierAt(worldPosition.X, worldPosition.Y);
 		return _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y);
 	}
 	
@@ -151,7 +119,6 @@ public partial class WorldTileMap : TileMap
 			tileSetAtlasCoordinates);
 	}
 	
-
 	/// <summary>
 	/// Indica con qué posición del WORLD se corresponde la posición del TILEMAP que indiquemos.
 	/// Es decir, devuelve la posición del SQUARE al que pertenece tileMapCell
@@ -160,88 +127,17 @@ public partial class WorldTileMap : TileMap
 	/// <returns></returns>
 	private Vector2I GetWorldPositionByTileMapPosition(Vector2I tileMapCell)
 	{
+		// con el enfoque de Squares, todas los tiles (posiciones de tilemap) de un square, pertenecerán a la misma 
+		// world_position.
 		// devuelve la posición de la esquina superior izq del cuadro al que pertenece la tile
-		return new Vector2I((int)Math.Floor(((decimal)tileMapCell.X/SquareSize.X)), 
-			(int)Math.Floor(((decimal)tileMapCell.Y/SquareSize.Y)));
-	}
-
-	/// <summary>
-	/// Determina si la posición del TILEMAP que indiquemos se corresponde con una frontera entre niveles de elevación
-	/// </summary>
-	/// <param name="tileMapCell">TILEMAP position (not WORLD position)</param>
-	/// <returns></returns>
-	private bool TileMapCellIsBorder(Vector2I tileMapCell)
-	{
-		
-		// tomamos la posición del square al que pertenece la tile (esa posición coincide con la esquina superior
-		// izq del cuadro)
-		var squarePos = GetWorldPositionByTileMapPosition(tileMapCell); 
-		
-		// calculamos posición relativa de la celda dentro del square
-		var relativeTileMapCellPos = tileMapCell - new Vector2I(squarePos.X * SquareSize.X, 
-			squarePos.Y * SquareSize.Y);
-		
-		// comprobamos los bordes del square correspondiente
-		var isStepDownNorth = IsStepDownAtOffset(squarePos, new Vector2I(0, -1));
-		var isStepDownSouth = IsStepDownAtOffset(squarePos, new Vector2I(0, 1)); 
-		var isStepDownWest = IsStepDownAtOffset(squarePos, new Vector2I(-1, 0)); 
-		var isStepDownEast = IsStepDownAtOffset(squarePos, new Vector2I(1, 0));
-		var isStepDownNorthWest = IsStepDownAtOffset(squarePos, new Vector2I(-1, -1));
-		var isStepDownNorthEast = IsStepDownAtOffset(squarePos, new Vector2I(1, -1));
-		var isStepDownSouthWest = IsStepDownAtOffset(squarePos, new Vector2I(-1, 1));
-		var isStepDownSouthEast = IsStepDownAtOffset(squarePos, new Vector2I(1, 1));
-		
-		return (isStepDownNorth && relativeTileMapCellPos.Y == 0) ||
-		       (isStepDownSouth && relativeTileMapCellPos.Y == SquareSize.Y - 1) ||
-		       (isStepDownWest && relativeTileMapCellPos.X == 0) ||
-		       (isStepDownEast && relativeTileMapCellPos.X == SquareSize.X - 1) ||
-		       (isStepDownNorthWest && relativeTileMapCellPos is { X: 0, Y: 0 }) ||
-		       (isStepDownNorthEast && relativeTileMapCellPos.X == SquareSize.X - 1 && relativeTileMapCellPos.Y == 0) ||
-		       (isStepDownSouthWest && relativeTileMapCellPos.X == 0 && relativeTileMapCellPos.Y == SquareSize.Y - 1) ||
-		       (isStepDownSouthEast && relativeTileMapCellPos.X == SquareSize.X - 1 
-		                            && relativeTileMapCellPos.Y == SquareSize.Y - 1);
-		
+		return new Vector2I((int)Math.Floor(((decimal)tileMapCell.X/_squareSize.X)), 
+			(int)Math.Floor(((decimal)tileMapCell.Y/_squareSize.Y)));
 	}
 	
-	private bool IsStepDownAtOffset(Vector2I squarePos, Vector2I offset)
-	{
-		return GetElevationTierByWorldPos(squarePos + TileMapOffset) > GetElevationTierByWorldPos(squarePos + offset + TileMapOffset);
-	}
-
-	private bool IsStepUpAtOffset(Vector2I squarePos, Vector2I offset)
-	{
-		return GetElevationTierByWorldPos(squarePos + TileMapOffset) < GetElevationTierByWorldPos(squarePos + offset + TileMapOffset);
-	}
-	
-	private bool IsStepAtOffset(Vector2I squarePos, Vector2I offset)
-	{
-		return GetElevationTierByWorldPos(squarePos + TileMapOffset) != GetElevationTierByWorldPos(squarePos + offset + TileMapOffset);
-	}
-	
-	
-	
-	public void ReloadTileMap(string property = "", bool displayBorders = false)
+	public void ReloadTileMap()
 	{
 		Clear();
-		InitializeChunks(displayBorders, property);
+		InitializeChunks();
 	}
-
-	/*
-	public override void _Input(InputEvent @event)
-    {
-        // Verifica si se ha hecho clic con el botón izquierdo del mouse
-        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
-        {
-            // Obtén las coordenadas del clic en el mundo
-            Vector2I clickPosition = (Vector2I) mouseEvent.Position;
-            GD.Print("clickPosition: " + clickPosition);
-
-            // Convierte las coordenadas del clic a las coordenadas del tile
-            Vector2I tileCoordinates = (Vector2I) LocalToMap(ToLocal(clickPosition - new Vector2I(490, 256)));
-
-            // Imprime las coordenadas del tile en la consola;
-            GD.Print("Clic en el tile de coordenadas: " + (tileCoordinates));
-        }
-    }
-	*/
+	
 }
