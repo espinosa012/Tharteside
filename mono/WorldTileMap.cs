@@ -88,7 +88,6 @@ public partial class WorldTileMap : TileMap
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos); 	
-		var tileSetSourceId = 10;
 
 		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainSea(worldPosition.X, worldPosition.Y))  
 			return new Vector3I(3, 0, 1);
@@ -99,11 +98,28 @@ public partial class WorldTileMap : TileMap
 		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainLowland(worldPosition.X, worldPosition.Y)) 
 			return new Vector3I(0, 0, 2);
 		
-		// provisional, el tipo de terreno debe estar determinado para todas las posiciones
-		return new Vector3I(_world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y), 
+		return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("Elevation"));
+	}
+
+	public Vector3I GetValueTileByPalette(Vector2I worldPos, WorldGenerator generator) 
+	{
+		int tileSetSourceId = 10;
+		return new Vector3I(generator.GetValueTierAt(worldPos.X, worldPos.Y), 
 			0, tileSetSourceId);
 	}
 
+	public Vector3I GetValueTileByPalette(Vector2I worldPos, MFNL noise)	// untested
+	{
+		int tileSetSourceId = 10;
+		int nTiers = (int) _world.GetWorldParameter("NTiers");
+		int tier = -1;
+		for (var i = 0; i < nTiers; i++){if (noise.GetNormalizedNoise2D(worldPos.X, worldPos.Y) 
+		                                     < (i + 1.0f)/nTiers){tier = i;}}
+		if (tier == -1) tier = nTiers - 1;
+		
+		return new Vector3I(tier, 0, tileSetSourceId);
+	}
+	
 	private Vector2I GetWorldPosBySquare(Vector2I squarePos)
 	{
 		return new Vector2I((squarePos.X/_squareSize.X)+_tileMapOffset.X, (squarePos.Y/_squareSize.Y)+_tileMapOffset.Y);

@@ -38,22 +38,22 @@ public partial class WorldGenerator : GodotObject
 
 
     // NEIGHBOUR EVALUATION (untested)
-	public bool IsStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	public bool IsStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0)
 	{
 		return GetValueTierAt(x, y) > GetValueTierAt(x + xOffset, y + yOffset);
 	}
 
-	public bool IsStepUpAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	public bool IsStepUpAtOffset(int x, int y, int xOffset = 0, int yOffset = 0)
 	{
 		return GetValueTierAt(x, y) < GetValueTierAt(x + xOffset, y + yOffset);
 	}
 
-	public bool IsStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	public bool IsStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0)
 	{
 		return !IsNoStepAtOffset(x, y, xOffset, yOffset);
 	}
 
-	public bool IsNoStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, string property = "")
+	public bool IsNoStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0)
 	{
 		return GetValueTierAt(x, y) == GetValueTierAt(x + xOffset, y + yOffset);
 	}
