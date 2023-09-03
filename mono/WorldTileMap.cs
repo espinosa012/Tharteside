@@ -90,16 +90,18 @@ public partial class WorldTileMap : TileMap
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos); 	
 		var tileSetSourceId = 10;
 
-		if (_world.IsTerrainSea(worldPosition.X, worldPosition.Y))  return new Vector3I(3, 0, 1);
+		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainSea(worldPosition.X, worldPosition.Y))  
+			return new Vector3I(3, 0, 1);
 		
-		if (_world.IsTerrainBeach(worldPosition.X, worldPosition.Y)) return new Vector3I(0, 0, 1);
+		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainBeach(worldPosition.X, worldPosition.Y)) 
+			return new Vector3I(0, 0, 1);
 		
-		if (_world.IsTerrainLowland(worldPosition.X, worldPosition.Y)) return new Vector3I(0, 0, 2);
+		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainLowland(worldPosition.X, worldPosition.Y)) 
+			return new Vector3I(0, 0, 2);
 		
 		// provisional, el tipo de terreno debe estar determinado para todas las posiciones
-		var valueTier = _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y);
-
-		return new Vector3I(valueTier, 0, tileSetSourceId);
+		return new Vector3I(_world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y), 
+			0, tileSetSourceId);
 	}
 
 	private Vector2I GetWorldPosBySquare(Vector2I squarePos)

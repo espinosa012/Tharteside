@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Biome : WorldGenerator
+public partial class Biome : WorldGenerator     // ¿debe ser realmente heredero de WorldGenerator?
 {
     private Elevation _elevation;
     private Temperature _temperature;
