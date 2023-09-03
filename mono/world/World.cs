@@ -17,13 +17,13 @@ public partial class World : GodotObject
 	// CONSTRUCTOR
 	public World()
 	{
-		InitNoisesAndParameters();
+		InitiNoises();
+		InitParameters();
 		InitWorldGenerators();
 	}
 
-	private void InitNoisesAndParameters()
+	private void InitiNoises()
 	{
-		// Init noise
 		_worldNoises = new Dictionary<string, MFNL>();
 		
 		// Formamos los objetos de ruido desde los .json correspondientes
@@ -42,8 +42,10 @@ public partial class World : GodotObject
 		var volcanicIslands = new MFNL("VolcanicIslands");
 		volcanicIslands.LoadFromJSON("VolcanicIslands");
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
+	}
 
-		// Init parameters (cargar desde json)
+	private void InitParameters()
+	{
 		_worldParameters = new Dictionary<string, Variant>();
 		
 		AddWorldParameter("WorldSize", new Vector2I(1024, 1024));
@@ -57,14 +59,15 @@ public partial class World : GodotObject
 		AddWorldParameter("OutToSeaFactor", 0.7f);  
 	}
 	
-	//  WORLD GENERATORS
 	private void InitWorldGenerators()
     {
         _worldGenerators = new Dictionary<string, WorldGenerator>();
 		InitElevation();
 		InitTemperature();
+		InitBiome();
 	}
 
+	//  WORLD GENERATORS
 	private void InitTemperature()
 	{
 		Temperature temperatureGenerator = new Temperature();
@@ -72,15 +75,15 @@ public partial class World : GodotObject
 		temperatureGenerator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
 		temperatureGenerator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
 			
-		_worldGenerators.Add("Temperature", temperatureGenerator);
+		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
 	private void InitElevation()
 	{	
 		Elevation elevationGenerator = new Elevation();
-		elevationGenerator.SetNoiseBaseElevation(_worldNoises["BaseElevation"]);
-		elevationGenerator.SetNoiseContinentalness(_worldNoises["Continentalness"]);
-		elevationGenerator.SetNoisePeaksAndValleys(_worldNoises["PeaksAndValleys"]);
-		elevationGenerator.SetNoiseVolcanicIslands(_worldNoises["VolcanicIslands"]);
+		elevationGenerator.SetParameterBaseElevationNoise(_worldNoises["BaseElevation"]);
+		elevationGenerator.SetParameterContinentalnessNoise(_worldNoises["Continentalness"]);
+		elevationGenerator.SetParameterPeaksAndValleysNoise(_worldNoises["PeaksAndValleys"]);
+		elevationGenerator.SetParameterVolcanicIslandsNoise(_worldNoises["VolcanicIslands"]);
 		
 		elevationGenerator.SetParameterChunkSize((Vector2I) _worldParameters["ChunkSize"]);
 		elevationGenerator.SetParameterNTiers((int) _worldParameters["NTiers"]);
@@ -91,9 +94,22 @@ public partial class World : GodotObject
 		elevationGenerator.SetParameterIslandThresholdLevel((float) _worldParameters["IslandThresholdLevel"]);
 		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
 
-		_worldGenerators.Add("Elevation", elevationGenerator);
+		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 
+	private void InitBiome()
+	{
+		Biome biomeGenerator = new Biome();
+		biomeGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
+		biomeGenerator.SetParameterTemperature((Temperature) GetWorldGenerator("Temperature"));
+		biomeGenerator.SetParameterPeaksAndValleys(GetWorldNoise("PeaksAndValleys"));
+		biomeGenerator.SetParameterMinimumPeaksAndValleysMineralSpawnValue(0.25f);
+		
+		AddWorldGenerator("Biome", biomeGenerator);
+	}
+
+	public void AddWorldGenerator(string generatorName, WorldGenerator generator) => _worldGenerators[generatorName] = generator;
+	
 	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
 	
 	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
@@ -113,18 +129,12 @@ public partial class World : GodotObject
 
 	public void RemoveWorldParameter(string param)
 	{
-		if (_worldParameters.ContainsKey(param))
-		{
-            bool v = _worldParameters.Remove(param);
-        }
+		if (_worldParameters.ContainsKey(param)) _worldParameters.Remove(param);
 	}
 
 	public void UpdateWorldParameter(string param, Variant value) 
 	{
-		if (_worldParameters.ContainsKey(param)) 
-		{
-			_worldParameters[param] = value;
-		}
+		if (_worldParameters.ContainsKey(param)) _worldParameters[param] = value;
 	}
 
 	public Variant GetWorldParameter(string param) => _worldParameters[param];
@@ -136,10 +146,7 @@ public partial class World : GodotObject
 
 	private void RemoveWorldNoise(string name)
 	{
-        if (_worldNoises.ContainsKey(name.StripEdges()))
-        {
-			_worldNoises.Remove(name);
-        }
+        if (_worldNoises.ContainsKey(name.StripEdges()))	_worldNoises.Remove(name);
     }
 
 	private MFNL GetWorldNoise(string name)
@@ -159,7 +166,7 @@ public partial class World : GodotObject
 	}
 	
 	
-	// TERRAIN (esto sí va en World)
+	// TERRAIN (esto sí va en World). Se podría sustituir porun GetBiome del generador de biomas
 	public bool IsTerrainSea(int x, int y)
 	{
 		// podríamos desomponer el tier 0 para distinguir varios niveles de profundidad de mar, obtener bioma orilla (mareas), etc
@@ -175,23 +182,7 @@ public partial class World : GodotObject
 	{
 		return _worldGenerators["Elevation"].GetValueTierAt(x, y) == 2;
 	}
-
-	public bool IsTerrainMineral(int x, int y)
-	{
-		int minimumMountainRockElevationTier = 3; 	// convertir en parámetro del mundo
-		bool isAboveMinimunElevation = _worldGenerators["Elevation"].GetValueTierAt(x, y) >= minimumMountainRockElevationTier;
-		bool isAboveMinimumPeaksAndValleys = GetWorldNoise("PeaksAndValleys").GetNormalizedNoise2D(x, y) > 0.25;	// convertir en parámetro del mundo
-		bool isSlopeRight = (_worldGenerators["Elevation"].IsStepDownAtOffset(x, y, 1, 0) && _worldGenerators["Elevation"].IsStepDownAtOffset(x, y, 2, 0));
-		bool isSlopeLeft = (_worldGenerators["Elevation"].IsStepDownAtOffset(x, y, -1, 0) && _worldGenerators["Elevation"].IsStepDownAtOffset(x, y, -2, 0));
-		bool isSlopeUp = (_worldGenerators["Elevation"].IsStepDownAtOffset(x, y, 0, -1) && _worldGenerators["Elevation"].IsStepDownAtOffset(x, y, 0, -2));
-		bool isSlopeDown = (_worldGenerators["Elevation"].IsStepDownAtOffset(x, y, 0, 1) && _worldGenerators["Elevation"].IsStepDownAtOffset(x, y, 0, 2));	// con la pendiente que se exija podemos regular la densidad
-		// comprobar pendientes creo que no detecta bien los cabmios bruscos, aunque queda bien en el mapa así...
-
-		// se le podría aplicar después un filtrado on un objeto de ruido muy granulado,que ayude a simular las vetas de mineral
-		// ¿qué pasa cuando coincide con roca u otra cosa?
-		// tenemos que poder regular la densidad de mineral (y de roca y de todo), quizá con un parámetro de persistencia del ruido
-		return isAboveMinimunElevation && isAboveMinimumPeaksAndValleys && ((isSlopeRight || isSlopeLeft) && (isSlopeDown || isSlopeUp));
-	}
+	
 
 	public bool IsTerrainRiver(int x, int y)
 	{

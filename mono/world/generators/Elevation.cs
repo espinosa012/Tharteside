@@ -5,10 +5,10 @@ using System;
 
 public partial class Elevation : WorldGenerator
 {
-    private MFNL _baseElevation;
-    private MFNL _continentalness;
-    private MFNL _peaksAndValleys;
-    private MFNL _volcanicIslands;
+    private MFNL _baseElevationNoise;
+    private MFNL _continentalnessNoise;
+    private MFNL _peaksAndValleysNoise;
+    private MFNL _volcanicIslandsNoise;
 
     private float _minContinentalHeight;    
     private float _continentalScaleValue;    
@@ -31,16 +31,16 @@ public partial class Elevation : WorldGenerator
     
     public float GetVolcanicIslandElevation(int x, int y)	// march23
 	{
-		return _peaksAndValleys.GetNormalizedNoise2D(x, y) * 
-		        _continentalScaleValue * _baseElevation.GetNormalizedNoise2D(x, y) *
-		        _volcanicIslands.GetNormalizedNoise2D(x, y) * _islandScaleValue;
+		return _peaksAndValleysNoise.GetNormalizedNoise2D(x, y) * 
+		        _continentalScaleValue * _baseElevationNoise.GetNormalizedNoise2D(x, y) *
+		        _volcanicIslandsNoise.GetNormalizedNoise2D(x, y) * _islandScaleValue;
 	}
 
     public float GetContinentalElevation(int x, int y)	// march23
 	{
-		return Math.Min(1f, Math.Max(_minContinentalHeight, _peaksAndValleys.GetNormalizedNoise2D(x, y) * 
-			_continentalScaleValue * _baseElevation.GetNormalizedNoise2D(x, y) -
-			_seaScaleValue *_continentalness.GetNormalizedNoise2D(x, y)));    
+		return Math.Min(1f, Math.Max(_minContinentalHeight, _peaksAndValleysNoise.GetNormalizedNoise2D(x, y) * 
+			_continentalScaleValue * _baseElevationNoise.GetNormalizedNoise2D(x, y) -
+			_seaScaleValue *_continentalnessNoise.GetNormalizedNoise2D(x, y)));    
 	}
 
     
@@ -51,12 +51,12 @@ public partial class Elevation : WorldGenerator
 
     public bool IsContinentalLand(int x, int y)
 	{
-		return _baseElevation.GetNormalizedNoise2D(x, y) - _minContinentalHeight > _seaScaleValue * _continentalness.GetNormalizedNoise2D(x, y);
+		return _baseElevationNoise.GetNormalizedNoise2D(x, y) - _minContinentalHeight > _seaScaleValue * _continentalnessNoise.GetNormalizedNoise2D(x, y);
 	}
 
     public bool IsVolcanicLand(int x, int y)
 	{
-		return (_volcanicIslands.GetNormalizedNoise2D(x, y) > _islandThresholdLevel);
+		return (_volcanicIslandsNoise.GetNormalizedNoise2D(x, y) > _islandThresholdLevel);
 	}
 
     public bool IsVolcanicIsland(int x, int y)
@@ -67,7 +67,7 @@ public partial class Elevation : WorldGenerator
     public bool IsOutToSea(int x, int y)
 	{
 		// devuelve si está lo suficientemente mar adentro según el factor OutToSeaFactor
-		return _baseElevation.GetNormalizedNoise2D(x, y) - _minContinentalHeight < (float) _seaScaleValue * _continentalness.GetNormalizedNoise2D(x, y) * _outToSeaFactor;
+		return _baseElevationNoise.GetNormalizedNoise2D(x, y) - _minContinentalHeight < (float) _seaScaleValue * _continentalnessNoise.GetNormalizedNoise2D(x, y) * _outToSeaFactor;
 	}
 
 
@@ -78,15 +78,18 @@ public partial class Elevation : WorldGenerator
 	}
 
 
-    // getters & setters
-    public MFNL GetNoiseBaseElevation() => _baseElevation;
-    public void SetNoiseBaseElevation(MFNL noise) => _baseElevation = noise;
-    public MFNL GetNoiseContinentalness() => _continentalness;
-    public void SetNoiseContinentalness(MFNL noise) => _continentalness = noise;
-    public MFNL GetNoisePeaksAndValleys() => _peaksAndValleys;
-    public void SetNoisePeaksAndValleys(MFNL noise) => _peaksAndValleys = noise;
-    public MFNL GetNoiseVolcanicIslands() => _volcanicIslands;
-    public void SetNoiseVolcanicIslands(MFNL noise) => _volcanicIslands = noise;
+    // getters & setters (uno por cada parámetro que queremos hacer accesibles)
+    public MFNL GetParameterBaseElevationNoise() => _baseElevationNoise;
+    public void SetParameterBaseElevationNoise(MFNL value) => _baseElevationNoise = value;
+    
+    public MFNL GetParameterContinentalnessNoise() => _continentalnessNoise;
+    public void SetParameterContinentalnessNoise(MFNL value) => _continentalnessNoise = value;
+    
+    public MFNL GetParameterPeaksAndValleysNoise() => _peaksAndValleysNoise;
+    public void SetParameterPeaksAndValleysNoise(MFNL value) => _peaksAndValleysNoise = value;
+    
+    public MFNL GetParameterVolcanicIslandsNoise() => _volcanicIslandsNoise;
+    public void SetParameterVolcanicIslandsNoise(MFNL value) => _volcanicIslandsNoise = value;
 
 
 
