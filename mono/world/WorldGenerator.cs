@@ -3,8 +3,13 @@ using System;
 
 public partial class WorldGenerator : GodotObject
 {
+    private Vector2I _chunkSize;    
     private int _nTiers;    
 
+
+	public virtual float GetChunkAverage(int x, int y){
+		return 0.0f;
+	}
 
     public virtual float GetValueAt(int x, int y)
     {
@@ -51,5 +56,7 @@ public partial class WorldGenerator : GodotObject
     public int GetParameterNTiers() => _nTiers;
     public void SetParameterNTiers(int value) => _nTiers = value;
 
+    public Vector2I GetParameterChunkSize() => _chunkSize;
+    public void SetParameterChunkSize(Vector2I value) => _chunkSize = value;
 
 }

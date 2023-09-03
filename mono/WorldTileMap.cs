@@ -5,44 +5,33 @@ namespace Tartheside.mono;
 
 public partial class WorldTileMap : TileMap
 {
-	private Vector2I WorldSize { get; set; }
-	private Vector2I TileMapOffset { get; set; }
-	private Vector2I ChunkSize { get; set; }
-	private Vector2I SquareSize { get; set; }
-	private Vector2I Chunks { get; set; }	// Chunks que se inicializarán al principio
-
+	private Vector2I WorldSize;
+	private Vector2I TileMapOffset;
+	private Vector2I ChunkSize;
+	private Vector2I SquareSize;
+	private Vector2I Chunks;	// Chunks que se inicializarán al principio
 	private World _world;
 	
 
-	public void SetWorldSize(Vector2I newSize)
-	{
-		WorldSize = newSize;
-	}
+	public Vector2I GetWorldSize() => WorldSize;
+	public void SetWorldSize(Vector2I newSize) => WorldSize = newSize;
 
-	public void SetTileMapOffset(Vector2I newOffset)
-	{
-		TileMapOffset = newOffset;
-	}
+	public Vector2I GetTileMapOffset(Vector2I newOffset) => TileMapOffset;
+	public void SetTileMapOffset(Vector2I newOffset) => TileMapOffset = newOffset;
 
-	public void SetTileMapChunks(Vector2I newSize)
-	{
-		Chunks = newSize;
-	}
+	public Vector2I GetTileMapChunks() => Chunks;
+	public void SetTileMapChunks(Vector2I newSize) => Chunks = newSize;
+
+	public Vector2I GetChunkSize() => ChunkSize;
+	public void SetChunkSize(Vector2I newSize) => ChunkSize = newSize;
+
+	public Vector2I GetSquareSize() => SquareSize;
+	public void SetSquareSize(Vector2I newSize) => SquareSize = newSize;
 	
-	public void SetChunkSize(Vector2I newSize)
-	{
-		ChunkSize = newSize;
-	}
+	public World GetWorld() => _world;
+	public void SetWorld(World world) => _world = world;
 	
-	public void SetSquareSize(Vector2I newSize)
-	{
-		SquareSize = newSize;
-	}
 	
-	public void SetWorld(World world)
-	{
-		_world = world;
-	}
 	
 	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize, 
 		Vector2I initChunks, bool displayBorders = false)
@@ -119,10 +108,6 @@ public partial class WorldTileMap : TileMap
 		{
 			return new Vector3I(3, 0, 1);
 		}
-		if (_world.IsTerrainForest(worldPos.X, worldPos.Y))
-		{
-			return new Vector3I(7, 47, 0);
-		}
 		if (_world.IsTerrainBeach(worldPos.X, worldPos.Y))
 		{
 			return new Vector3I(0, 0, 1);
@@ -131,11 +116,6 @@ public partial class WorldTileMap : TileMap
 		{
 			return new Vector3I(0, 0, 2);
 		}
-		if (_world.IsTerrainRock(worldPos.X, worldPos.Y))
-		{
-			return new Vector3I(5, 5, 5);
-		}
-
 
 
 		// if (_world.IsTerrainMineral(worldPos.X, worldPos.Y))

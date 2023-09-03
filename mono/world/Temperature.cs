@@ -11,12 +11,7 @@ public partial class Temperature : WorldGenerator
         return GetNormalizedDistanceToEquator(y);
     }
 
-    public float GetNormalizedDistanceToEquator(int y)
-	{
-		return (float) Math.Abs(y - _equatorLine) / _equatorLine;
-	}
-
-
+    public float GetNormalizedDistanceToEquator(int y) => (float) Math.Abs(y - _equatorLine) / _equatorLine;
 
     // getters & setters
     public int GetParameterEquatorLine() => _equatorLine;
