@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
-using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Tartheside.mono;
 
@@ -17,12 +14,12 @@ public partial class World : GodotObject
 	// CONSTRUCTOR
 	public World()
 	{
-		InitiNoises();
+		InitNoises();
 		InitParameters();
 		InitWorldGenerators();
 	}
 
-	private void InitiNoises()
+	private void InitNoises()
 	{
 		_worldNoises = new Dictionary<string, MFNL>();
 		
@@ -77,6 +74,7 @@ public partial class World : GodotObject
 			
 		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
+	
 	private void InitElevation()
 	{	
 		Elevation elevationGenerator = new Elevation();
@@ -96,7 +94,7 @@ public partial class World : GodotObject
 
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
-
+	
 	private void InitBiome()
 	{
 		Biome biomeGenerator = new Biome();
@@ -108,11 +106,13 @@ public partial class World : GodotObject
 		AddWorldGenerator("Biome", biomeGenerator);
 	}
 
+	
 	public void AddWorldGenerator(string generatorName, WorldGenerator generator) => _worldGenerators[generatorName] = generator;
 	
 	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
 	
 	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
+	
 	
 	//  WORLD PARAMETERS
 	public void AddWorldParameter(string param, Variant value)
@@ -141,6 +141,7 @@ public partial class World : GodotObject
 
 	public Dictionary<string, Variant> GetWorldParameters() => _worldParameters;
 
+	
 	//  WORLD NOISE
 	private void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
 
@@ -166,39 +167,8 @@ public partial class World : GodotObject
 	}
 	
 	
-	// TERRAIN (esto sí va en World). Se podría sustituir porun GetBiome del generador de biomas
-	public bool IsTerrainSea(int x, int y)
-	{
-		// podríamos desomponer el tier 0 para distinguir varios niveles de profundidad de mar, obtener bioma orilla (mareas), etc
-		return _worldGenerators["Elevation"].GetValueTierAt(x, y) == 0;
-	}
-
-	public bool IsTerrainBeach(int x, int y)
-	{
-		return _worldGenerators["Elevation"].GetValueTierAt(x, y) == 1;
-	}
-
-	public bool IsTerrainLowland(int x, int y)
-	{
-		return _worldGenerators["Elevation"].GetValueTierAt(x, y) == 2;
-	}
-	
-
-	public bool IsTerrainRiver(int x, int y)
-	{
-		return false;
-	}
-
 	// CHUNKS
-	public Vector2I GetChunkByWorldPosition(int x, int y)
-	{
-		return new Vector2I((int) Math.Floor((double) (x / ((Vector2I) GetWorldParameter("ChunkSize")).X)), (int) Math.Floor((double) (y / ((Vector2I) GetWorldParameter("ChunkSize")).Y)));
-	}
-
-	public float GetRandomFloatByPosition(int x, int y)		// llevar a clase Rng
-	{
-		RandomNumberGenerator rng = new RandomNumberGenerator();
-		rng.Seed = 1308;
-		return rng.Randf();
-	}
+	public Vector2I GetChunkByWorldPosition(int x, int y) => new Vector2I((int) Math.Floor((double) (x / 
+		((Vector2I) GetWorldParameter("ChunkSize")).X)), (int) Math.Floor((double) (y / 
+		((Vector2I) GetWorldParameter("ChunkSize")).Y)));
 }
