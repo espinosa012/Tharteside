@@ -76,7 +76,8 @@ public partial class WorldTileMap : TileMap
 		{
 			for (var j = 0; j < _squareSize.Y; j++)
 			{
-				Vector3I terrainTileToPlace = GetTerrainTileToPlace(worldPos);
+				//Vector3I terrainTileToPlace = GetTerrainTileToPlace(worldPos);
+				Vector3I terrainTileToPlace = new Vector3I(_world.GetWorldGenerator("Temperature").GetValueTierAt(worldPos), 0, 10);
 				var newWorldPosition = new Vector2I(worldPos.X + i, worldPos.Y + j);
 				SetCell(newWorldPosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y), 
 					terrainTileToPlace.Z);
@@ -90,11 +91,12 @@ public partial class WorldTileMap : TileMap
 		var tileSetSourceId = 10;
 
 		// terrain determination (se podría meter en el world, y aquí centrarnos sólo en qué tile mostramos)
-		if (_world.IsTerrainSea(worldPos.X, worldPos.Y))  return new Vector3I(3, 0, 1);
 		
-		if (_world.IsTerrainBeach(worldPos.X, worldPos.Y)) return new Vector3I(0, 0, 1);
+		if (_world.IsTerrainSea(worldPosition.X, worldPosition.Y))  return new Vector3I(3, 0, 1);
 		
-		if (_world.IsTerrainLowland(worldPos.X, worldPos.Y)) return new Vector3I(0, 0, 2);
+		if (_world.IsTerrainBeach(worldPosition.X, worldPosition.Y)) return new Vector3I(0, 0, 1);
+		
+		if (_world.IsTerrainLowland(worldPosition.X, worldPosition.Y)) return new Vector3I(0, 0, 2);
 		
 		// provisional, el tipo de terreno debe estar determinado para todas las posiciones
 		var valueTier = _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPosition.X, worldPosition.Y);

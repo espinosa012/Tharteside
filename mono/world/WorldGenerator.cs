@@ -16,6 +16,11 @@ public partial class WorldGenerator : GodotObject
         return 0.0f;
     }
 
+    public int GetValueTierAt(Vector2I pos)
+    {
+	    return GetValueTierAt(pos.X, pos.Y);
+    }
+    
     public int GetValueTierAt(int x, int y)
     	{
 		//  para valores en el rango 0-1
@@ -27,6 +32,8 @@ public partial class WorldGenerator : GodotObject
         for (var i = 0; i < _nTiers; i++){if (value < (i + 1.0f)/(float) _nTiers){return i;}}
 		return _nTiers - 1;
     }
+    
+    
 
 
 
@@ -56,7 +63,7 @@ public partial class WorldGenerator : GodotObject
     public int GetParameterNTiers() => _nTiers;
     public void SetParameterNTiers(int value) => _nTiers = value;
 
-    public Vector2I GetParameterChunkSize() => _chunkSize;
+    public Vector2I GetParameterChunkSize() => _chunkSize;		// guardamos esto para calcular averages y demás.
     public void SetParameterChunkSize(Vector2I value) => _chunkSize = value;
 
 }

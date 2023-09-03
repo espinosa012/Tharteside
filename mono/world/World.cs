@@ -46,6 +46,7 @@ public partial class World : GodotObject
 		// Init parameters (cargar desde json)
 		_worldParameters = new Dictionary<string, Variant>();
 		
+		AddWorldParameter("WorldSize", new Vector2I(1024, 1024));
 		AddWorldParameter("NTiers", 24);
 		AddWorldParameter("ChunkSize", new Vector2I(16, 16));
 		AddWorldParameter("MinContinentalHeight", 0.023f);
@@ -61,8 +62,18 @@ public partial class World : GodotObject
     {
         _worldGenerators = new Dictionary<string, WorldGenerator>();
 		InitElevation();
+		InitTemperature();
 	}
 
+	private void InitTemperature()
+	{
+		Temperature temperatureGenerator = new Temperature();
+		temperatureGenerator.SetParameterEquatorLine((((Vector2I)GetWorldParameter("WorldSize")).Y / 2));
+		temperatureGenerator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
+		temperatureGenerator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
+			
+		_worldGenerators.Add("Temperature", temperatureGenerator);
+	}
 	private void InitElevation()
 	{	
 		Elevation elevationGenerator = new Elevation();
@@ -81,13 +92,22 @@ public partial class World : GodotObject
 		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
 
 		_worldGenerators.Add("Elevation", elevationGenerator);
-
 	}
 
 	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
 
 	//  WORLD PARAMETERS
-	public void AddWorldParameter(string param, Variant value) => _worldParameters.Add(param, value);
+	public void AddWorldParameter(string param, Variant value)
+	{
+		if (_worldParameters.ContainsKey(param))
+		{
+			UpdateWorldParameter(param, value);
+		}
+		else
+		{
+			_worldParameters[param] = value;
+		}
+	} 
 
 	public void RemoveWorldParameter(string param)
 	{
@@ -105,7 +125,7 @@ public partial class World : GodotObject
 		}
 	}
 
-	public Variant GetWorldParameter(string param) => _worldParameters.ContainsKey(param);
+	public Variant GetWorldParameter(string param) => _worldParameters[param];
 
 	public Dictionary<string, Variant> GetWorldParameters() => _worldParameters;
 
