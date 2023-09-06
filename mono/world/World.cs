@@ -171,4 +171,11 @@ public partial class World : GodotObject
 	public Vector2I GetChunkByWorldPosition(int x, int y) => new Vector2I((int) Math.Floor((double) (x / 
 		((Vector2I) GetWorldParameter("ChunkSize")).X)), (int) Math.Floor((double) (y / 
 		((Vector2I) GetWorldParameter("ChunkSize")).Y)));
+	
+	
+	// UTILITIES
+	public void WorldToPng()
+	{
+		
+	}
 }
