@@ -68,8 +68,8 @@ public partial class World : GodotObject
 	private void InitTemperature()
 	{
 		Temperature temperatureGenerator = new Temperature();
-		temperatureGenerator.SetParameterEquatorLine((((Vector2I)GetWorldParameter("WorldSize")).Y / 2));
 		temperatureGenerator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
+		temperatureGenerator.SetParameterEquatorLine((((Vector2I)GetWorldParameter("WorldSize")).Y / 2));
 		temperatureGenerator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
 			
 		AddWorldGenerator("Temperature", temperatureGenerator);
@@ -82,7 +82,6 @@ public partial class World : GodotObject
 		elevationGenerator.SetParameterContinentalnessNoise(_worldNoises["Continentalness"]);
 		elevationGenerator.SetParameterPeaksAndValleysNoise(_worldNoises["PeaksAndValleys"]);
 		elevationGenerator.SetParameterVolcanicIslandsNoise(_worldNoises["VolcanicIslands"]);
-		
 		elevationGenerator.SetParameterChunkSize((Vector2I) _worldParameters["ChunkSize"]);
 		elevationGenerator.SetParameterNTiers((int) _worldParameters["NTiers"]);
 		elevationGenerator.SetParameterMinContinentalHeight((float) _worldParameters["MinContinentalHeight"]);

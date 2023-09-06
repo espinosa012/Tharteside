@@ -43,6 +43,16 @@ public partial class WorldGenerator : GodotObject
 		return GetValueTierAt(x, y) > GetValueTierAt(x + xOffset, y + yOffset);
 	}
 
+	public bool IsNStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, int n = 1)
+	{
+		return GetValueTierAt(x, y) - GetValueTierAt(x + xOffset, y + yOffset) == n;
+	}
+	
+	public bool IsNStepUpAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, int n = 1)
+	{
+		return GetValueTierAt(x + xOffset, y + yOffset) - GetValueTierAt(x, y) == n;
+	}
+	
 	public bool IsStepUpAtOffset(int x, int y, int xOffset = 0, int yOffset = 0)
 	{
 		return GetValueTierAt(x, y) < GetValueTierAt(x + xOffset, y + yOffset);

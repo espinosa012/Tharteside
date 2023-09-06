@@ -25,9 +25,15 @@ public partial class Biome : WorldGenerator     // ¿debe ser realmente heredero
         return _elevation.GetValueTierAt(x, y) == 1;
     }
 
-    public bool IsTerrainLowland(int x, int y)
+    public bool IsTerrainLowLand(int x, int y)
     {
-        return _elevation.GetValueTierAt(x, y) == 2;
+        int tier = _elevation.GetValueTierAt(x, y);
+        return tier is 2 or 3;
+    }
+    public bool IsTerrainMediumLand(int x, int y)
+    {
+        int tier = _elevation.GetValueTierAt(x, y);
+        return tier is 4 or 5;
     }
     
     public bool IsTerrainMineral(int x, int y)

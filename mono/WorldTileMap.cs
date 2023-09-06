@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace Tartheside.mono;
@@ -9,9 +10,9 @@ public partial class WorldTileMap : TileMap
 	private Vector2I _tileMapOffset;
 	private Vector2I _chunkSize;
 	private Vector2I _squareSize;
-	private Vector2I _chunks;	// Chunks que se inicializarán al principio
+	private Vector2I _chunks; // Chunks que se inicializarán al principio
 	private World _world;
-	
+
 	// getters & setters
 	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
@@ -30,9 +31,9 @@ public partial class WorldTileMap : TileMap
 
 	public Vector2I GetSquareSize() => _squareSize;
 	public void SetSquareSize(Vector2I newSize) => _squareSize = newSize;
-	
+
 	// tilemap
-	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize, 
+	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize,
 		Vector2I initChunks)
 	{
 		_worldSize = worldSize;
@@ -40,7 +41,7 @@ public partial class WorldTileMap : TileMap
 		_chunkSize = chunkSize;
 		_squareSize = squareSize;
 		_chunks = initChunks;
-		
+
 		InitializeChunks();
 	}
 
@@ -50,26 +51,32 @@ public partial class WorldTileMap : TileMap
 		{
 			for (var j = 0; j < _chunks.Y; j++)
 			{
-				RenderChunk(new Vector2I(i, j));		
+				RenderChunk(new Vector2I(i, j));
 			}
 		}
 	}
-	
+
 	private void RenderChunk(Vector2I chunkPosition)
 	{
-		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X; x < _chunkSize.X * _squareSize.X + 
-		     chunkPosition.X * _chunkSize.X * _squareSize.X; x+=_squareSize.X)
+		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X;
+		     x < _chunkSize.X * _squareSize.X +
+		     chunkPosition.X * _chunkSize.X * _squareSize.X;
+		     x += _squareSize.X)
 		{
-			for (var y = chunkPosition.Y * _chunkSize.Y * _squareSize.Y; y < _chunkSize.Y * _squareSize.Y + 
-			     chunkPosition.Y * _chunkSize.Y * _squareSize.Y; y+=_squareSize.Y)
+			for (var y = chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
+			     y < _chunkSize.Y * _squareSize.Y +
+			     chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
+			     y += _squareSize.Y)
 			{
-				var squarePos = new Vector2I(x, y);	// posición en el mundo de la celda superior izquierda del cuadro
-				FulfillSquare(squarePos);	// escalado del mapa
+				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
+				
+				// escalado del mapa
+				FulfillSquareTerrain(squarePos); 
 			}
 		}
 	}
-	
-	private void FulfillSquare(Vector2I worldPos)
+
+	private void FulfillSquareTerrain(Vector2I worldPos, int tileMapLayer = 0)
 	{
 		// world pos: la posición del mundo recibida coincide con la de comienzo del square
 		for (var i = 0; i < _squareSize.X; i++)
@@ -77,28 +84,67 @@ public partial class WorldTileMap : TileMap
 			for (var j = 0; j < _squareSize.Y; j++)
 			{
 				Vector3I terrainTileToPlace = GetTerrainTileToPlace(worldPos);
-				//Vector3I terrainTileToPlace = new Vector3I(_world.GetWorldGenerator("Temperature").GetValueTierAt(worldPos), 0, 10);
-				var newWorldPosition = new Vector2I(worldPos.X + i, worldPos.Y + j);
-				SetCell(newWorldPosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y), 
-					terrainTileToPlace.Z);
+				var tilePosition = GetTilePositionByWorldPositon(worldPos, i, j);
+				SetCell(tilePosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y),
+					terrainTileToPlace.Z, tileMapLayer);
 			}
 		}
 	}
 
+	private void FulfillSquareElevationStep(Vector2I worldPos, int tileMapLayer = 1)
+	{
+		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
+		Elevation elevation = (Elevation) _world.GetWorldParameter("Elevation");
+		Vector2I[] neighbours = {Vector2I.Up, Vector2I.Down, Vector2I.Left, Vector2I.Right};
+		
+		foreach (var pos in neighbours)
+		{
+			if (elevation.IsNStepUpAtOffset(worldPos.X, worldPos.Y, pos.X, pos.Y, 1))
+			{
+				
+			}	
+		}
+	}
+	
+	private Vector2I GetTilePositionByWorldPositon(Vector2I worldPos, int squarePosX, int squarePosY)
+	{
+		return new Vector2I(worldPos.X + squarePosX, worldPos.Y + squarePosY);
+	}
+
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
-		Vector2I worldPosition = GetWorldPosBySquare(worldPos); 	
-
-		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainSea(worldPosition.X, worldPosition.Y))  
+		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
+		
+		// devolvemos Vector3I(atlasCoord.X, atlasCoord.Y, tileSetSourceId)
+		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainSea(worldPosition.X, worldPosition.Y))
 			return new Vector3I(3, 0, 1);
-		
-		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainBeach(worldPosition.X, worldPosition.Y)) 
+
+		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainBeach(worldPosition.X, worldPosition.Y))
 			return new Vector3I(0, 0, 1);
-		
-		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainLowland(worldPosition.X, worldPosition.Y)) 
+
+		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainLowLand(worldPosition.X, worldPosition.Y))
 			return new Vector3I(0, 0, 2);
-		
+
+		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainMediumLand(worldPosition.X, worldPosition.Y))
+			return new Vector3I(0, 0, 4);
+
 		return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("Elevation"));
+	}
+
+	private Vector3I GetElevationStepTileToPlace(Vector2I offset)
+	{
+		// devolvemos Vector3I(atlasCoord.X, atlasCoord.Y, tileSetSourceId)
+		// recorremos sólo las celdas del square que se corresponaan en función de la dirección del escalón (offset)
+		int tileSetSourceId = 5;
+
+		if (offset == Vector2I.Up)	return new Vector3I(1, 5, 5);
+		if (offset == Vector2I.Down)	return new Vector3I(1, 3, 5);
+		if (offset == Vector2I.Left)	return new Vector3I(2, 4, 5);
+		if (offset == Vector2I.Right)	return new Vector3I(0, 4, 5);
+		
+		// no debe devolver esto nunca, se llama sólo cuando sabemos que es step
+		return Vector3I.Zero;
+
 	}
 
 	public Vector3I GetValueTileByPalette(Vector2I worldPos, WorldGenerator generator) 

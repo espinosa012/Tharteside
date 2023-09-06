@@ -91,8 +91,6 @@ public partial class Elevation : WorldGenerator
     public MFNL GetParameterVolcanicIslandsNoise() => _volcanicIslandsNoise;
     public void SetParameterVolcanicIslandsNoise(MFNL value) => _volcanicIslandsNoise = value;
 
-
-
     public float GetParameterMinContinentalHeight() => _minContinentalHeight;
     public void SetParameterMinContinentalHeight(float value) => _minContinentalHeight = value;
 
