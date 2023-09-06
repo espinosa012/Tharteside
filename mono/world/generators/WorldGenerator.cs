@@ -3,6 +3,7 @@ using System;
 
 public partial class WorldGenerator : GodotObject
 {
+    private Vector2I _worldSize;    
     private Vector2I _chunkSize;    
     private int _nTiers;    
 
@@ -70,6 +71,9 @@ public partial class WorldGenerator : GodotObject
 
 
     // getters & setters
+    public Vector2I GetParameterWorldSize() => _worldSize;
+    public void SetParameterWorldSize(Vector2I value) => _worldSize = value;
+    
     public int GetParameterNTiers() => _nTiers;
     public void SetParameterNTiers(int value) => _nTiers = value;
 

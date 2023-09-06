@@ -68,6 +68,7 @@ public partial class World : GodotObject
 	private void InitTemperature()
 	{
 		Temperature temperatureGenerator = new Temperature();
+		temperatureGenerator.SetParameterWorldSize((Vector2I) GetWorldParameter("WorldSize"));
 		temperatureGenerator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
 		temperatureGenerator.SetParameterEquatorLine((((Vector2I)GetWorldParameter("WorldSize")).Y / 2));
 		temperatureGenerator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
