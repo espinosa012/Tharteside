@@ -97,13 +97,13 @@ public class World
 	
 	private void InitBiome()
 	{
-		Biome biomeGenerator = new Biome();
-		biomeGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
-		biomeGenerator.SetParameterTemperature((Temperature) GetWorldGenerator("Temperature"));
-		biomeGenerator.SetParameterPeaksAndValleys(GetWorldNoise("PeaksAndValleys"));
-		biomeGenerator.SetParameterMinimumPeaksAndValleysMineralSpawnValue(0.25f);
+		Terrain terrainGenerator = new Terrain();
+		terrainGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
+		terrainGenerator.SetParameterTemperature((Temperature) GetWorldGenerator("Temperature"));
+		terrainGenerator.SetParameterPeaksAndValleys(GetWorldNoise("PeaksAndValleys"));
+		terrainGenerator.SetParameterMinimumPeaksAndValleysMineralSpawnValue(0.25f);
 		
-		AddWorldGenerator("Biome", biomeGenerator);
+		AddWorldGenerator("Biome", terrainGenerator);
 	}
 
 	

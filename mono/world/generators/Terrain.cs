@@ -1,5 +1,5 @@
 
-public partial class Biome : WorldGenerator 
+public partial class Terrain : WorldGenerator 
 {
     private Elevation _elevation;
     private Temperature _temperature;
@@ -11,6 +11,12 @@ public partial class Biome : WorldGenerator
     {
         return 0;
     }
+
+    public void SetValueAt(int x, int y, int terrainId)
+    {
+        // para cambiar el terreno de una posición (tras procesado de imagen, acción en el juego, etc.)
+    }
+    
     
     public bool IsTerrainSea(int x, int y)
     {
