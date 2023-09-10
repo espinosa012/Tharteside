@@ -3,7 +3,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-public partial class PaletteCreator : GodotObject
+public class PaletteCreator
 {
     int TileSize = 16;
     public void CreateGradientPalette(int nColors = 48, string filename="palette.png", string initialColor = "#FFFFFF", string finalColor = "#000000", string middleColor = "#749140")

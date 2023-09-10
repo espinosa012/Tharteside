@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class WorldGenerator : GodotObject
 {
@@ -80,4 +79,11 @@ public partial class WorldGenerator : GodotObject
     public Vector2I GetParameterChunkSize() => _chunkSize;		// guardamos esto para calcular averages y demás.
     public void SetParameterChunkSize(Vector2I value) => _chunkSize = value;
 
+    
+    
+    // utilities
+    public void GeneratorToPng()
+    {
+	    
+    }
 }

@@ -1,7 +1,5 @@
-using Godot;
-using System;
 
-public partial class Biome : WorldGenerator     // ¿debe ser realmente heredero de WorldGenerator?
+public partial class Biome : WorldGenerator 
 {
     private Elevation _elevation;
     private Temperature _temperature;
@@ -30,6 +28,7 @@ public partial class Biome : WorldGenerator     // ¿debe ser realmente heredero
         int tier = _elevation.GetValueTierAt(x, y);
         return tier is 2 or 3;
     }
+
     public bool IsTerrainMediumLand(int x, int y)
     {
         int tier = _elevation.GetValueTierAt(x, y);

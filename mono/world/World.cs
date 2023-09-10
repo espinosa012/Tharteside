@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-
+using MathNet;
 namespace Tartheside.mono;
 
-public partial class World : GodotObject
+public class World
 {
 	// WORLD PARAMETERS AND NOISES
 	private Dictionary<string, Variant> _worldParameters;
@@ -176,6 +176,9 @@ public partial class World : GodotObject
 	// UTILITIES
 	public void WorldToPng()
 	{
-		
+		/*
+		 *	para calcular distancia al mar, detectar islas, 
+		 * 
+		 */
 	}
 }

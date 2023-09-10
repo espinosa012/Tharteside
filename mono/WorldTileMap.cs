@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Godot;
 
 namespace Tartheside.mono;
@@ -114,20 +113,6 @@ public partial class WorldTileMap : TileMap
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
-		
-		// devolvemos Vector3I(atlasCoord.X, atlasCoord.Y, tileSetSourceId)
-		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainSea(worldPosition.X, worldPosition.Y))
-			return new Vector3I(3, 0, 1);
-
-		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainBeach(worldPosition.X, worldPosition.Y))
-			return new Vector3I(0, 0, 1);
-
-		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainLowLand(worldPosition.X, worldPosition.Y))
-			return new Vector3I(0, 0, 2);
-
-		if (((Biome)_world.GetWorldGenerator("Biome")).IsTerrainMediumLand(worldPosition.X, worldPosition.Y))
-			return new Vector3I(0, 0, 4);
-
 		return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("Elevation"));
 	}
 
@@ -149,7 +134,7 @@ public partial class WorldTileMap : TileMap
 
 	public Vector3I GetValueTileByPalette(Vector2I worldPos, WorldGenerator generator) 
 	{
-		int tileSetSourceId = 10;
+		int tileSetSourceId = 13;
 		return new Vector3I(generator.GetValueTierAt(worldPos.X, worldPos.Y), 
 			0, tileSetSourceId);
 	}
