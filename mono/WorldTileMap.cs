@@ -69,7 +69,7 @@ public partial class WorldTileMap : TileMap
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
 				// escalado del mapa
-				FulfillSquareTerrain(squarePos); 
+				FulfillSquareTerrain(squarePos); // debajo irían el resto de capas (minas, etc.) 
 			}
 		}
 	}
@@ -90,7 +90,7 @@ public partial class WorldTileMap : TileMap
 	}
 
 	private void FulfillSquareElevationStep(Vector2I worldPos, int tileMapLayer = 1)
-	{
+	{//TODO
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
 		Elevation elevation = (Elevation) _world.GetWorldParameter("Elevation");
 		Vector2I[] neighbours = {Vector2I.Up, Vector2I.Down, Vector2I.Left, Vector2I.Right};
@@ -112,8 +112,8 @@ public partial class WorldTileMap : TileMap
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
-		//return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("Elevation"));
-		return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("HeightMap"));
+		return GetValueTileByPalette(worldPosition, new Callable(_world.GetWorldGenerator("HeightMap"), 
+			"GetValueTierAt"), 10);
 	}
 
 	private Vector3I GetElevationStepTileToPlace(Vector2I offset)
@@ -122,42 +122,30 @@ public partial class WorldTileMap : TileMap
 		// recorremos sólo las celdas del square que se corresponaan en función de la dirección del escalón (offset)
 		int tileSetSourceId = 5;
 
-		if (offset == Vector2I.Up)	return new Vector3I(1, 5, 5);
-		if (offset == Vector2I.Down)	return new Vector3I(1, 3, 5);
-		if (offset == Vector2I.Left)	return new Vector3I(2, 4, 5);
-		if (offset == Vector2I.Right)	return new Vector3I(0, 4, 5);
+		if (offset == Vector2I.Up)	return new Vector3I(1, 5, tileSetSourceId);
+		if (offset == Vector2I.Down)	return new Vector3I(1, 3, tileSetSourceId);
+		if (offset == Vector2I.Left)	return new Vector3I(2, 4, tileSetSourceId);
+		if (offset == Vector2I.Right)	return new Vector3I(0, 4, tileSetSourceId);
 		
 		// no debe devolver esto nunca, se llama sólo cuando sabemos que es step
 		return Vector3I.Zero;
 
 	}
 
-	public Vector3I GetValueTileByPalette(Vector2I worldPos, WorldGenerator generator) 
+	public Vector3I GetValueTileByPalette(Vector2I worldPos, Callable valueCallable, int tileSetSourceId)
 	{
-		int tileSetSourceId = 13;
-		return new Vector3I(generator.GetValueTierAt(worldPos.X, worldPos.Y), 
+		return new Vector3I( (int) valueCallable.Call(worldPos.X, worldPos.Y), 
 			0, tileSetSourceId);
 	}
 
-	public Vector3I GetValueTileByPalette(Vector2I worldPos, MFNL noise)	// untested
-	{
-		int tileSetSourceId = 10;
-		int nTiers = (int) _world.GetWorldParameter("NTiers");
-		int tier = -1;
-		for (var i = 0; i < nTiers; i++){if (noise.GetNormalizedNoise2D(worldPos.X, worldPos.Y) 
-		                                     < (i + 1.0f)/nTiers){tier = i;}}
-		if (tier == -1) tier = nTiers - 1;
-		
-		return new Vector3I(tier, 0, tileSetSourceId);
-	}
 	
 	private Vector2I GetWorldPosBySquare(Vector2I squarePos)
 	{
 		return new Vector2I((squarePos.X/_squareSize.X)+_tileMapOffset.X, (squarePos.Y/_squareSize.Y)+_tileMapOffset.Y);
 	}
 	
-	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId = 9, 
-		int tileMapLayer = 0)
+	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId, 
+		int tileMapLayer)
 	{
 		base.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, 
 			tileSetAtlasCoordinates);
