@@ -59,10 +59,10 @@ public class World
 	private void InitWorldGenerators()
     {
         _worldGenerators = new Dictionary<string, WorldGenerator>();
-		InitElevation();
+		/*InitElevation();
 		InitTemperature();
 		InitTerrain();
-		InitHeightMap();	// untested
+		InitHeightMap();*/
     }
 
 	//  WORLD GENERATORS
@@ -85,7 +85,7 @@ public class World
 	}
 	
 	
-	private void InitTemperature()
+	public void InitTemperature()
 	{
 		Temperature temperatureGenerator = new Temperature();
 		SetGlobalGeneratorParameters(temperatureGenerator);
@@ -94,7 +94,7 @@ public class World
 		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
 	
-	private void InitElevation()
+	public void InitElevation()
 	{	
 		Elevation elevationGenerator = new Elevation();
 		SetGlobalGeneratorParameters(elevationGenerator);
@@ -112,7 +112,7 @@ public class World
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 	
-	private void InitTerrain()	//deprecated
+	public void InitTerrain()	//deprecated
 	{
 		Terrain terrainGenerator = new Terrain();
 		terrainGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
@@ -123,13 +123,10 @@ public class World
 		AddWorldGenerator("Terrain", terrainGenerator);
 	}
 
-	private void InitHeightMap()
+	public void InitHeightMap()
 	{
 		HeightMap heightMapGenerator = new HeightMap();
 		SetGlobalGeneratorParameters(heightMapGenerator);
-
-			 
-		
 		AddWorldGenerator("HeightMap", heightMapGenerator);
 	}
 	

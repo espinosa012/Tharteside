@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://tswy1h6sun4r"]
+[gd_scene load_steps=30 format=3 uid="uid://tswy1h6sun4r"]
 
 [ext_resource type="Script" path="res://mono/WorldManager.cs" id="1_bymoe"]
 [ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_n7f2w"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://resources/MiniWorldSprites/green16.png" id="11_rmevl"]
 [ext_resource type="Script" path="res://mono/WorldTileMap.cs" id="13_ko68t"]
 [ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="13_pnybr"]
+[ext_resource type="Script" path="res://mono/TileMapEventManager.cs" id="16_fsqo3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gudb5"]
 texture = ExtResource("1_n7f2w")
@@ -296,15 +297,17 @@ sources/10 = SubResource("TileSetAtlasSource_fkms1")
 sources/13 = SubResource("TileSetAtlasSource_svcgn")
 
 [node name="TWorldManager" type="Node2D"]
+scale = Vector2(1.00003, 0.996241)
 script = ExtResource("1_bymoe")
-HeightMap = "marenostrum"
+HeightMap = "hispania"
 WorldSize = Vector2i(1024, 1024)
-TileMapOffset = Vector2i(200, 2000)
+TileMapOffset = Vector2i(0, 1300)
 ChunkSize = Vector2i(64, 64)
 SquareSize = Vector2i(1, 1)
-Chunks = Vector2i(10, 10)
+Chunks = Vector2i(1, 1)
 
 [node name="TileMap" type="TileMap" parent="."]
+unique_name_in_owner = true
 tile_set = SubResource("TileSet_fqw7f")
 format = 2
 layer_1/name = ""
@@ -320,3 +323,9 @@ script = ExtResource("13_ko68t")
 unique_name_in_owner = true
 position = Vector2(1370, 1473)
 script = ExtResource("13_pnybr")
+speed = 50.0
+initial_position = Vector2i(100, 100)
+
+[node name="TileMapEventManager" type="Node" parent="TileMap"]
+unique_name_in_owner = true
+script = ExtResource("16_fsqo3")

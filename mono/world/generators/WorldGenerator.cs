@@ -87,6 +87,11 @@ public partial class WorldGenerator : GodotObject
 	    
     }
 
+    public void ChunkToPng(Vector2I chunkPos)
+    {
+	    
+    }
+
     public float GetChunkAverageValue(Vector2I chunkPos)
     {
 	    // based on chunk size

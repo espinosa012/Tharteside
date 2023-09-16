@@ -5,6 +5,7 @@ namespace Tartheside.mono;
 
 public partial class WorldTileMap : TileMap
 {
+	private TileMapEventManager _eventManager;
 	private Vector2I _worldSize;
 	private Vector2I _tileMapOffset;
 	private Vector2I _chunkSize;
@@ -112,7 +113,7 @@ public partial class WorldTileMap : TileMap
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
-		return GetValueTileByPalette(worldPosition, new Callable(_world.GetWorldGenerator("HeightMap"), 
+		return GetValueTileByPalette(worldPosition, new Callable(_world.GetWorldGenerator("Elevation"), 
 			"GetValueTierAt"), 10);
 	}
 
@@ -172,4 +173,12 @@ public partial class WorldTileMap : TileMap
 		InitializeChunks();
 	}
 	
+	// Eventos. Llevar a clase externa 
+	public override void _Input(InputEvent @event)
+	{
+		if (@event.IsPressed() && @event.AsText().Equals("Left Mouse Button"))	// optimizar
+		{
+			GetNode<TileMapEventManager>("%TileMapEventManager").HandleRightClick();
+		}
+	}
 }

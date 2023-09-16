@@ -22,9 +22,7 @@ public partial class HeightMap : WorldGenerator
     
     public void LoadHeighMap(string filename)
     {
-        // resources/heightmap
         SetParameterImageFilename(filename);
-        
         _heightMap = Image.Load<Rgba32>(GetParameterImagePath());    // cuidado con el formato
     }
 
