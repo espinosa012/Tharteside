@@ -123,9 +123,10 @@ public class World
 		AddWorldGenerator("Terrain", terrainGenerator);
 	}
 
-	public void InitHeightMap()
+	public void InitHeightMap(string filename)
 	{
 		HeightMap heightMapGenerator = new HeightMap();
+		heightMapGenerator.LoadHeighMap(filename);
 		SetGlobalGeneratorParameters(heightMapGenerator);
 		AddWorldGenerator("HeightMap", heightMapGenerator);
 	}

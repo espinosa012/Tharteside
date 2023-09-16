@@ -9,7 +9,7 @@ public partial class HeightMap : WorldGenerator
 
     private string _imageFilename;
     private Image<Rgba32> _heightMap;
-
+    
     public override float GetValueAt(int x, int y)
     {
         if (x >= _heightMap.Width || y >= _heightMap.Height || x < 0 || y < 0)

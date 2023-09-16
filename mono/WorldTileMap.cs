@@ -70,26 +70,35 @@ public partial class WorldTileMap : TileMap
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
 				// escalado del mapa
-				FulfillSquareTerrain(squarePos); // debajo irían el resto de capas (minas, etc.) 
+				FulfillSquareElevation(squarePos); // debajo irían el resto de capas (minas, etc.) 
 			}
 		}
 	}
 
-	private void FulfillSquareTerrain(Vector2I worldPos, int tileMapLayer = 0)
+	private void FulfillSquare(Vector2I worldPos, Callable valueSource, int tileSetSourceId, int tileMapLayer)
 	{
 		// world pos: la posición del mundo recibida coincide con la de comienzo del square
 		for (var i = 0; i < _squareSize.X; i++)
 		{
 			for (var j = 0; j < _squareSize.Y; j++)
 			{
-				Vector3I terrainTileToPlace = GetTerrainTileToPlace(worldPos);
-				var tilePosition = GetTilePositionByWorldPositon(worldPos, i, j);
-				SetCell(tilePosition, new Vector2I(terrainTileToPlace.X, terrainTileToPlace.Y),
-					terrainTileToPlace.Z, tileMapLayer);
+				Vector3I tileToPlace = GetTileToPlace(worldPos, tileSetSourceId, valueSource);
+				var tilePosition = GetTilePositionByWorldPosition(worldPos, i, j);
+				SetCell(tilePosition, new Vector2I(tileToPlace.X, tileToPlace.Y),
+					tileToPlace.Z, tileMapLayer);
 			}
 		}
 	}
+	
 
+	
+	private void FulfillSquareElevation(Vector2I worldPos, int tileMapLayer = 0)
+	{
+		// generalizar
+		// world pos: la posición del mundo recibida coincide con la de comienzo del square
+		FulfillSquare(worldPos, new Callable(_world.GetWorldGenerator("Elevation"), "GetValueTierAt"), 10, tileMapLayer);
+	}
+	
 	private void FulfillSquareElevationStep(Vector2I worldPos, int tileMapLayer = 1)
 	{//TODO
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
@@ -105,16 +114,16 @@ public partial class WorldTileMap : TileMap
 		}
 	}
 	
-	private Vector2I GetTilePositionByWorldPositon(Vector2I worldPos, int squarePosX, int squarePosY)
+	
+	private Vector2I GetTilePositionByWorldPosition(Vector2I worldPos, int squarePosX, int squarePosY)
 	{
 		return new Vector2I(worldPos.X + squarePosX, worldPos.Y + squarePosY);
 	}
 
-	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
+	private Vector3I GetTileToPlace(Vector2I worldPos,  int tileSetSourceId, Callable valueSourceCallable)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
-		var valueSource = _world.GetWorldNoise("Continentalness");	// caepta cualquier calse que implemente un GetValueTier para dos enteros
-		return GetValueTileByPalette(worldPosition, new Callable(valueSource, "GetValueTierAt"), 10);
+		return GetValueTileByPalette(worldPosition, valueSourceCallable, tileSetSourceId);
 	}
 
 	private Vector3I GetElevationStepTileToPlace(Vector2I offset)
@@ -142,6 +151,7 @@ public partial class WorldTileMap : TileMap
 	
 	private Vector2I GetWorldPosBySquare(Vector2I squarePos)
 	{
+		// consideramos offset
 		return new Vector2I((squarePos.X/_squareSize.X)+_tileMapOffset.X, (squarePos.Y/_squareSize.Y)+_tileMapOffset.Y);
 	}
 	

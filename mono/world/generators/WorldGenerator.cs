@@ -10,7 +10,11 @@ public partial class WorldGenerator : GodotObject
 	public virtual float GetChunkAverage(int x, int y){
 		return 0.0f;
 	}
-
+	
+	public virtual float GetRegionAverage(Vector2I center, Vector2I size){
+		return 0.0f;
+	}
+	
     public virtual float GetValueAt(int x, int y)
     {
         return 0.0f;
