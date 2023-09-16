@@ -8,13 +8,14 @@ public partial class MFNL : FastNoiseLite
 {
     string Name;
     RandomNumberGenerator Rng;
-
+    private int _nTiers;
 
     // CONSTRUCTOR
-    public MFNL(string name="Noise")
+    public MFNL(string name="Noise", int nTiers = 24)
     {
         Name = name;
         Rng = new RandomNumberGenerator();  // inicializamos el rng
+        _nTiers = nTiers;
     }
 
     public void Rename(string newName)
@@ -30,6 +31,17 @@ public partial class MFNL : FastNoiseLite
         return (GetNoise2D(x, y) + 1f) * 0.5f;  // pasamos del rango [-1, 1] a [0, 1]
     }
 
+    public int GetValueTier(float value)
+    {
+        for (var i = 0; i < _nTiers; i++){if (value < (i + 1.0f)/ _nTiers){return i;}}
+        return _nTiers - 1;
+    }
+
+    public int GetValueTierAt(int x, int y)
+    {
+        return GetValueTier(GetNormalizedNoise2D(x, y));
+    }
+    
     public void CreateNoiseChunk(Vector2I position, Vector2I chunkSize)
     {//TODO
         int startX = position.X * chunkSize.X;

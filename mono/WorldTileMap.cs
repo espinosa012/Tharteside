@@ -113,8 +113,8 @@ public partial class WorldTileMap : TileMap
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
-		return GetValueTileByPalette(worldPosition, new Callable(_world.GetWorldGenerator("Elevation"), 
-			"GetValueTierAt"), 10);
+		var valueSource = _world.GetWorldNoise("Continentalness");	// caepta cualquier calse que implemente un GetValueTier para dos enteros
+		return GetValueTileByPalette(worldPosition, new Callable(valueSource, "GetValueTierAt"), 10);
 	}
 
 	private Vector3I GetElevationStepTileToPlace(Vector2I offset)

@@ -14,8 +14,8 @@ public class World
 	// CONSTRUCTOR
 	public World()
 	{
-		InitNoises();
 		InitParameters();
+		InitNoises();
 		InitWorldGenerators();
 	}
 
@@ -24,19 +24,19 @@ public class World
 		_worldNoises = new Dictionary<string, MFNL>();
 		
 		// Formamos los objetos de ruido desde los .json correspondientes
-		var baseElevation = new MFNL("BaseElevation");
+		var baseElevation = new MFNL("BaseElevation", (int) GetWorldParameter("NTiers"));
 		baseElevation.LoadFromJSON("BaseElevation");
 		AddWorldNoise("BaseElevation", baseElevation);
 
-		var continentalness = new MFNL("Continentalness");
+		var continentalness = new MFNL("Continentalness", (int) GetWorldParameter("NTiers"));
 		continentalness.LoadFromJSON("Continentalness");
 		AddWorldNoise("Continentalness", continentalness);
 
-		var peaksAndValleys = new MFNL("PeaksAndValleys");
+		var peaksAndValleys = new MFNL("PeaksAndValleys", (int) GetWorldParameter("NTiers"));
 		peaksAndValleys.LoadFromJSON("PeaksAndValleys");
 		AddWorldNoise("PeaksAndValleys", peaksAndValleys);
 
-		var volcanicIslands = new MFNL("VolcanicIslands");
+		var volcanicIslands = new MFNL("VolcanicIslands", (int) GetWorldParameter("NTiers"));
 		volcanicIslands.LoadFromJSON("VolcanicIslands");
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
 	}
@@ -130,9 +130,15 @@ public class World
 		AddWorldGenerator("HeightMap", heightMapGenerator);
 	}
 	
+	
 	public void AddWorldGenerator(string generatorName, WorldGenerator generator) => _worldGenerators[generatorName] = generator;
 	
 	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
+	
+	public void RemoveWorldGenerator(string gen)
+	{
+		if (_worldGenerators.ContainsKey(gen)) _worldParameters.Remove(gen);
+	}
 	
 	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
 	
@@ -177,7 +183,7 @@ public class World
         if (_worldNoises.ContainsKey(name.StripEdges()))	_worldNoises.Remove(name);
     }
 
-	private MFNL GetWorldNoise(string name)
+	public MFNL GetWorldNoise(string name)
 	{
 		if (_worldNoises.TryGetValue(name, out var noise)) {return noise;}
 		return null;
@@ -185,6 +191,7 @@ public class World
 
 	public Dictionary<string, MFNL> GetWorldNoises() => _worldNoises;
 
+	
 	private void RandomizeWorld()
 	{
 		foreach (MFNL noise in _worldNoises.Values)
