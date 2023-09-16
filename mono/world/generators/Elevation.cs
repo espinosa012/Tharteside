@@ -67,7 +67,7 @@ public partial class Elevation : WorldGenerator
     public bool IsOutToSea(int x, int y)
 	{
 		// devuelve si está lo suficientemente mar adentro según el factor OutToSeaFactor
-		return _baseElevationNoise.GetNormalizedNoise2D(x, y) - _minContinentalHeight < (float) _seaScaleValue * _continentalnessNoise.GetNormalizedNoise2D(x, y) * _outToSeaFactor;
+		return _baseElevationNoise.GetNormalizedNoise2D(x, y) - _minContinentalHeight < _seaScaleValue * _continentalnessNoise.GetNormalizedNoise2D(x, y) * _outToSeaFactor;
 	}
 
 

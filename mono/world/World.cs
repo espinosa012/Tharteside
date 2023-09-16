@@ -61,17 +61,35 @@ public class World
         _worldGenerators = new Dictionary<string, WorldGenerator>();
 		InitElevation();
 		InitTemperature();
-		InitBiome();
-	}
+		InitTerrain();
+		InitHeightMap();	// untested
+    }
 
 	//  WORLD GENERATORS
+	public void SetGlobalGeneratorParameters(WorldGenerator generator)
+	{
+		// parámetros presentes en todos los generadores (atributos de la clase madre WorldGenerator)
+		// puede ser un problema si se se actualizan los valores en el world después de inicializarse
+		// por eso, creamos UpdateGlobalGeneratorParameters
+		generator.SetParameterWorldSize((Vector2I) GetWorldParameter("WorldSize"));
+		generator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
+		generator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
+	}
+
+	private void UpdateGlobalGeneratorsParameters()
+	{
+		foreach (var generator in GetWorldGenerators().Values)
+		{
+			SetGlobalGeneratorParameters(generator);
+		}
+	}
+	
+	
 	private void InitTemperature()
 	{
 		Temperature temperatureGenerator = new Temperature();
-		temperatureGenerator.SetParameterWorldSize((Vector2I) GetWorldParameter("WorldSize"));
-		temperatureGenerator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
+		SetGlobalGeneratorParameters(temperatureGenerator);
 		temperatureGenerator.SetParameterEquatorLine((((Vector2I)GetWorldParameter("WorldSize")).Y / 2));
-		temperatureGenerator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
 			
 		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
@@ -79,12 +97,11 @@ public class World
 	private void InitElevation()
 	{	
 		Elevation elevationGenerator = new Elevation();
+		SetGlobalGeneratorParameters(elevationGenerator);
 		elevationGenerator.SetParameterBaseElevationNoise(_worldNoises["BaseElevation"]);
 		elevationGenerator.SetParameterContinentalnessNoise(_worldNoises["Continentalness"]);
 		elevationGenerator.SetParameterPeaksAndValleysNoise(_worldNoises["PeaksAndValleys"]);
 		elevationGenerator.SetParameterVolcanicIslandsNoise(_worldNoises["VolcanicIslands"]);
-		elevationGenerator.SetParameterChunkSize((Vector2I) _worldParameters["ChunkSize"]);
-		elevationGenerator.SetParameterNTiers((int) _worldParameters["NTiers"]);
 		elevationGenerator.SetParameterMinContinentalHeight((float) _worldParameters["MinContinentalHeight"]);
 		elevationGenerator.SetParameterContinentalScaleValue((float) _worldParameters["ContinentalScaleValue"]);
 		elevationGenerator.SetParameterSeaScaleValue((float) _worldParameters["SeaScaleValue"]);
@@ -95,7 +112,7 @@ public class World
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 	
-	private void InitBiome()
+	private void InitTerrain()	//deprecated
 	{
 		Terrain terrainGenerator = new Terrain();
 		terrainGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
@@ -103,9 +120,18 @@ public class World
 		terrainGenerator.SetParameterPeaksAndValleys(GetWorldNoise("PeaksAndValleys"));
 		terrainGenerator.SetParameterMinimumPeaksAndValleysMineralSpawnValue(0.25f);
 		
-		AddWorldGenerator("Biome", terrainGenerator);
+		AddWorldGenerator("Terrain", terrainGenerator);
 	}
 
+	private void InitHeightMap()
+	{
+		HeightMap heightMapGenerator = new HeightMap();
+		SetGlobalGeneratorParameters(heightMapGenerator);
+
+			 
+		
+		AddWorldGenerator("HeightMap", heightMapGenerator);
+	}
 	
 	public void AddWorldGenerator(string generatorName, WorldGenerator generator) => _worldGenerators[generatorName] = generator;
 	
@@ -134,7 +160,11 @@ public class World
 
 	public void UpdateWorldParameter(string param, Variant value) 
 	{
-		if (_worldParameters.ContainsKey(param)) _worldParameters[param] = value;
+		if (_worldParameters.ContainsKey(param))
+		{
+			_worldParameters[param] = value;
+			UpdateGlobalGeneratorsParameters();
+		}
 	}
 
 	public Variant GetWorldParameter(string param) => _worldParameters[param];
@@ -152,7 +182,7 @@ public class World
 
 	private MFNL GetWorldNoise(string name)
 	{
-		if (_worldNoises.ContainsKey(name)) {return _worldNoises[name];}
+		if (_worldNoises.TryGetValue(name, out var noise)) {return noise;}
 		return null;
 	}
 

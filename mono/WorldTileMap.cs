@@ -55,7 +55,7 @@ public partial class WorldTileMap : TileMap
 		}
 	}
 
-	private void RenderChunk(Vector2I chunkPosition)
+	public void RenderChunk(Vector2I chunkPosition)
 	{
 		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X;
 		     x < _chunkSize.X * _squareSize.X +
@@ -68,7 +68,6 @@ public partial class WorldTileMap : TileMap
 			     y += _squareSize.Y)
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
-				
 				// escalado del mapa
 				FulfillSquareTerrain(squarePos); 
 			}
@@ -113,7 +112,8 @@ public partial class WorldTileMap : TileMap
 	private Vector3I GetTerrainTileToPlace(Vector2I worldPos)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
-		return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("Elevation"));
+		//return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("Elevation"));
+		return GetValueTileByPalette(worldPosition, _world.GetWorldGenerator("HeightMap"));
 	}
 
 	private Vector3I GetElevationStepTileToPlace(Vector2I offset)
