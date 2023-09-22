@@ -6,6 +6,9 @@ public partial class Latitude : WorldGenerator
 {
     private int _equatorLine;
     
+    // regiones de latitud
+    
+    
     public override float GetValueAt(int x, int y)
     {
         return GetNormalizedDistanceToEquator(y);

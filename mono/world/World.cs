@@ -49,6 +49,7 @@ public class World
 		AddWorldParameter("WorldSize", new Vector2I(1024, 1024));
 		AddWorldParameter("NTiers", 24);
 		AddWorldParameter("ChunkSize", new Vector2I(16, 16));
+		AddWorldParameter("EquatorLine", 512);
 		AddWorldParameter("MinContinentalHeight", 0.023f);
 		AddWorldParameter("ContinentalScaleValue", 1.22f);
 		AddWorldParameter("SeaScaleValue", 1f/0.85f);
@@ -62,6 +63,7 @@ public class World
         _worldGenerators = new Dictionary<string, WorldGenerator>();
 		/*InitElevation();
 		InitTemperature();
+		InitLatitude();
 		InitTerrain();
 		InitHeightMap();*/
     }
@@ -90,9 +92,17 @@ public class World
 	{
 		Temperature temperatureGenerator = new Temperature();
 		SetGlobalGeneratorParameters(temperatureGenerator);
-		temperatureGenerator.SetParameterEquatorLine((((Vector2I)GetWorldParameter("WorldSize")).Y / 2));
+		temperatureGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
 			
 		AddWorldGenerator("Temperature", temperatureGenerator);
+	}
+	
+	public void InitLatitude()
+	{
+		Latitude latitudeGenerator = new Latitude();
+		SetGlobalGeneratorParameters(latitudeGenerator);
+		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
+		AddWorldGenerator("Latitude", latitudeGenerator);
 	}
 	
 	public void InitElevation()
