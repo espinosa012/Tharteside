@@ -43,6 +43,7 @@ public class World
 
 	private void InitParameters()
 	{
+		// podríamos llevarlo a un fichero json, y/o crear una clase WorldParameters
 		_worldParameters = new Dictionary<string, Variant>();
 		
 		AddWorldParameter("WorldSize", new Vector2I(1024, 1024));

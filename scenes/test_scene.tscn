@@ -303,8 +303,8 @@ HeightMap = "hispania"
 WorldSize = Vector2i(1024, 1024)
 TileMapOffset = Vector2i(0, 1300)
 ChunkSize = Vector2i(64, 64)
-SquareSize = Vector2i(1, 1)
-Chunks = Vector2i(4, 4)
+SquareSize = Vector2i(16, 16)
+Chunks = Vector2i(1, 1)
 
 [node name="TileMap" type="TileMap" parent="."]
 unique_name_in_owner = true

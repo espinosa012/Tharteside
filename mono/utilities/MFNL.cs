@@ -33,8 +33,7 @@ public partial class MFNL : FastNoiseLite
 
     public int GetValueTier(float value)
     {
-        for (var i = 0; i < _nTiers; i++){if (value < (i + 1.0f)/ _nTiers){return i;}}
-        return _nTiers - 1;
+        return (int)(value / (1.0f / _nTiers));
     }
 
     public int GetValueTierAt(int x, int y)
