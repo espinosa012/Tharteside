@@ -12,7 +12,10 @@ public partial class TileMapEventManager : Node
 
     public void HandleRightClick()
     {
-        GD.Print( (Vector2I) (_tileMap.GetLocalMousePosition() / _tileMap.TileSet.TileSize));
+        Human testHuman = (Human) GetNode<CharacterBody2D>("../TestCharacter");
+        Vector2I clickedPosition = (Vector2I)(_tileMap.GetLocalMousePosition() / _tileMap.TileSet.TileSize);
+        GD.Print(clickedPosition);
+        GD.Print(testHuman.PathfindingAstar.GetPath(testHuman.CurrentMapPosition, clickedPosition));
     }
     
 }
