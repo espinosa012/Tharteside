@@ -2,9 +2,9 @@ using Godot;
 
 public partial class WorldGenerator : GodotObject
 {
-    private Vector2I _worldSize;    
-    private Vector2I _chunkSize;    
-    private int _nTiers;    
+    public Vector2I _worldSize;    
+    public Vector2I _chunkSize;    
+    public int _nTiers;    
 
 
 	public virtual float GetChunkAverage(int x, int y){

@@ -335,6 +335,7 @@ script = ExtResource("16_fsqo3")
 [node name="TestCharacter" type="CharacterBody2D" parent="TileMap"]
 unique_name_in_owner = true
 script = ExtResource("17_fakod")
+InitialMapPosition = Vector2i(8, 4)
 
 [node name="Sprite2D" type="Sprite2D" parent="TileMap/TestCharacter"]
 texture = ExtResource("2_8nmpp")

@@ -11,10 +11,11 @@ public partial class Human : CharacterBody2D
     // El Human será asignado a un Sprite2D para mostrarlo en el mundo
     private TileMap _tileMap;
     public TAStar PathfindingAstar;
-
-    public bool IsMoving;
+    
+    [Export] public Vector2I InitialMapPosition;
     public Vector2I CurrentMapPosition;
     public Vector2I TargetMapPosition;
+    public bool IsMoving;
 
     // Human Attributes
     public float MaxSpeed = 40.0f;
@@ -26,6 +27,7 @@ public partial class Human : CharacterBody2D
         _tileMap = GetParent<TileMap>();    // !!!
         PathfindingAstar = new TAStar(CurrentMapPosition, 
             CurrentMapPosition + new Vector2I(128, 128));   // ateción al tamaño de la región A*
+        MoveToMapPosition(InitialMapPosition);
         IsMoving = false;
     }
 
