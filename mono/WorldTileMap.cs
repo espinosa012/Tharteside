@@ -90,13 +90,12 @@ public partial class WorldTileMap : TileMap
 		}
 	}
 	
-
-	
 	private void FulfillSquareElevation(Vector2I worldPos, int tileMapLayer = 0)
 	{
 		// generalizar
 		// world pos: la posición del mundo recibida coincide con la de comienzo del square
 		FulfillSquare(worldPos, new Callable(_world.GetWorldGenerator("Elevation"), "GetValueTierAt"), 10, tileMapLayer);
+		//FulfillSquare(worldPos, new Callable(_world.GetWorldNoise("Continentalness"), "GetValueTierAt"), 10, tileMapLayer);
 	}
 	
 	private void FulfillSquareElevationStep(Vector2I worldPos, int tileMapLayer = 1)
