@@ -16,16 +16,18 @@ public partial class WorldTileMap : TileMap
 	private Callable _proceduralSource;
 
 	// getters & setters
-	public void SetProceduralSource(string proceduralSource)
+	public Callable GetProceduralSourceByName(string name)
 	{
-		proceduralSource ??= "Elevation";
-		
-		if (_world.GetWorldGenerators().ContainsKey(proceduralSource))
-			_proceduralSource = new Callable(_world.GetWorldGenerator(proceduralSource), "GetValueTierAt");
-		else if (_world.GetWorldNoises().ContainsKey(proceduralSource))
-			_proceduralSource = new Callable(_world.GetWorldNoise(proceduralSource), "GetValueTierAt");
-
+		name ??= "Elevation";
+		if (_world.GetWorldGenerators().ContainsKey(name))
+			return new Callable(_world.GetWorldGenerator(name), "GetValueTierAt");
+		if (_world.GetWorldNoises().ContainsKey(name))
+			return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
+		return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
 	}
+	public Callable GetProceduralSource() => _proceduralSource;
+	public void SetProceduralSource(string proceduralSource) =>
+		_proceduralSource = GetProceduralSourceByName(proceduralSource);
 	
 	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
@@ -49,6 +51,7 @@ public partial class WorldTileMap : TileMap
 	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize,
 		Vector2I initChunks)
 	{
+		//TODO: cambiar por getters y setters para acceder desde afuera
 		_worldSize = worldSize;
 		_tileMapOffset = offset;
 		_chunkSize = chunkSize;
@@ -68,13 +71,8 @@ public partial class WorldTileMap : TileMap
 			}
 		}
 	}
-
-	public async Task AsyncRenderChunk(Vector2I chunkPosition)
-	{
-		RenderChunk(chunkPosition);
-	}
-
-	public void RenderChunk(Vector2I chunkPosition)
+	
+	public void RenderChunk(Vector2I chunkPosition)	// hacer asíncrono para renderizar los chunks en paralelo
 	{
 		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X;
 		     x < _chunkSize.X * _squareSize.X +
@@ -88,7 +86,8 @@ public partial class WorldTileMap : TileMap
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
 				// escalado del mapa
-				FulfillSquare(squarePos, _proceduralSource, 10, 0); // debajo irían el resto de capas (minas, etc.) 
+				FulfillSquare(squarePos, _proceduralSource, 10, 0); 
+				// debajo irían el resto de capas (minas, etc.) 
 			}
 		}
 	}
@@ -108,30 +107,6 @@ public partial class WorldTileMap : TileMap
 		}
 	}
 	
-	private void FulfillSquareElevation(Vector2I worldPos, int tileMapLayer = 0)
-	{
-		// generalizar
-		// world pos: la posición del mundo recibida coincide con la de comienzo del square
-		FulfillSquare(worldPos, new Callable(_world.GetWorldGenerator("Elevation"), "GetValueTierAt"), 10, tileMapLayer);
-		//FulfillSquare(worldPos, new Callable(_world.GetWorldNoise("Continentalness"), "GetValueTierAt"), 10, tileMapLayer);
-	}
-	
-	private void FulfillSquareElevationStep(Vector2I worldPos, int tileMapLayer = 1)
-	{//TODO
-		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
-		Elevation elevation = (Elevation) _world.GetWorldParameter("Elevation");
-		Vector2I[] neighbours = {Vector2I.Up, Vector2I.Down, Vector2I.Left, Vector2I.Right};
-		
-		foreach (var pos in neighbours)
-		{
-			if (elevation.IsNStepUpAtOffset(worldPos.X, worldPos.Y, pos.X, pos.Y, 1))
-			{
-				
-			}	
-		}
-	}
-	
-	
 	private Vector2I GetTilePositionByWorldPosition(Vector2I worldPos, int squarePosX, int squarePosY)
 	{
 		return new Vector2I(worldPos.X + squarePosX, worldPos.Y + squarePosY);
@@ -142,29 +117,12 @@ public partial class WorldTileMap : TileMap
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
 		return GetValueTileByPalette(worldPosition, valueSourceCallable, tileSetSourceId);
 	}
-
-	private Vector3I GetElevationStepTileToPlace(Vector2I offset)
-	{
-		// devolvemos Vector3I(atlasCoord.X, atlasCoord.Y, tileSetSourceId)
-		// recorremos sólo las celdas del square que se corresponaan en función de la dirección del escalón (offset)
-		int tileSetSourceId = 5;
-
-		if (offset == Vector2I.Up)	return new Vector3I(1, 5, tileSetSourceId);
-		if (offset == Vector2I.Down)	return new Vector3I(1, 3, tileSetSourceId);
-		if (offset == Vector2I.Left)	return new Vector3I(2, 4, tileSetSourceId);
-		if (offset == Vector2I.Right)	return new Vector3I(0, 4, tileSetSourceId);
-		
-		// no debe devolver esto nunca, se llama sólo cuando sabemos que es step
-		return Vector3I.Zero;
-
-	}
-
+	
 	public Vector3I GetValueTileByPalette(Vector2I worldPos, Callable valueCallable, int tileSetSourceId)
 	{
 		return new Vector3I( (int) valueCallable.Call(worldPos.X, worldPos.Y), 
 			0, tileSetSourceId);
 	}
-
 	
 	private Vector2I GetWorldPosBySquare(Vector2I squarePos)
 	{
@@ -179,21 +137,7 @@ public partial class WorldTileMap : TileMap
 			tileSetAtlasCoordinates);
 	}
 	
-	/// <summary>
-	/// Indica con qué posición del WORLD se corresponde la posición del TILEMAP que indiquemos.
-	/// Es decir, devuelve la posición del SQUARE al que pertenece tileMapCell
-	/// </summary>
-	/// <param name="tileMapCell"></param>
-	/// <returns></returns>
-	private Vector2I GetWorldPositionByTileMapPosition(Vector2I tileMapCell)
-	{
-		// con el enfoque de Squares, todas los tiles (posiciones de tilemap) de un square, pertenecerán a la misma 
-		// world_position.
-		// devuelve la posición de la esquina superior izq del cuadro al que pertenece la tile
-		return new Vector2I((int)Math.Floor(((decimal)tileMapCell.X/_squareSize.X)), 
-			(int)Math.Floor(((decimal)tileMapCell.Y/_squareSize.Y)));
-	}
-	
+
 	public void ReloadTileMap()
 	{
 		Clear();

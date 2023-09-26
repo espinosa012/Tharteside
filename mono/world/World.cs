@@ -43,7 +43,7 @@ public class World
 
 	private void InitParameters()
 	{
-		// podríamos llevarlo a un fichero json, y/o crear una clase WorldParameters
+		//TODO: llevarlo a un fichero json, y/o crear una clase WorldParameters
 		_worldParameters = new Dictionary<string, Variant>();
 		
 		AddWorldParameter("WorldSize", new Vector2I(1024, 1024));
@@ -103,6 +103,7 @@ public class World
 		SetGlobalGeneratorParameters(latitudeGenerator);
 		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
 		AddWorldGenerator("Latitude", latitudeGenerator);
+		//TODO: intervalos de regiones como parámetros
 	}
 	
 	public void InitElevation()
@@ -123,17 +124,6 @@ public class World
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 	
-	public void InitTerrain()	//deprecated
-	{
-		Terrain terrainGenerator = new Terrain();
-		terrainGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
-		terrainGenerator.SetParameterTemperature((Temperature) GetWorldGenerator("Temperature"));
-		terrainGenerator.SetParameterPeaksAndValleys(GetWorldNoise("PeaksAndValleys"));
-		terrainGenerator.SetParameterMinimumPeaksAndValleysMineralSpawnValue(0.25f);
-		
-		AddWorldGenerator("Terrain", terrainGenerator);
-	}
-
 	public void InitHeightMap(string filename)
 	{
 		HeightMap heightMapGenerator = new HeightMap();

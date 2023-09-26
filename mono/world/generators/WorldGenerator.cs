@@ -2,43 +2,29 @@ using Godot;
 
 public partial class WorldGenerator : GodotObject
 {
-    public Vector2I _worldSize;    
-    public Vector2I _chunkSize;    
-    public int _nTiers;    
-
+    private Vector2I _worldSize;    
+    private Vector2I _chunkSize;    
+    private int _nTiers;    
 
 	public virtual float GetChunkAverage(int x, int y){
 		return 0.0f;
-	}
+	}//TODO
 	
 	public virtual float GetRegionAverage(Vector2I center, Vector2I size){
 		return 0.0f;
-	}
+	}//TODO
 	
-    public virtual float GetValueAt(int x, int y)
-    {
-        return 0.0f;
-    }
+    public virtual float GetValueAt(int x, int y) => 0.0f;
 
-    public int GetValueTierAt(Vector2I pos)
-    {
-	    return GetValueTierAt(pos.X, pos.Y);
-    }
+    public int GetValueTierAt(Vector2I pos) =>
+		GetValueTierAt(pos.X, pos.Y);
     
-    public int GetValueTierAt(int x, int y)
-    	{
-		//  para valores en el rango 0-1
-        return GetValueTier(GetValueAt(x, y));
-	}
+    public int GetValueTierAt(int x, int y) =>
+         GetValueTier(GetValueAt(x, y));
 
-    public int GetValueTier(float value)
-    {
-	    return (int)(value / (1.0f / _nTiers));
-    }
+    public int GetValueTier(float value) =>
+		(int)(value / (1.0f / _nTiers));
     
-    
-
-
 
     // NEIGHBOUR EVALUATION (untested)
 	public bool IsStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0)
@@ -93,11 +79,5 @@ public partial class WorldGenerator : GodotObject
     public void ChunkToPng(Vector2I chunkPos)
     {
 	    
-    }
-
-    public float GetChunkAverageValue(Vector2I chunkPos)
-    {
-	    // based on chunk size
-	    return 0.0f;
     }
 }

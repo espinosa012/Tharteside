@@ -19,18 +19,16 @@ public partial class WorldManager : Node2D
 	public override void _Ready()
 	{
 		InitializeWorld();
-		InitializeTileMap();
+		InitializeTileMap();	// TODO: cambiar el enfoque. No habrá un tilemap, sino una lista
 	}
 
-	private WorldTileMap GetWorldTileMapFromTscn()
-	{
-		PackedScene tileMapScene = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn");
-		return tileMapScene.Instantiate<WorldTileMap>();
-	}
+	private WorldTileMap GetWorldTileMapFromTscn() =>
+		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<WorldTileMap>();
 	
-	private void InstantiateTileMap()
+	private void InstantiateTileMap(string name = "Tilemap")
 	{
 		_tileMap = GetWorldTileMapFromTscn();
+		_tileMap.Name = name;
 		_tileMap.Position = new Vector2I(0, 0);
 		AddChild(_tileMap);	// crear nodo de control	
 	}
@@ -38,7 +36,6 @@ public partial class WorldManager : Node2D
 	private void InitializeTileMap()
 	{
 		InstantiateTileMap();
-		//_tileMap = (WorldTileMap) GetNode<TileMap>("TileMap"); // en el futuro, formar desde código
 		_tileMap.SetWorld(_world);
 		_tileMap.SetProceduralSource(ProceduralSource);
 		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, Chunks);
@@ -55,38 +52,6 @@ public partial class WorldManager : Node2D
 		
 		_world.UpdateWorldParameter("WorldSize", WorldSize);
 		_world.UpdateWorldParameter("ChunkSize", ChunkSize);
-	}
-	
-	
-	
-	public void SetWorldSize(Vector2I newSize)
-	{
-		_tileMap.SetWorldSize(newSize);
-	}
-
-	public void SetTileMapOffset(Vector2I newOffset)
-	{
-		_tileMap.SetTileMapOffset(newOffset);
-	}
-
-	public void SetTileMapChunks(Vector2I newSize)
-	{
-		_tileMap.SetTileMapChunks(newSize);
-	}
-	
-	public void SetChunkSize(Vector2I newSize)
-	{
-		_tileMap.SetChunkSize(newSize);
-	}
-	
-	public void SetSquareSize(Vector2I newSize)
-	{
-		_tileMap.SetSquareSize(newSize);
-	}
-
-	public void ReloadTileMap()
-	{
-		_tileMap.ReloadTileMap();
 	}
 	
 	
