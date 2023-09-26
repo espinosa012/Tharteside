@@ -1,0 +1,333 @@
+[gd_scene load_steps=31 format=3 uid="uid://buiaq85ypaais"]
+
+[ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_3b3xx"]
+[ext_resource type="Texture2D" uid="uid://h45rq6wtrrg2" path="res://resources/MiniWorldSprites/Ground/Shore.png" id="2_67w6g"]
+[ext_resource type="Texture2D" uid="uid://eyk8oreoy2fk" path="res://resources/MiniWorldSprites/p24.png" id="3_1ny2x"]
+[ext_resource type="Texture2D" uid="uid://3rr2hygl5ngu" path="res://resources/MiniWorldSprites/elevation_palette.png" id="4_gd8gf"]
+[ext_resource type="Texture2D" uid="uid://c7r057wjkhcxt" path="res://resources/MiniWorldSprites/Ground/TexturedGrass.png" id="5_o26ht"]
+[ext_resource type="Texture2D" uid="uid://b31ihx4beedq8" path="res://resources/MiniWorldSprites/Ground/Winter.png" id="6_xaxr7"]
+[ext_resource type="Texture2D" uid="uid://b74obn5pufulf" path="res://resources/MiniWorldSprites/Ground/DeadGrass.png" id="7_ur8ey"]
+[ext_resource type="Texture2D" uid="uid://df11gjce04ldq" path="res://resources/MiniWorldSprites/Ground/Cliff.png" id="8_w582u"]
+[ext_resource type="Texture2D" uid="uid://vdffsg2h1h22" path="res://resources/MiniWorldSprites/Ground/Cliff-Water.png" id="9_gmqfa"]
+[ext_resource type="Texture2D" uid="uid://dqeqdmyqm8noq" path="res://resources/MiniWorldSprites/Ground/green.png" id="10_nyc5l"]
+[ext_resource type="Texture2D" uid="uid://bnmugrorvl3xw" path="res://resources/MiniWorldSprites/Ground/palette.png" id="11_ijo8e"]
+[ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://resources/MiniWorldSprites/green16.png" id="12_i8iov"]
+[ext_resource type="Script" path="res://mono/WorldTileMap.cs" id="13_6x4al"]
+[ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="14_vxcuv"]
+[ext_resource type="Script" path="res://mono/TileMapEventManager.cs" id="15_coiq5"]
+[ext_resource type="Script" path="res://mono/human/Human.cs" id="16_7ss5r"]
+[ext_resource type="Texture2D" uid="uid://drsqum8whl68i" path="res://resources/MiniWorldSprites/Characters/Champions/Zhinja.png" id="17_scgdn"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gudb5"]
+texture = ExtResource("1_3b3xx")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_smlec"]
+texture = ExtResource("2_67w6g")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fkms1"]
+texture = ExtResource("3_1ny2x")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+16:0/0 = 0
+17:0/0 = 0
+18:0/0 = 0
+19:0/0 = 0
+20:0/0 = 0
+21:0/0 = 0
+22:0/0 = 0
+23:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_svcgn"]
+texture = ExtResource("4_gd8gf")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+16:0/0 = 0
+17:0/0 = 0
+18:0/0 = 0
+19:0/0 = 0
+20:0/0 = 0
+21:0/0 = 0
+22:0/0 = 0
+23:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_d2gag"]
+texture = ExtResource("5_o26ht")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_p0u8d"]
+texture = ExtResource("6_xaxr7")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fi8ks"]
+texture = ExtResource("7_ur8ey")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wb4yw"]
+texture = ExtResource("8_w582u")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+6:8/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5dwpk"]
+texture = ExtResource("9_gmqfa")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o44wn"]
+texture = ExtResource("10_nyc5l")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+16:0/0 = 0
+17:0/0 = 0
+18:0/0 = 0
+19:0/0 = 0
+20:0/0 = 0
+21:0/0 = 0
+22:0/0 = 0
+23:0/0 = 0
+24:0/0 = 0
+25:0/0 = 0
+26:0/0 = 0
+27:0/0 = 0
+28:0/0 = 0
+29:0/0 = 0
+30:0/0 = 0
+31:0/0 = 0
+32:0/0 = 0
+33:0/0 = 0
+34:0/0 = 0
+35:0/0 = 0
+36:0/0 = 0
+37:0/0 = 0
+38:0/0 = 0
+39:0/0 = 0
+40:0/0 = 0
+41:0/0 = 0
+42:0/0 = 0
+43:0/0 = 0
+44:0/0 = 0
+45:0/0 = 0
+46:0/0 = 0
+47:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mojx5"]
+texture = ExtResource("11_ijo8e")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_43v17"]
+texture = ExtResource("12_i8iov")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_fqw7f"]
+sources/0 = SubResource("TileSetAtlasSource_gudb5")
+sources/1 = SubResource("TileSetAtlasSource_smlec")
+sources/2 = SubResource("TileSetAtlasSource_d2gag")
+sources/3 = SubResource("TileSetAtlasSource_p0u8d")
+sources/4 = SubResource("TileSetAtlasSource_fi8ks")
+sources/5 = SubResource("TileSetAtlasSource_wb4yw")
+sources/6 = SubResource("TileSetAtlasSource_5dwpk")
+sources/7 = SubResource("TileSetAtlasSource_o44wn")
+sources/8 = SubResource("TileSetAtlasSource_mojx5")
+sources/9 = SubResource("TileSetAtlasSource_43v17")
+sources/10 = SubResource("TileSetAtlasSource_fkms1")
+sources/13 = SubResource("TileSetAtlasSource_svcgn")
+
+[node name="TileMap" type="TileMap"]
+tile_set = SubResource("TileSet_fqw7f")
+format = 2
+layer_1/name = ""
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 0
+layer_1/tile_data = PackedInt32Array()
+script = ExtResource("13_6x4al")
+
+[node name="TileMapCamera2D" type="Camera2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(1370, 1473)
+script = ExtResource("14_vxcuv")
+speed = 50.0
+initial_position = Vector2i(100, 100)
+
+[node name="TileMapEventManager" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("15_coiq5")
+
+[node name="TestCharacter" type="CharacterBody2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("16_7ss5r")
+InitialMapPosition = Vector2i(8, 4)
+
+[node name="Sprite2D" type="Sprite2D" parent="TestCharacter"]
+position = Vector2(0, 21.6792)
+scale = Vector2(1, 1.41691)
+texture = ExtResource("17_scgdn")
+hframes = 5
+vframes = 9

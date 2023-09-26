@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Godot;
 
 namespace Tartheside.mono;
@@ -12,8 +13,20 @@ public partial class WorldTileMap : TileMap
 	private Vector2I _squareSize;
 	private Vector2I _chunks; // Chunks que se inicializarán al principio
 	private World _world;
+	private Callable _proceduralSource;
 
 	// getters & setters
+	public void SetProceduralSource(string proceduralSource)
+	{
+		proceduralSource ??= "Elevation";
+		
+		if (_world.GetWorldGenerators().ContainsKey(proceduralSource))
+			_proceduralSource = new Callable(_world.GetWorldGenerator(proceduralSource), "GetValueTierAt");
+		else if (_world.GetWorldNoises().ContainsKey(proceduralSource))
+			_proceduralSource = new Callable(_world.GetWorldNoise(proceduralSource), "GetValueTierAt");
+
+	}
+	
 	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
 
@@ -56,6 +69,11 @@ public partial class WorldTileMap : TileMap
 		}
 	}
 
+	public async Task AsyncRenderChunk(Vector2I chunkPosition)
+	{
+		RenderChunk(chunkPosition);
+	}
+
 	public void RenderChunk(Vector2I chunkPosition)
 	{
 		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X;
@@ -70,7 +88,7 @@ public partial class WorldTileMap : TileMap
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
 				// escalado del mapa
-				FulfillSquareElevation(squarePos); // debajo irían el resto de capas (minas, etc.) 
+				FulfillSquare(squarePos, _proceduralSource, 10, 0); // debajo irían el resto de capas (minas, etc.) 
 			}
 		}
 	}

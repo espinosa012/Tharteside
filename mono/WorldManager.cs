@@ -6,6 +6,7 @@ namespace Tartheside.mono;
 public partial class WorldManager : Node2D
 {	
 	[Export] public string HeightMap;
+	[Export] public string ProceduralSource;
 	[Export] public Vector2I WorldSize;
 	[Export] public Vector2I TileMapOffset;
 	[Export] public Vector2I ChunkSize;
@@ -21,12 +22,28 @@ public partial class WorldManager : Node2D
 		InitializeTileMap();
 	}
 
+	private WorldTileMap GetWorldTileMapFromTscn()
+	{
+		PackedScene tileMapScene = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn");
+		return tileMapScene.Instantiate<WorldTileMap>();
+	}
+	
+	private void InstantiateTileMap()
+	{
+		_tileMap = GetWorldTileMapFromTscn();
+		_tileMap.Position = new Vector2I(0, 0);
+		AddChild(_tileMap);	// crear nodo de control	
+	}
+	
 	private void InitializeTileMap()
 	{
-		_tileMap = (WorldTileMap) GetNode<TileMap>("TileMap"); // en el futuro, formar desde código
+		InstantiateTileMap();
+		//_tileMap = (WorldTileMap) GetNode<TileMap>("TileMap"); // en el futuro, formar desde código
 		_tileMap.SetWorld(_world);
+		_tileMap.SetProceduralSource(ProceduralSource);
 		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, Chunks);
 	}
+
 	
 	private void InitializeWorld()
 	{
