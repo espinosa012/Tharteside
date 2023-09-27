@@ -22,7 +22,7 @@ public partial class WorldTileMap : TileMap
 		if (_world.GetWorldGenerators().ContainsKey(name))
 			return new Callable(_world.GetWorldGenerator(name), "GetValueTierAt");
 		if (_world.GetWorldNoises().ContainsKey(name))
-			return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
+			return new Callable(_world.GetWorldNoise(name), "GetAbsoluteNoiseValue");
 		return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
 	}
 	public Callable GetProceduralSource() => _proceduralSource;

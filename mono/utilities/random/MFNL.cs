@@ -25,7 +25,11 @@ public partial class MFNL : FastNoiseLite
 
 
     // NOISE VALUES
-
+    public float GetAbsoluteNoiseValueTierAt(int x, int y)
+    {
+        return GetValueTier(Mathf.Abs(GetNoise2D(x, y)));
+    }
+    
     public float GetNormalizedNoise2D(int x, int y)
     {
         return (GetNoise2D(x, y) + 1f) * 0.5f;  // pasamos del rango [-1, 1] a [0, 1]

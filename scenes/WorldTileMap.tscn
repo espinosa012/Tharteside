@@ -15,7 +15,7 @@
 [ext_resource type="Script" path="res://mono/WorldTileMap.cs" id="13_6x4al"]
 [ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="14_vxcuv"]
 [ext_resource type="Script" path="res://mono/TileMapEventManager.cs" id="15_coiq5"]
-[ext_resource type="Script" path="res://mono/human/Human.cs" id="16_7ss5r"]
+[ext_resource type="Script" path="res://mono/human/HumanCharacter.cs" id="16_cjy8w"]
 [ext_resource type="Texture2D" uid="uid://drsqum8whl68i" path="res://resources/MiniWorldSprites/Characters/Champions/Zhinja.png" id="17_scgdn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gudb5"]
@@ -322,11 +322,10 @@ script = ExtResource("15_coiq5")
 
 [node name="TestCharacter" type="CharacterBody2D" parent="."]
 unique_name_in_owner = true
-script = ExtResource("16_7ss5r")
+script = ExtResource("16_cjy8w")
 InitialMapPosition = Vector2i(8, 4)
 
 [node name="Sprite2D" type="Sprite2D" parent="TestCharacter"]
-position = Vector2(0, 21.6792)
 scale = Vector2(1, 1.41691)
 texture = ExtResource("17_scgdn")
 hframes = 5

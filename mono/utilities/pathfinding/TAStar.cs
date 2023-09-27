@@ -6,6 +6,7 @@ namespace Tartheside.mono.utilities.pathfinding;
 
 public partial class TAStar : AStarGrid2D
 {
+    // con _compute_cost(x, y) aplicamos el g cost /barro( 
     public TAStar(Vector2I regionOrigin, Vector2I regionEnd)
     {
         DefaultEstimateHeuristic = Heuristic.Manhattan;

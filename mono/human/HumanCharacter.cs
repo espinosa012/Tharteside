@@ -6,7 +6,7 @@ using Godot.Collections;
 using Tartheside.mono.utilities.pathfinding;
 using Array = Godot.Collections.Array;
 
-public partial class Human : CharacterBody2D
+public partial class HumanCharacter : CharacterBody2D
 {
     // El Human será asignado a un Sprite2D para mostrarlo en el mundo
     private TileMap _tileMap;
@@ -18,7 +18,7 @@ public partial class Human : CharacterBody2D
     public bool IsMoving;
 
     // Human Attributes
-    public float MaxSpeed = 40.0f;
+    public float MaxSpeed = 40.0f;  // esto perteneceria al Human, no al character
     
     
     
