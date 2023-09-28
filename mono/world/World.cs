@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using MathNet;
 namespace Tartheside.mono;
 
 public class World
@@ -46,9 +45,7 @@ public class World
 		//TODO: llevarlo a un fichero json, y/o crear una clase WorldParameters
 		_worldParameters = new Dictionary<string, Variant>();
 		
-		AddWorldParameter("WorldSize", new Vector2I(1024, 1024));
 		AddWorldParameter("NTiers", 24);
-		AddWorldParameter("ChunkSize", new Vector2I(16, 16));
 		AddWorldParameter("EquatorLine", 512);
 		AddWorldParameter("MinContinentalHeight", 0.023f);
 		AddWorldParameter("ContinentalScaleValue", 1.22f);
@@ -69,6 +66,16 @@ public class World
     }
 
 	//  WORLD GENERATORS
+	
+	public void AddWorldGenerator(string generatorName, WorldGenerator generator) => _worldGenerators[generatorName] = generator;
+	
+	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
+	
+	public void RemoveWorldGenerator(string gen)
+	{
+		if (_worldGenerators.ContainsKey(gen)) _worldParameters.Remove(gen);
+	}
+	
 	public void SetGlobalGeneratorParameters(WorldGenerator generator)
 	{
 		// parámetros presentes en todos los generadores (atributos de la clase madre WorldGenerator)
@@ -86,8 +93,10 @@ public class World
 			SetGlobalGeneratorParameters(generator);
 		}
 	}
-	
-	
+
+	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
+
+	// init world generators
 	public void InitTemperature()
 	{
 		Temperature temperatureGenerator = new Temperature();
@@ -124,25 +133,17 @@ public class World
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 	
-	public void InitHeightMap(string filename)
+	// HEIGHTMAP
+	public void AddHeightMap(string generatorName, string filename)
 	{
+		// podremos utilizar heightmaps deterministas para distintos propoósitos
 		HeightMap heightMapGenerator = new HeightMap();
 		heightMapGenerator.LoadHeighMap(filename);
 		SetGlobalGeneratorParameters(heightMapGenerator);
-		AddWorldGenerator("HeightMap", heightMapGenerator);
+		AddWorldGenerator(generatorName, heightMapGenerator);
 	}
 	
-	
-	public void AddWorldGenerator(string generatorName, WorldGenerator generator) => _worldGenerators[generatorName] = generator;
-	
-	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
-	
-	public void RemoveWorldGenerator(string gen)
-	{
-		if (_worldGenerators.ContainsKey(gen)) _worldParameters.Remove(gen);
-	}
-	
-	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
+		
 	
 	
 	//  WORLD PARAMETERS
@@ -170,6 +171,9 @@ public class World
 			_worldParameters[param] = value;
 			UpdateGlobalGeneratorsParameters();
 		}
+		else
+			AddWorldParameter(param, value);
+		
 	}
 
 	public Variant GetWorldParameter(string param) => _worldParameters[param];
@@ -192,7 +196,6 @@ public class World
 	}
 
 	public Dictionary<string, MFNL> GetWorldNoises() => _worldNoises;
-
 	
 	private void RandomizeWorld()
 	{
@@ -203,11 +206,17 @@ public class World
 	}
 	
 	
+	// OBSTACLES
+	public bool ISWorldObstacle()
+	{
+		// para pathfinding (tanto de humanos como de otros elementos como ríos, etc.)
+		return false;
+	}
+	
 	// CHUNKS
 	public Vector2I GetChunkByWorldPosition(int x, int y) => new Vector2I((int) Math.Floor((double) (x / 
 		((Vector2I) GetWorldParameter("ChunkSize")).X)), (int) Math.Floor((double) (y / 
 		((Vector2I) GetWorldParameter("ChunkSize")).Y)));
-	
 	
 	// UTILITIES
 	public void WorldToPng()

@@ -45,13 +45,13 @@ public partial class WorldManager : Node2D
 	private void InitializeWorld()
 	{
 		_world = new World();
+		_world.UpdateWorldParameter("WorldSize", WorldSize);
+		_world.UpdateWorldParameter("ChunkSize", ChunkSize);
+		
 		_world.InitElevation();
 		//_world.InitTemperature();
 		//_world.InitTerrain();
 		//_world.InitHeightMap(HeightMap + ".png");
-		
-		_world.UpdateWorldParameter("WorldSize", WorldSize);
-		_world.UpdateWorldParameter("ChunkSize", ChunkSize);
 	}
 	
 	

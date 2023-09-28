@@ -23,6 +23,14 @@ public partial class River : WorldGenerator
     {
         return true;
     }
+
+
+    public void RandomizeAvailablePath()
+    {
+        // randomizamos sólo el noise correspondientes al absolute
+        _baseElevation.RandomizeSeed();
+        // como está ahora mismo, si había ríos previamente creados, éstos sobrevivirán.
+    }
     
     
     // getters & setters
@@ -33,7 +41,7 @@ public partial class River : WorldGenerator
     public void SetParameterContinentalness(MFNL continentalness) => _continentalness = continentalness;
 
     public MFNL GetParameterBaseElevation() => _baseElevation;
-    public void SetParameterBaseElevation(MFNL baseElevation) => _baseElevation = baseElevation;
+    public void SetParameterBaseElevation(MFNL baseElevation) => _baseElevation = (MFNL) baseElevation.Duplicate();
 
     
 }
