@@ -15,7 +15,11 @@ public partial class TAStar : AStarGrid2D
         ChangeRegion(GetRegionByOriginAndEndPositions(regionOrigin, regionEnd));
     }
 
-    
+    public override float _ComputeCost(Vector2I fromId, Vector2I toId)
+    {
+        return base._ComputeCost(fromId, toId);
+    }
+
     // Region
     public Rect2I GetRegionByOriginAndEndPositions(Vector2I regionOrigin, Vector2I regionEnd)
     {
@@ -28,7 +32,6 @@ public partial class TAStar : AStarGrid2D
         Region = newRegion;
         Update();
     }
-
 
     // Obstacles
     public void AddObstacle(Vector2I pos)

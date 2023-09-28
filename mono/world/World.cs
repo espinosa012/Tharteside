@@ -58,11 +58,6 @@ public class World
 	private void InitWorldGenerators()
     {
         _worldGenerators = new Dictionary<string, WorldGenerator>();
-		/*InitElevation();
-		InitTemperature();
-		InitLatitude();
-		InitTerrain();
-		InitHeightMap();*/
     }
 
 	//  WORLD GENERATORS
@@ -132,6 +127,12 @@ public class World
 
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
+
+	public void InitRiver()
+	{
+		River riverGenerator = new River();
+		AddWorldGenerator("River", riverGenerator);
+	}
 	
 	// HEIGHTMAP
 	public void AddHeightMap(string generatorName, string filename)
@@ -142,8 +143,6 @@ public class World
 		SetGlobalGeneratorParameters(heightMapGenerator);
 		AddWorldGenerator(generatorName, heightMapGenerator);
 	}
-	
-		
 	
 	
 	//  WORLD PARAMETERS

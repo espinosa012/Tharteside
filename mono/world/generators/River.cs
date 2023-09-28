@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Tartheside.mono.utilities.pathfinding;
 
 public partial class River : WorldGenerator
 {
@@ -7,7 +8,14 @@ public partial class River : WorldGenerator
     private Elevation _elevation;
     private MFNL _continentalness;
     private MFNL _baseElevation;
-
+    private TAStar _pathfindingAstar;
+    
+    public River()
+    {
+        _pathfindingAstar = new TAStar(new Vector2I(), new Vector2I());
+    }
+        
+    
     // considerar la pendiente, slope, que esta en elevation
     public bool IsRiver(int x, int y)
     {
