@@ -22,7 +22,7 @@ public partial class WorldTileMap : TileMap
 		if (_world.GetWorldGenerators().ContainsKey(name))
 			return new Callable(_world.GetWorldGenerator(name), "GetValueTierAt");
 		if (_world.GetWorldNoises().ContainsKey(name))
-			return new Callable(_world.GetWorldNoise(name), "GetAbsoluteNoiseValue");
+			return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
 		return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
 	}
 	public Callable GetProceduralSource() => _proceduralSource;
@@ -67,7 +67,7 @@ public partial class WorldTileMap : TileMap
 		{
 			for (var j = 0; j < _chunks.Y; j++)
 			{
-				RenderChunk(new Vector2I(i, j));
+				RenderChunk(new Vector2I(i, j));		// TODO: paralelizar
 			}
 		}
 	}
@@ -86,8 +86,10 @@ public partial class WorldTileMap : TileMap
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
 				// escalado del mapa
-				FulfillSquare(squarePos, _proceduralSource, 10, 0); 
+				FulfillSquare(squarePos, GetProceduralSourceByName("Elevation"), 10, 0); 
 				// debajo irían el resto de capas (minas, etc.) 
+				FulfillSquare(squarePos, _proceduralSource, 10, 1); 
+
 			}
 		}
 	}

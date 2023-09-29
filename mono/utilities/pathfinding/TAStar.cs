@@ -6,18 +6,18 @@ namespace Tartheside.mono.utilities.pathfinding;
 
 public partial class TAStar : AStarGrid2D
 {
-    // con _compute_cost(x, y) aplicamos el g cost /barro( 
+    // con set_point_weight_scale y _compute_cost (x, y) aplicamos el g cost /barro( 
     public TAStar(Vector2I regionOrigin, Vector2I regionEnd)
     {
         DefaultEstimateHeuristic = Heuristic.Manhattan;
         DiagonalMode = DiagonalModeEnum.Never;
         
-        ChangeRegion(GetRegionByOriginAndEndPositions(regionOrigin, regionEnd));
+        ChangeRegion(regionOrigin, regionEnd);
     }
 
     public override float _ComputeCost(Vector2I fromId, Vector2I toId)
     {
-        return base._ComputeCost(fromId, toId);
+        return 1.0f;
     }
 
     // Region
@@ -33,6 +33,11 @@ public partial class TAStar : AStarGrid2D
         Update();
     }
 
+    public void ChangeRegion(Vector2I origin, Vector2I end)
+    {
+        ChangeRegion(GetRegionByOriginAndEndPositions(origin, end));
+    }
+    
     // Obstacles
     public void AddObstacle(Vector2I pos)
     {

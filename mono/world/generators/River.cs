@@ -1,45 +1,26 @@
 using Godot;
-using System;
-using Tartheside.mono.utilities.pathfinding;
+
 
 public partial class River : WorldGenerator
 {
 
     private Elevation _elevation;
     private MFNL _continentalness;
+    private MFNL _baseNoise;
     private MFNL _baseElevation;
-    private TAStar _pathfindingAstar;
     
-    public River()
-    {
-        _pathfindingAstar = new TAStar(new Vector2I(), new Vector2I());
-    }
-        
     
-    // considerar la pendiente, slope, que esta en elevation
-    public bool IsRiver(int x, int y)
+    public override float GetValueAt(int x, int y)
     {
-        return _baseElevation.GetAbsoluteNoiseValueTierAt(x, y) == 0;
-    }
-    
-    public bool IsValidBirth(int x, int y)
-    {
-        return true;
-    }
-    
-    public bool IsValidMouth(int x, int y)
-    {
-        return true;
+        return RiverAlgorithm(x, y);
     }
 
-
-    public void RandomizeAvailablePath()
-    {
-        // randomizamos sólo el noise correspondientes al absolute
-        _baseElevation.RandomizeSeed();
-        // como está ahora mismo, si había ríos previamente creados, éstos sobrevivirán.
+    private float RiverAlgorithm(int x, int y)
+    {   // sep23
+        return ((_baseNoise.GetAbsoluteNoiseValueTierAt(x, y, 32) == 0 && 
+                 _elevation.GetValueTierAt(x, y) != 0) ? 0.99f : -1.0f);
     }
-    
+
     
     // getters & setters
     public Elevation GetParameterElevation() => _elevation;
@@ -49,7 +30,10 @@ public partial class River : WorldGenerator
     public void SetParameterContinentalness(MFNL continentalness) => _continentalness = continentalness;
 
     public MFNL GetParameterBaseElevation() => _baseElevation;
-    public void SetParameterBaseElevation(MFNL baseElevation) => _baseElevation = (MFNL) baseElevation.Duplicate();
-
+    public void SetParameterBaseElevation(MFNL baseElevation) => _baseElevation = baseElevation;
+        
+    public MFNL GetParameterBaseNoise() => _baseNoise;
+    public void SetParameterBaseNoise(MFNL baseNoise) => _baseNoise = baseNoise;
     
+
 }

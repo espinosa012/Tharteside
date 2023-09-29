@@ -27,10 +27,14 @@ public partial class WorldManager : Node2D
 	
 	private void InstantiateTileMap(string name = "Tilemap")
 	{
+		Window tileMapWindow = new Window();
+		tileMapWindow.Size = new Vector2I(1480, 1480);
+		tileMapWindow.Position = new Vector2I(24, 24);
 		_tileMap = GetWorldTileMapFromTscn();
 		_tileMap.Name = name;
 		_tileMap.Position = new Vector2I(0, 0);
-		AddChild(_tileMap);	// crear nodo de control	
+		tileMapWindow.AddChild(_tileMap);	// crear nodo de control	
+		AddChild(tileMapWindow);
 	}
 	
 	private void InitializeTileMap()

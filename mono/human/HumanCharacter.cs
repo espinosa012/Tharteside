@@ -47,6 +47,7 @@ public partial class HumanCharacter : CharacterBody2D
                 await MoveToAdjacentPosition(TargetMapPosition);
         }
         IsMoving = false;
+        PathfindingAstar.ChangeRegion(CurrentMapPosition - new Vector2I(64, 64), CurrentMapPosition + new Vector2I(64, 64));
     }
     
     private void MoveToMapPosition(Vector2I mapPos)

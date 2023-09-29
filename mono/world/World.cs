@@ -38,6 +38,10 @@ public class World
 		var volcanicIslands = new MFNL("VolcanicIslands", (int) GetWorldParameter("NTiers"));
 		volcanicIslands.LoadFromJSON("VolcanicIslands");
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
+		
+		var river = new MFNL("River", (int) GetWorldParameter("NTiers"));
+		river.LoadFromJSON("River");
+		AddWorldNoise("River", river);
 	}
 
 	private void InitParameters()
@@ -131,6 +135,11 @@ public class World
 	public void InitRiver()
 	{
 		River riverGenerator = new River();
+		SetGlobalGeneratorParameters(riverGenerator);
+		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
+		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
+		riverGenerator.SetParameterBaseElevation(GetWorldNoise("BaseElevation"));
+		riverGenerator.SetParameterBaseNoise(GetWorldNoise("River"));
 		AddWorldGenerator("River", riverGenerator);
 	}
 	
@@ -206,7 +215,7 @@ public class World
 	
 	
 	// OBSTACLES
-	public bool ISWorldObstacle()
+	public bool ISWorldObstacle(int x, int y)
 	{
 		// para pathfinding (tanto de humanos como de otros elementos como ríos, etc.)
 		return false;
@@ -221,7 +230,7 @@ public class World
 	public void WorldToPng()
 	{
 		/*
-		 *	para calcular distancia al mar, detectar islas, 
+		 *	TODO: para calcular distancia al mar, detectar islas, 
 		 * 
 		 */
 	}

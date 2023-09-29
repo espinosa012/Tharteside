@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -10,6 +11,12 @@ public partial class MFNL : FastNoiseLite
     RandomNumberGenerator Rng;
     private int _nTiers;
 
+    private string[] _valuesToSave = new string[] {
+        "NoiseType", "Seed", "Frequency", "FractalType", "FractalGain", 
+        "FractalLacunarity", "FractalOctaves", "FractalPingPongStrength", "FractalWeightedStrength", 
+        "CellularDistanceFunction", "CellularReturnType", "CellularJitter"
+    };
+    
     // CONSTRUCTOR
     public MFNL(string name="Noise", int nTiers = 24)
     {
@@ -25,9 +32,9 @@ public partial class MFNL : FastNoiseLite
 
 
     // NOISE VALUES
-    public float GetAbsoluteNoiseValueTierAt(int x, int y)
+    public float GetAbsoluteValueNoise(int x, int y)
     {
-        return GetValueTier(Mathf.Abs(GetNoise2D(x, y)));
+        return Mathf.Abs(GetNoise2D(x, y));
     }
     
     public float GetNormalizedNoise2D(int x, int y)
@@ -35,14 +42,20 @@ public partial class MFNL : FastNoiseLite
         return (GetNoise2D(x, y) + 1f) * 0.5f;  // pasamos del rango [-1, 1] a [0, 1]
     }
 
-    public int GetValueTier(float value)
+    public int GetValueTier(float value, int nTiers = 0)
     {
-        return (int)(value / (1.0f / _nTiers));
+        nTiers = (nTiers == 0) ? _nTiers : nTiers;
+        return (int)(value / (1.0f / nTiers));
     }
 
     public int GetValueTierAt(int x, int y)
     {
         return GetValueTier(GetNormalizedNoise2D(x, y));
+    }
+    
+    public float GetAbsoluteNoiseValueTierAt(int x, int y, int nTiers = 0)
+    {
+        return GetValueTier(Mathf.Abs(GetNoise2D(x, y)), nTiers);
     }
     
     public void CreateNoiseChunk(Vector2I position, Vector2I chunkSize)
@@ -67,7 +80,7 @@ public partial class MFNL : FastNoiseLite
 
     public Variant GetParam(string param) => Get(CamelCaseToSnakeCase(param));
 
-    public void RandomizeSeed() => SetSeed(Rng.RandiRange(0, 999999999));
+    public void RandomizeSeed() => SetSeed(Rng.RandiRange(0, 999999999));   // luego hau que recargar
 
     public void SetSeed(int seed) => Set("Seed", seed);
 
@@ -76,13 +89,8 @@ public partial class MFNL : FastNoiseLite
     public void SaveToJSON(string filename="")
     {
         Dictionary<string, string> noiseDict = new Dictionary<string, string>();
-        string[] valuesToSave = new string[] {
-            "NoiseType", "Seed", "Frequency", "FractalType", "FractalGain", 
-            "FractalLacunarity", "FractalOctaves", "FractalPingPongStrength", "FractalWeightedStrength", 
-            "CellularDistanceFunction", "CellularReturnType", "CellularJitter"
-        };
         
-        foreach (string vts in valuesToSave) noiseDict.Add(vts, Get(CamelCaseToSnakeCase(vts)).ToString());
+        foreach (string vts in _valuesToSave) noiseDict.Add(vts, Get(CamelCaseToSnakeCase(vts)).ToString());
 
         string jsonString = JsonSerializer.Serialize(noiseDict);
         
@@ -113,5 +121,9 @@ public partial class MFNL : FastNoiseLite
         return Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();
     }
 
+    public MFNL FromFastNoiseLite(FastNoiseLite toClone)
+    {
+        return (MFNL) this.MemberwiseClone();
+    }
 
 }

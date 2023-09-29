@@ -314,7 +314,8 @@ unique_name_in_owner = true
 position = Vector2(1370, 1473)
 script = ExtResource("14_vxcuv")
 speed = 50.0
-initial_position = Vector2i(100, 100)
+initial_zoom = Vector2(0.175, 0.175)
+initial_position = Vector2i(1370, 1470)
 
 [node name="TileMapEventManager" type="Node" parent="."]
 unique_name_in_owner = true
