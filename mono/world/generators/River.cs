@@ -12,7 +12,7 @@ public partial class River : WorldGenerator
     
     public override float GetValueAt(int x, int y)
     {
-        return RiverAlgorithm(x, y);
+        return 1.0f - _baseNoise.GetAbsoluteValueNoise(x, y);
     }
 
     private float RiverAlgorithm(int x, int y)
