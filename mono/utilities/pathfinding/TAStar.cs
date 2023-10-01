@@ -52,7 +52,16 @@ public partial class TAStar : AStarGrid2D
     // Path
     public Array<Vector2I> GetPath(Vector2I origin, Vector2I target)
     {
-        return GetIdPath(origin, target);
+        Array<Vector2I> path;
+        try
+        {
+            path = GetIdPath(origin, target);
+        }
+        catch (Exception e)
+        {
+            path = null;
+        }
+        return path;
     }
     
     

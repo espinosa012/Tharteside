@@ -15,13 +15,22 @@ public partial class WorldManager : Node2D
 
 	private World _world;
 	private WorldTileMap _tileMap;
-
+	private TCommandLine _commandLine;
+	
 	public override void _Ready()
 	{
 		InitializeWorld();
 		InitializeTileMap();	// TODO: cambiar el enfoque. No habrá un tilemap, sino una lista
+		InitializeCommandLine();
 	}
 
+	private void InitializeCommandLine()
+	{
+		_commandLine = (TCommandLine) GetNode<LineEdit>("cmd");
+		_commandLine.Init(_world, _tileMap);
+	}
+	
+	
 	private WorldTileMap GetWorldTileMapFromTscn() =>
 		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<WorldTileMap>();
 	
@@ -29,7 +38,7 @@ public partial class WorldManager : Node2D
 	{
 		Window tileMapWindow = new Window();
 		tileMapWindow.Size = new Vector2I(1480, 1480);
-		tileMapWindow.Position = new Vector2I(24, 24);
+		tileMapWindow.Position = new Vector2I(64, 84);
 		_tileMap = GetWorldTileMapFromTscn();
 		_tileMap.Name = name;
 		_tileMap.Position = new Vector2I(0, 0);

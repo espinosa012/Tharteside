@@ -61,7 +61,8 @@ public partial class WorldTileMap : TileMap
 		InitializeChunks();
 	}
 
-	private void InitializeChunks()
+	// provisionalmente public, hacer privado
+	public void InitializeChunks()
 	{
 		for (var i = 0; i < _chunks.X; i++)
 		{
@@ -138,7 +139,12 @@ public partial class WorldTileMap : TileMap
 		base.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, 
 			tileSetAtlasCoordinates);
 	}
-	
+
+	public new void ClearLayer(int layer)
+	{
+		RemoveLayer(layer);
+		AddLayer(layer);	
+	}
 
 	public void ReloadTileMap()
 	{

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://tswy1h6sun4r"]
+[gd_scene load_steps=3 format=3 uid="uid://tswy1h6sun4r"]
 
 [ext_resource type="Script" path="res://mono/WorldManager.cs" id="1_bymoe"]
+[ext_resource type="Script" path="res://mono/utilities/command_line/TCommandLine.cs" id="2_kvq82"]
 
 [node name="TWorldManager" type="Node2D"]
 scale = Vector2(1.00501, 0.996241)
@@ -10,4 +11,9 @@ WorldSize = Vector2i(1024, 1024)
 TileMapOffset = Vector2i(0, 1300)
 ChunkSize = Vector2i(64, 64)
 SquareSize = Vector2i(1, 1)
-Chunks = Vector2i(8, 8)
+Chunks = Vector2i(1, 1)
+
+[node name="cmd" type="LineEdit" parent="."]
+offset_right = 402.0
+offset_bottom = 46.0
+script = ExtResource("2_kvq82")

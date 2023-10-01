@@ -134,7 +134,7 @@ public class World
 
 	public void InitRiver()
 	{
-		River riverGenerator = new River();
+		world.generators.River riverGenerator = new world.generators.River();
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
@@ -158,13 +158,9 @@ public class World
 	public void AddWorldParameter(string param, Variant value)
 	{
 		if (_worldParameters.ContainsKey(param))
-		{
 			UpdateWorldParameter(param, value);
-		}
 		else
-		{
 			_worldParameters[param] = value;
-		}
 	} 
 
 	public void RemoveWorldParameter(string param)

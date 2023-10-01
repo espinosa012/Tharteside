@@ -1,5 +1,4 @@
-using Godot;
-
+namespace Tartheside.mono.world.generators;
 
 public partial class River : WorldGenerator
 {
@@ -9,18 +8,30 @@ public partial class River : WorldGenerator
     private MFNL _baseNoise;
     private MFNL _baseElevation;
     
-    
     public override float GetValueAt(int x, int y)
     {
-        return 1.0f - _baseNoise.GetAbsoluteValueNoise(x, y);
+        //return 1.0f - _baseNoise.GetAbsoluteValueNoise(x, y);
+        return RiverAlgorithm(x, y);
     }
 
     private float RiverAlgorithm(int x, int y)
     {   // sep23
-        return ((_baseNoise.GetAbsoluteNoiseValueTierAt(x, y, 32) == 0 && 
-                 _elevation.GetValueTierAt(x, y) != 0) ? 0.99f : -1.0f);
+        bool isNotSea = _elevation.GetValueTierAt(x, y) != 0;
+        return ((IsValidRiverPath(x, y) && isNotSea) ? 0.99999f : -1.0f);
+    }
+    
+    private bool IsValidRiverPath(int x, int y)
+    {
+        const int nTiers = 32;  // cuanto mayor, más estrechos los ríos.
+        return _baseNoise.GetAbsoluteNoiseValueTierAt(x, y, nTiers) == 0;
     }
 
+    public void Randomize()
+    {
+        _baseNoise.RandomizeSeed();
+    }
+    
+    
     
     // getters & setters
     public Elevation GetParameterElevation() => _elevation;
@@ -35,5 +46,5 @@ public partial class River : WorldGenerator
     public MFNL GetParameterBaseNoise() => _baseNoise;
     public void SetParameterBaseNoise(MFNL baseNoise) => _baseNoise = baseNoise;
     
-
 }
+

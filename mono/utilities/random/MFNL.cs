@@ -11,10 +11,19 @@ public partial class MFNL : FastNoiseLite
     RandomNumberGenerator Rng;
     private int _nTiers;
 
-    private string[] _valuesToSave = new string[] {
-        "NoiseType", "Seed", "Frequency", "FractalType", "FractalGain", 
-        "FractalLacunarity", "FractalOctaves", "FractalPingPongStrength", "FractalWeightedStrength", 
-        "CellularDistanceFunction", "CellularReturnType", "CellularJitter"
+    private string[] _noiseProperties = {
+        "CellularDistanceFunction", "CellularJitter", "CellularReturnType",
+        
+        "DomainWarpEnabled", 
+        "DomainWarpType", "DomainWarpAmplitude", "DomainWarpFrequency",
+        "DomainWarpFractalType", "DomainWarpFractalGain", "DomainWarpFractalLacunarity", "DomainWarpFractalOctaves", 
+          
+        "FractalType",
+        "FractalGain", "FractalLacunarity", "FractalOctaves",
+        "FractalPingPongStrength", "FractalType", "FractalWeightedStrength", 
+        "FractalWeightedStrength", 
+        
+        "Frequency", "NoiseType", "Offset", "Seed"
     };
     
     // CONSTRUCTOR
@@ -87,7 +96,7 @@ public partial class MFNL : FastNoiseLite
 
     public void RandomizeSeed() => SetSeed(Rng.RandiRange(0, 999999999));   // luego hau que recargar
 
-    public void SetSeed(int seed) => Set("Seed", seed);
+    public void SetSeed(int seed) => Seed = seed;
 
 
     //  NOISE JSON
@@ -95,7 +104,7 @@ public partial class MFNL : FastNoiseLite
     {
         Dictionary<string, string> noiseDict = new Dictionary<string, string>();
         
-        foreach (string vts in _valuesToSave) noiseDict.Add(vts, Get(CamelCaseToSnakeCase(vts)).ToString());
+        foreach (string vts in _noiseProperties) noiseDict.Add(vts, Get(CamelCaseToSnakeCase(vts)).ToString());
 
         string jsonString = JsonSerializer.Serialize(noiseDict);
         
@@ -129,6 +138,19 @@ public partial class MFNL : FastNoiseLite
     public MFNL FromFastNoiseLite(FastNoiseLite toClone)
     {
         return (MFNL) this.MemberwiseClone();
+    }
+
+
+    public override string ToString()
+    {
+        string delimeter = "----------------------------------------\n";
+        string toReturn = delimeter + "----" + Name + "----\n";
+        Dictionary<string, Variant> noiseDict = new Dictionary<string, Variant>();
+        foreach (var prop in _noiseProperties)
+        {
+            toReturn += prop + ": " + Get(CamelCaseToSnakeCase(prop)) + "\n";
+        }
+        return toReturn + delimeter;
     }
 
 }
