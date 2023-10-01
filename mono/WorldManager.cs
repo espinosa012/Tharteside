@@ -50,7 +50,6 @@ public partial class WorldManager : Node2D
 	{
 		InstantiateTileMap();
 		_tileMap.SetWorld(_world);
-		_tileMap.SetProceduralSource(ProceduralSource);
 		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, Chunks);
 	}
 

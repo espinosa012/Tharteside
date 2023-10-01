@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Godot;
+using Godot.Collections;
 
 namespace Tartheside.mono;
 
@@ -13,7 +14,6 @@ public partial class WorldTileMap : TileMap
 	private Vector2I _squareSize;
 	private Vector2I _chunks; // Chunks que se inicializarán al principio
 	private World _world;
-	private Callable _proceduralSource;
 
 	// getters & setters
 	public Callable GetProceduralSourceByName(string name)
@@ -25,9 +25,6 @@ public partial class WorldTileMap : TileMap
 			return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
 		return new Callable(_world.GetWorldNoise(name), "GetValueTierAt");
 	}
-	public Callable GetProceduralSource() => _proceduralSource;
-	public void SetProceduralSource(string proceduralSource) =>
-		_proceduralSource = GetProceduralSourceByName(proceduralSource);
 	
 	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
@@ -64,16 +61,23 @@ public partial class WorldTileMap : TileMap
 	// provisionalmente public, hacer privado
 	public void InitializeChunks()
 	{
+		RenderChunks("Elevation", 0);		// TODO: paralelizar
+		RenderChunks("River", 1);
+	}
+
+	public void RenderChunks(string source, int layer)
+	{
 		for (var i = 0; i < _chunks.X; i++)
 		{
 			for (var j = 0; j < _chunks.Y; j++)
 			{
-				RenderChunk(new Vector2I(i, j));		// TODO: paralelizar
+				RenderChunk(new Vector2I(i, j), source, layer);
 			}
 		}
 	}
 	
-	public void RenderChunk(Vector2I chunkPosition)	// hacer asíncrono para renderizar los chunks en paralelo
+	
+	private void RenderChunk(Vector2I chunkPosition, string source, int layer) // hacer asíncrono para renderizar los chunks en paralelo
 	{
 		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X;
 		     x < _chunkSize.X * _squareSize.X +
@@ -86,14 +90,10 @@ public partial class WorldTileMap : TileMap
 			     y += _squareSize.Y)
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
-				// escalado del mapa
-				FulfillSquare(squarePos, GetProceduralSourceByName("Elevation"), 10, 0); 
-				// debajo irían el resto de capas (minas, etc.) 
-				FulfillSquare(squarePos, _proceduralSource, 10, 1); 
-
+				FulfillSquare(squarePos, GetProceduralSourceByName(source), 10, layer); 
 			}
 		}
-	}
+	}	
 
 	private void FulfillSquare(Vector2I worldPos, Callable valueSource, int tileSetSourceId, int tileMapLayer)
 	{
