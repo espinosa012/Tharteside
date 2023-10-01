@@ -58,8 +58,7 @@ public partial class WorldTileMap : TileMap
 		InitializeChunks();
 	}
 
-	// provisionalmente public, hacer privado
-	public void InitializeChunks()
+	private void InitializeChunks()
 	{
 		RenderChunks("Elevation", 0);		// TODO: paralelizar
 		RenderChunks("River", 1);
@@ -67,6 +66,7 @@ public partial class WorldTileMap : TileMap
 
 	public void RenderChunks(string source, int layer)
 	{
+		ClearLayer(layer);
 		for (var i = 0; i < _chunks.X; i++)
 		{
 			for (var j = 0; j < _chunks.Y; j++)
@@ -75,7 +75,6 @@ public partial class WorldTileMap : TileMap
 			}
 		}
 	}
-	
 	
 	private void RenderChunk(Vector2I chunkPosition, string source, int layer) // hacer asíncrono para renderizar los chunks en paralelo
 	{
@@ -120,8 +119,8 @@ public partial class WorldTileMap : TileMap
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
 		return GetValueTileByPalette(worldPosition, valueSourceCallable, tileSetSourceId);
 	}
-	
-	public Vector3I GetValueTileByPalette(Vector2I worldPos, Callable valueCallable, int tileSetSourceId)
+
+	private Vector3I GetValueTileByPalette(Vector2I worldPos, Callable valueCallable, int tileSetSourceId)
 	{
 		return new Vector3I( (int) valueCallable.Call(worldPos.X, worldPos.Y), 
 			0, tileSetSourceId);

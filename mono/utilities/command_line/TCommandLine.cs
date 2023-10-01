@@ -1,6 +1,8 @@
-using Godot;
 using System;
+using Godot;
+using System.Text.RegularExpressions;
 using System.Linq;
+using Godot.Collections;
 using Tartheside.mono;
 using Tartheside.mono.world.generators;
 
@@ -30,26 +32,32 @@ public partial class TCommandLine : LineEdit
 		//PrintNoise(text.Trim());
 		//ClearLayer(text);	
 		// implementar comando exit y tomar el foco con tab o Fx
-		Call(text.Split(" ")[0].Trim());
+
+		Tuple<string, string[]> command = GetCommandAndArgs(text);
+		Call(command.Item1);
 		Clear();
 	}
-	
+
+	private Tuple<string, string[]> GetCommandAndArgs(string text)
+	{
+		string pattern = @"^(?<cmd>\w+)(\s+(?<args>.*))?$";
+		Match match = Regex.Match(text, pattern);
+		if (!match.Success)
+			return null;
+		return new Tuple<string, string[]>(match.Groups["cmd"].Value.Trim(), match.Groups["args"].Value.Split());	
+	}
 	
     // COMMANDS
     private void RandomizeRiver()
     {
 	    ((River)_world.GetWorldGenerator("River")).Randomize();
-	    _tileMap.ClearLayer(1);
-	    _tileMap.InitializeChunks();
+	    _tileMap.RenderChunks("River", 1);
     }
     
-    private void ClearLayer(string layer)
+    private void PrintNoise(string args)
     {
-	    _tileMap.ClearLayer(int.Parse(layer.Replace("ClearLayer", "")));
-    }
-    
-    private void PrintNoise(string noise)
-    {
+	    GD.Print(args);
+	    string noise = args.Split()[0];
 	    if (!_world.GetWorldNoises().Keys.Contains(noise))
 	    {
 		    GD.Print(noise + " not available");
