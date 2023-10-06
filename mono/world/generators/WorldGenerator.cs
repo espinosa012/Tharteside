@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Godot;
 
 public partial class WorldGenerator : GodotObject
@@ -58,7 +59,7 @@ public partial class WorldGenerator : GodotObject
 	}
 
 
-    // getters & setters
+    // getters & setters	TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
     public Vector2I GetParameterWorldSize() => _worldSize;
     public void SetParameterWorldSize(Vector2I value) => _worldSize = value;
     
@@ -71,6 +72,11 @@ public partial class WorldGenerator : GodotObject
     
     
     // utilities
+    
+    private string CamelCaseToSnakeCase(string str)  => 
+	    Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();// llevar a clase utilities
+    
+    
     public void GeneratorToPng()
     {
 	    

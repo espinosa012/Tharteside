@@ -71,22 +71,6 @@ public partial class MFNL : FastNoiseLite
     {
         return GetValueTier(Mathf.Abs(GetNoise2D(x, y)), nTiers);
     }
-    
-    public void CreateNoiseChunk(Vector2I position, Vector2I chunkSize)
-    {//TODO
-        int startX = position.X * chunkSize.X;
-        int endX = startX + chunkSize.X;
-        int startY = position.Y * chunkSize.Y;
-        int endY = startY + chunkSize.Y;
-		
-		for (int x = startX; x < endX; x++)
-		{
-			for (int y = startY; y < endY; y++)
-			{
-				
-			}
-		}
-    }
 
 
     //  NOISE PARAMS
@@ -129,6 +113,11 @@ public partial class MFNL : FastNoiseLite
     }
 
     // AUX FUNCTIONS
+    public string GetParamValueAsString(string param)
+    {
+        return Get(param).ToString();
+    }
+    
     private string CamelCaseToSnakeCase(string str)  // static function
     {
         // Reemplaza los caracteres en mayúsculas con un guión bajo seguido de la misma letra en minúscula

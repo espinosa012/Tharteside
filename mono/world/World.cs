@@ -39,9 +39,9 @@ public class World
 		volcanicIslands.LoadFromJSON("VolcanicIslands");
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
 		
-		var river = new MFNL("River", (int) GetWorldParameter("NTiers"));
-		river.LoadFromJSON("River");
-		AddWorldNoise("River", river);
+		var riverNoise = new MFNL("RiverNoise", (int) GetWorldParameter("NTiers"));
+		riverNoise.LoadFromJSON("RiverNoise");
+		AddWorldNoise("RiverNoise", riverNoise);
 	}
 
 	private void InitParameters()
@@ -139,7 +139,7 @@ public class World
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
 		riverGenerator.SetParameterBaseElevation(GetWorldNoise("BaseElevation"));
-		riverGenerator.SetParameterBaseNoise(GetWorldNoise("River"));
+		riverGenerator.SetParameterBaseNoise(GetWorldNoise("RiverNoise"));
 		AddWorldGenerator("River", riverGenerator);
 	}
 	

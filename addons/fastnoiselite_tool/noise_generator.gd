@@ -111,8 +111,6 @@ var is_live: bool = false
 
 
 func _ready():
-	init_ui()
-	
 	noise = FastNoiseLite.new()
 	noise_resource = NoiseResource.new()
 	

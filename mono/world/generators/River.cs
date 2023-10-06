@@ -2,11 +2,13 @@ namespace Tartheside.mono.world.generators;
 
 public partial class River : WorldGenerator
 {
-
+    
     private Elevation _elevation;
     private MFNL _continentalness;
     private MFNL _baseNoise;
     private MFNL _baseElevation;
+    private int _thresholdTier = 0;     // el valor ideal dependerá de las características del ruido (freq) para
+                                        // no perder continuidad.
     
     public override float GetValueAt(int x, int y)
     {
@@ -16,7 +18,7 @@ public partial class River : WorldGenerator
 
     private float RiverAlgorithm(int x, int y)
     {   // sep23
-        bool isNotSea = _elevation.GetValueTierAt(x, y) != 0;
+        bool isNotSea = _elevation.GetValueTierAt(x, y) != _thresholdTier;
         return ((IsValidRiverPath(x, y) && isNotSea) ? 0.99999f : -1.0f);
     }
     
@@ -45,6 +47,8 @@ public partial class River : WorldGenerator
         
     public MFNL GetParameterBaseNoise() => _baseNoise;
     public void SetParameterBaseNoise(MFNL baseNoise) => _baseNoise = baseNoise;
-    
+
+    public int GetParameterThresholdTier() => _thresholdTier;   
+    public void SetParameterThresholdTier(int thresholdTier) => _thresholdTier = thresholdTier;
 }
 
