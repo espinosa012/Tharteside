@@ -33,19 +33,25 @@ public partial class TCommandLine : LineEdit
 
 		Tuple<string, string[]> command = GetCommandAndArgs(text);
 		if (command.Item2.IsEmpty())
+		{
 			Call(command.Item1);
-		else
+		}
+			else
 			Call(command.Item1, command.Item2);
 		Clear();
 	}
 
 	private Tuple<string, string[]> GetCommandAndArgs(string text)
 	{
+		string[] args;
 		string pattern = @"^(?<cmd>\w+)(\s+(?<args>.*))?$";
 		Match match = Regex.Match(text, pattern);
 		if (!match.Success)
 			return null;
-		return new Tuple<string, string[]>(match.Groups["cmd"].Value.Trim(), match.Groups["args"].Value.Split());	
+		args = match.Groups["args"].Value.Split();
+		if (args[0] == "")
+			args = null;
+		return new Tuple<string, string[]>(match.Groups["cmd"].Value.Trim(), args);	
 	}
 	
     // COMMANDS
@@ -66,14 +72,18 @@ public partial class TCommandLine : LineEdit
 	    if (_world.GetWorldNoises().ContainsKey(args[0]))
 	    {
 		    _world.GetWorldNoise(args[0]).UpdateParam(args[1], float.Parse(args[2]));	// puede fallar en caso de que espere otro tipo distinto a float
-		    _tileMap.ReloadTileMap();
 	    }
 	    else if (_world.GetWorldGenerators().ContainsKey(args[0]))	//untested
 	    {
 		    _world.GetWorldGenerator(args[0]).Call("SetParameter" + args[1], float.Parse(args[2]));	// puede fallar en caso de que espere otro tipo distinto a float
-
 	    }
+	    else if(_world.GetWorldParameters().ContainsKey(args[0]))
+	    {
+		    _world.UpdateWorldParameter(args[0], float.Parse(args[1]));
+	    }
+	    _tileMap.ReloadTileMap();
     }
+    
     
     private void RandomizeRiver()
     {
