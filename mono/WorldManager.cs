@@ -15,7 +15,7 @@ public partial class WorldManager : Node2D
 
 	private World _world;
 	private WorldTileMap _tileMap;
-	private TCommandLine _commandLine;
+	private utilities.command_line.TCommandLine _commandLine;
 	
 	public override void _Ready()
 	{
@@ -26,7 +26,7 @@ public partial class WorldManager : Node2D
 
 	private void InitializeCommandLine()
 	{
-		_commandLine = (TCommandLine) GetNode<LineEdit>("cmd");
+		_commandLine = (utilities.command_line.TCommandLine) GetNode<LineEdit>("cmd");
 		_commandLine.Init(_world, _tileMap);
 	}
 	

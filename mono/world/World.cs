@@ -174,6 +174,8 @@ public class World
 		{
 			_worldParameters[param] = value;
 			UpdateGlobalGeneratorsParameters();
+			foreach (var generator in _worldGenerators.Values)
+				generator.Call("SetParameter"+param, value);
 		}
 		else
 			AddWorldParameter(param, value);

@@ -1,11 +1,11 @@
 using System;
-using Godot;
-using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Godot;
 using Godot.Collections;
-using Tartheside.mono;
 using Tartheside.mono.world.generators;
 
+namespace Tartheside.mono.utilities.command_line;
 
 public partial class TCommandLine : LineEdit
 {
@@ -22,22 +22,22 @@ public partial class TCommandLine : LineEdit
 	{
 		_world = w;
 		_tileMap = tm;
-		GD.Print(_world);
 	}
-	
+
+	private void Output(string message)
+	{
+		GD.Print("console message >> " + message);
+	}
 	
 	private void _ProcessCommand(string text)
 	{
 		// usar expresiones regulares para formar comandos y atributos (opcinales, indicando el nombre del parámetro, etc)
 		// implementar comando exit y tomar el foco con tab o Fx
-
 		Tuple<string, string[]> command = GetCommandAndArgs(text);
-		if (command.Item2.IsEmpty())
-		{
-			Call(command.Item1);
-		}
-			else
+		if (HasMethod(command.Item1))
 			Call(command.Item1, command.Item2);
+		else
+			Call(command.Item1.Capitalize(), command.Item2);
 		Clear();
 	}
 
@@ -54,62 +54,72 @@ public partial class TCommandLine : LineEdit
 		return new Tuple<string, string[]>(match.Groups["cmd"].Value.Trim(), args);	
 	}
 	
-    // COMMANDS
-    private void Get(string[] args)
-    {
+	
+	// COMMANDS
+	private void Get(string[] args)
+	{
 		if (_world.GetWorldNoises().ContainsKey(args[0]))
-	    {
-		    GD.Print(_world.GetWorldNoise(args[0]).GetParamValueAsString(args[1]));
-	    }
+		{
+			GD.Print(_world.GetWorldNoise(args[0]).GetParamValueAsString(args[1]));
+		}
 		else if (_world.GetWorldGenerators().ContainsKey(args[0]))
 		{
 
 		}
-    }
+	}
     
-    private void Set(string[] args)
-    {
-	    if (_world.GetWorldNoises().ContainsKey(args[0]))
-	    {
-		    _world.GetWorldNoise(args[0]).UpdateParam(args[1], float.Parse(args[2]));	// puede fallar en caso de que espere otro tipo distinto a float
-	    }
-	    else if (_world.GetWorldGenerators().ContainsKey(args[0]))	//untested
-	    {
-		    _world.GetWorldGenerator(args[0]).Call("SetParameter" + args[1], float.Parse(args[2]));	// puede fallar en caso de que espere otro tipo distinto a float
-	    }
-	    else if(_world.GetWorldParameters().ContainsKey(args[0]))
-	    {
-		    _world.UpdateWorldParameter(args[0], float.Parse(args[1]));
-	    }
-	    _tileMap.ReloadTileMap();
-    }
-    
-    
-    private void RandomizeRiver()
-    {
-	    ((River)_world.GetWorldGenerator("River")).Randomize();
-	    _tileMap.RenderChunks("River", 1);
-    }
-    
-    private void SetRiverFreq(string[] args)
-    {
-	    ((River)_world.GetWorldGenerator("River")).GetParameterBaseNoise().Frequency = float.Parse(args[0]);
-	    _tileMap.RenderChunks("River", 1);
-    }
-    
-    private void PrintNoise(string args)
-    {
-	    GD.Print(args);
-	    string noise = args.Split()[0];
-	    if (!_world.GetWorldNoises().Keys.Contains(noise))
-	    {
-		    GD.Print(noise + " not available");
-		    return;
-	    }
-	    GD.Print(_world.GetWorldNoise(noise)); 
-    }
+	private void Set(string[] args)
+	{
+		if (_world.GetWorldNoises().ContainsKey(args[0]))
+		{
+			if (args[2].Contains("."))	// float
+				_world.GetWorldNoise(args[0]).UpdateParam(args[1], float.Parse(args[2]));
+			else	// int
+				_world.GetWorldNoise(args[0]).UpdateParam(args[1], int.Parse(args[2]));
+		}
+		else if (_world.GetWorldGenerators().ContainsKey(args[0]))	//untested
+		{
+			_world.GetWorldGenerator(args[0]).Call("SetParameter" + args[1], float.Parse(args[2]));	// puede fallar en caso de que espere otro tipo distinto a float
+		}
+		else if(_world.GetWorldParameters().ContainsKey(args[0]))
+		{
+			_world.UpdateWorldParameter(args[0], float.Parse(args[1]));
+		}
+		_tileMap.ReloadTileMap();
+	}
 	
-	
+	private void Render(string[] args)
+	{
+		_tileMap.Clear();
+		_tileMap.RenderChunks(args[0].Trim(), 0);
+	}
+    
+	private void RandomizeRiver(string[] args)
+	{
+		((River)_world.GetWorldGenerator("River")).Randomize();
+		_tileMap.RenderChunks("River", 1);
+	}
+    
+	private void SetRiverFreq(string[] args)
+	{
+		((River)_world.GetWorldGenerator("River")).GetParameterBaseNoise().Frequency = float.Parse(args[0]);
+		_tileMap.RenderChunks("River", 1);
+	}
+    
+	private void PrintNoise(string[] args)
+	{
+		string noise = args[0].Split()[0];
+		if (!_world.GetWorldNoises().Keys.Contains(noise))
+		{
+			GD.Print(noise + " not available");
+			return;
+		}
+		GD.Print(_world.GetWorldNoise(noise)); 
+	}
+
+	private void ReloadTileMap(string[] args) => _tileMap.ReloadTileMap();
+
+	private void Exit(string[] args) => GetTree().Quit();
 	
 	
 }

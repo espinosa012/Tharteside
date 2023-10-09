@@ -18,14 +18,16 @@ public partial class River : WorldGenerator
 
     private float RiverAlgorithm(int x, int y)
     {   // sep23
-        bool isNotSea = _elevation.GetValueTierAt(x, y) != _thresholdTier;
+        var isNotSea = _elevation.GetValueTierAt(x, y) != 0;
         return ((IsValidRiverPath(x, y) && isNotSea) ? 0.99999f : -1.0f);
     }
     
     private bool IsValidRiverPath(int x, int y)
     {
-        const int nTiers = 32;  // cuanto mayor, más estrechos los ríos.
-        return _baseNoise.GetAbsoluteNoiseValueTierAt(x, y, nTiers) == 0;
+        const int nTiers = 32;  // tomer el valor del parámetro.
+                                // cuanto mayor, más estrechos los ríos.
+        return (_baseNoise.GetAbsoluteNoiseValueTierAt(x, y, nTiers) <= _thresholdTier) 
+                && !_elevation.IsVolcanicIsland(x, y);
     }
 
     public void Randomize()
