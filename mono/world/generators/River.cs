@@ -20,6 +20,9 @@ public partial class River : WorldGenerator
     {   // sep23
         var isNotSea = _elevation.GetValueTierAt(x, y) != 0;
         return ((IsValidRiverPath(x, y) && isNotSea) ? 0.99999f : -1.0f);
+        
+        // cuando usamos squares de más de 1, tenemos que implementar la lógica para tener los valores
+        // dentro del square. esto en tilemap
     }
     
     private bool IsValidRiverPath(int x, int y)

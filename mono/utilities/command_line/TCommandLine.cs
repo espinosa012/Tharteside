@@ -31,12 +31,12 @@ public partial class TCommandLine : LineEdit
 	
 	private void _ProcessCommand(string text)
 	{
-		// usar expresiones regulares para formar comandos y atributos (opcinales, indicando el nombre del parámetro, etc)
+		// TODO: usar expresiones regulares para formar comandos y atributos (opcinales, indicando el nombre del parámetro, etc)
 		// implementar comando exit y tomar el foco con tab o Fx
 		Tuple<string, string[]> command = GetCommandAndArgs(text);
 		if (HasMethod(command.Item1))
 			Call(command.Item1, command.Item2);
-		else
+		else if (HasMethod(command.Item1.Capitalize()))
 			Call(command.Item1.Capitalize(), command.Item2);
 		Clear();
 	}

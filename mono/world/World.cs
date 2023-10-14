@@ -57,6 +57,8 @@ public class World
 		AddWorldParameter("IslandScaleValue", 0.81f);
 		AddWorldParameter("IslandThresholdLevel", 0.76f); 
 		AddWorldParameter("OutToSeaFactor", 0.7f);  
+		AddWorldParameter("HumidityContinentalnessFactor", 0.715f);  
+		AddWorldParameter("HumidityRiverFactor", 1.0f - 0.715f);  
 	}
 	
 	private void InitWorldGenerators()
@@ -141,6 +143,18 @@ public class World
 		riverGenerator.SetParameterBaseElevation(GetWorldNoise("BaseElevation"));
 		riverGenerator.SetParameterBaseNoise(GetWorldNoise("RiverNoise"));
 		AddWorldGenerator("River", riverGenerator);
+	}
+	
+	public void InitHumidity()
+	{
+		world.generators.Humidity humidityGenerator = new world.generators.Humidity();
+		SetGlobalGeneratorParameters(humidityGenerator);
+		humidityGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
+		humidityGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
+		humidityGenerator.SetParameterRiver((world.generators.River) GetWorldGenerator("River"));
+		humidityGenerator.SetParameterContinentalnessFactor((float) GetWorldParameter("HumidityContinentalnessFactor"));
+		humidityGenerator.SetParameterRiverFactor((float) GetWorldParameter("HumidityRiverFactor"));
+		AddWorldGenerator("Humidity", humidityGenerator);
 	}
 	
 	// HEIGHTMAP

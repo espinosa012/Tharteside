@@ -46,7 +46,7 @@ public partial class MFNL : FastNoiseLite
         return Mathf.Abs(GetNoise2D(x, y));
     }
 
-    public float GetNormalizedInverseNoiseValueAt(int x, int y)
+    public float GetNormalizedInverseNoise2D(int x, int y)
     {
         return 1.0f - GetNormalizedNoise2D(x, y);
     }
