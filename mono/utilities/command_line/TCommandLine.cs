@@ -73,9 +73,9 @@ public partial class TCommandLine : LineEdit
 		if (_world.GetWorldNoises().ContainsKey(args[0]))
 		{
 			if (args[2].Contains("."))	// float
-				_world.GetWorldNoise(args[0]).UpdateParam(args[1], float.Parse(args[2]));
+				_world.GetWorldNoise(args[0]).UpdateNoiseProperty(args[1], float.Parse(args[2]));
 			else	// int
-				_world.GetWorldNoise(args[0]).UpdateParam(args[1], int.Parse(args[2]));
+				_world.GetWorldNoise(args[0]).UpdateNoiseProperty(args[1], int.Parse(args[2]));
 		}
 		else if (_world.GetWorldGenerators().ContainsKey(args[0]))	//untested
 		{

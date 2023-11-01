@@ -97,6 +97,8 @@ public partial class WorldTileMap : TileMap
 	private void FulfillSquare(Vector2I worldPos, Callable valueSource, int tileSetSourceId, int tileMapLayer)
 	{
 		// world pos: la posición del mundo recibida coincide con la de comienzo del square
+		
+		// TODO: no todos los generadores rellenan igual los squares. El río por ejemplo
 		for (var i = 0; i < _squareSize.X; i++)
 		{
 			for (var j = 0; j < _squareSize.Y; j++)
@@ -151,7 +153,7 @@ public partial class WorldTileMap : TileMap
 		InitializeChunks();
 	}
 	
-	// Eventos. Llevar a clase externa 
+	// TODO: Eventos. Llevar a clase externa 
 	public override void _Input(InputEvent @event)
 	{
 		if (@event.IsPressed() && @event.AsText().Equals("Left Mouse Button"))	// optimizar

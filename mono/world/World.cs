@@ -24,23 +24,23 @@ public class World
 		
 		// Formamos los objetos de ruido desde los .json correspondientes
 		var baseElevation = new MFNL("BaseElevation", (int) GetWorldParameter("NTiers"));
-		baseElevation.LoadFromJSON("BaseElevation");
+		baseElevation.LoadFromJson("BaseElevation");
 		AddWorldNoise("BaseElevation", baseElevation);
 
 		var continentalness = new MFNL("Continentalness", (int) GetWorldParameter("NTiers"));
-		continentalness.LoadFromJSON("Continentalness");
+		continentalness.LoadFromJson("Continentalness");
 		AddWorldNoise("Continentalness", continentalness);
 
 		var peaksAndValleys = new MFNL("PeaksAndValleys", (int) GetWorldParameter("NTiers"));
-		peaksAndValleys.LoadFromJSON("PeaksAndValleys");
+		peaksAndValleys.LoadFromJson("PeaksAndValleys");
 		AddWorldNoise("PeaksAndValleys", peaksAndValleys);
 
 		var volcanicIslands = new MFNL("VolcanicIslands", (int) GetWorldParameter("NTiers"));
-		volcanicIslands.LoadFromJSON("VolcanicIslands");
+		volcanicIslands.LoadFromJson("VolcanicIslands");
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
 		
 		var riverNoise = new MFNL("RiverNoise", (int) GetWorldParameter("NTiers"));
-		riverNoise.LoadFromJSON("RiverNoise");
+		riverNoise.LoadFromJson("RiverNoise");
 		AddWorldNoise("RiverNoise", riverNoise);
 	}
 

@@ -29,20 +29,17 @@ public partial class Latitude : WorldGenerator
     
     public bool IsLatitudRegionTropical(int y)
     {
-        float eqDist = GetNormalizedDistanceToEquator(y);
-        return eqDist >= 0.1f && eqDist < 0.5f;
+        return GetNormalizedDistanceToEquator(y) is >= 0.1f and < 0.5f;
     }
     
     public bool IsLatitudRegionSubtropical(int y)
     {
-        float eqDist = GetNormalizedDistanceToEquator(y);
-        return eqDist >= 0.1f && eqDist < 0.5f;
+        return GetNormalizedDistanceToEquator(y) is >= 0.1f and < 0.5f;
     }
     
     public bool IsLatitudRegionTemperate(int y)
     {
-        float eqDist = GetNormalizedDistanceToEquator(y);
-        return eqDist >= 0.5f && eqDist < 0.8f;
+        return GetNormalizedDistanceToEquator(y) is >= 0.5f and < 0.8f;
     }
     
     public bool IsLatitudRegionPolar(int y)

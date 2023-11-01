@@ -17,13 +17,13 @@ public partial class MFNL : FastNoiseLite
         "DomainWarpEnabled", 
         "DomainWarpType", "DomainWarpAmplitude", "DomainWarpFrequency",
         "DomainWarpFractalType", "DomainWarpFractalGain", "DomainWarpFractalLacunarity", "DomainWarpFractalOctaves", 
-          
+        
         "FractalType",
         "FractalGain", "FractalLacunarity", "FractalOctaves",
         "FractalPingPongStrength", "FractalType", "FractalWeightedStrength", 
         "FractalWeightedStrength", 
         
-        "Frequency", "NoiseType", "Offset", "Seed"
+        "Frequency", "NoiseType", "Seed"
     };
     
     // CONSTRUCTOR
@@ -74,9 +74,9 @@ public partial class MFNL : FastNoiseLite
 
 
     //  NOISE PARAMS
-    public void UpdateParam(string param, Variant value) => Set(CamelCaseToSnakeCase(param), value);
+    public void UpdateNoiseProperty(string param, Variant value) => Set(CamelCaseToSnakeCase(param), value);
 
-    public Variant GetParam(string param) => Get(CamelCaseToSnakeCase(param));
+    public Variant GetNoiseProperty(string param) => Get(CamelCaseToSnakeCase(param));
 
     public void RandomizeSeed() => SetSeed(Rng.RandiRange(0, 999999999));   // luego hau que recargar
 
@@ -84,7 +84,7 @@ public partial class MFNL : FastNoiseLite
 
 
     //  NOISE JSON
-    public void SaveToJSON(string filename="")
+    public void SaveToJson(string filename="")
     {
         Dictionary<string, string> noiseDict = new Dictionary<string, string>();
         
@@ -102,7 +102,7 @@ public partial class MFNL : FastNoiseLite
         File.WriteAllText("resources/noise/" + filename, jsonString);   
     }
 
-    public void LoadFromJSON(string filename)
+    public void LoadFromJson(string filename)
     {
         if (!Regex.IsMatch(filename, @"\.json$", RegexOptions.IgnoreCase)){filename += ".json";}    // si no viene la extensión, la indicamos
         var file = Godot.FileAccess.Open("res://resources/noise/" + filename, Godot.FileAccess.ModeFlags.Read);
@@ -129,7 +129,8 @@ public partial class MFNL : FastNoiseLite
         return (MFNL) this.MemberwiseClone();
     }
 
-
+    public string[] GetNoiseProperties() => _noiseProperties;
+    
     public override string ToString()
     {
         string delimeter = "----------------------------------------\n";

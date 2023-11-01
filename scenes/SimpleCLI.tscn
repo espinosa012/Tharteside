@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ch7bfcqc2vxli"]
+
+[ext_resource type="Script" path="res://mono/utilities/command_line/TCommandLine.cs" id="1_3gewq"]
+
+[node name="cmd" type="LineEdit"]
+offset_right = 402.0
+offset_bottom = 46.0
+script = ExtResource("1_3gewq")

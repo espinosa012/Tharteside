@@ -16,6 +16,8 @@ public partial class River : WorldGenerator
         return RiverAlgorithm(x, y);
     }
 
+    //TODO crear funcion para calcular el caudal en cierta posición x,y
+    
     private float RiverAlgorithm(int x, int y)
     {   // sep23
         var isNotSea = _elevation.GetValueTierAt(x, y) != 0;
