@@ -17,7 +17,7 @@ public partial class TAStar : AStarGrid2D
 
     public override float _ComputeCost(Vector2I fromId, Vector2I toId)
     {
-        return 1.0f;
+        return 1.0f;    // for testing. No obstacles
     }
 
     // Region

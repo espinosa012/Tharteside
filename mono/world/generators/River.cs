@@ -12,10 +12,17 @@ public partial class River : WorldGenerator
     private MFNL _continentalness;
     private MFNL _baseNoise;
     private MFNL _baseElevation;
-    private int _thresholdTier = 0;     // el valor ideal dependerá de las características del ruido (freq) para
-                                        // no perder continuidad.
+    private int _thresholdTier = 0;     
+    
+    public RiverTAstar PathfindingAstar;
 
-    private Array<RiverEntity> _rivers = new Array<RiverEntity>();
+
+    private Array<RiverEntity> _rivers;
+
+    public River()
+    {
+        _rivers = new Array<RiverEntity>();
+    }
     
     
     public override float GetValueAt(int x, int y)
@@ -45,6 +52,18 @@ public partial class River : WorldGenerator
         return falseValue;
     }
 
+    public void GenerateRiverAstar(Vector2I birthPos, Vector2I mouthPos)
+    {
+        RiverEntity riverEntity = new RiverEntity();
+        riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
+        riverEntity.SetMouthPosition(mouthPos.X, mouthPos.Y);
+
+        foreach (var point in PathfindingAstar.GetPath(birthPos, mouthPos))
+            riverEntity.AddPoint(point);
+        _rivers.Add(riverEntity);
+    }
+    
+    
     public void GenerateRiver(Vector2I birthPos)
     {
         RiverEntity river = new RiverEntity();
@@ -106,5 +125,8 @@ public partial class River : WorldGenerator
 
     public int GetParameterThresholdTier() => _thresholdTier;   
     public void SetParameterThresholdTier(int thresholdTier) => _thresholdTier = thresholdTier;
+
+    public void SetPathfindingAstar(RiverTAstar pathfinding) => PathfindingAstar = pathfinding;
+    public RiverTAstar GetParameterPathfindingAstar() => PathfindingAstar;
 }
 

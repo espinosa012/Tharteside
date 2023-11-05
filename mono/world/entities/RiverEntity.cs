@@ -17,6 +17,11 @@ public partial class RiverEntity : WorldEntity
         RiverPath = new Array<Vector2I>();
     }
 
+    public void AddPoint(Vector2I point)
+    {
+        RiverPath.Add(point);
+    }
+    
     public void SetBirthPosition(int x, int y) => _birthPosition = new Vector2I(x, y);
     public void SetMouthPosition(int x, int y) => _mouthPosition = new Vector2I(x, y);
 
