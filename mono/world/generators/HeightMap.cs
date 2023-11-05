@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Image = SixLabors.ImageSharp.Image;
 
-public partial class HeightMap : WorldGenerator
+public partial class HeightMap : Tartheside.mono.world.generators.WorldGenerator
 {
 
     private string _imageFilename;

@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class Latitude : WorldGenerator
+public partial class Latitude : Tartheside.mono.world.generators.WorldGenerator
 {
     private int _equatorLine;
     

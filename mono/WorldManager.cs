@@ -30,7 +30,6 @@ public partial class WorldManager : Node2D
 		_commandLine.Init(_world, _tileMap);
 	}
 	
-	
 	private WorldTileMap GetWorldTileMapFromTscn() =>
 		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<WorldTileMap>();
 	
@@ -52,7 +51,6 @@ public partial class WorldManager : Node2D
 		_tileMap.SetWorld(_world);
 		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, Chunks);
 	}
-
 	
 	private void InitializeWorld()
 	{
@@ -68,17 +66,11 @@ public partial class WorldManager : Node2D
 		//_world.InitHeightMap(HeightMap + ".png");
 	}
 	
-	
 	// info
-	public Dictionary<string, Variant> GetWorldParameters()
-	{
-		return _world.GetWorldParameters();
-	}
+	public Dictionary<string, Variant> GetWorldParameters() => _world.GetWorldParameters();
 
-	public Dictionary<string, MFNL> GetWorldNoises()
-	{
-        return _world.GetWorldNoises();
-    }
+	public Dictionary<string, MFNL> GetWorldNoises() => _world.GetWorldNoises();
+    
 
 
 }

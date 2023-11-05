@@ -91,6 +91,7 @@ alignment = 2
 [node name="DomainWarpEnabledInput" type="CheckBox" parent="Margin/GlobalContainer/Right/DomainWarp/MarginContainer/VBoxContainer/DomainWarpEnabled/HBox"]
 layout_mode = 2
 size_flags_horizontal = 8
+flat = true
 alignment = 2
 
 [node name="DomainWarpType" type="MarginContainer" parent="Margin/GlobalContainer/Right/DomainWarp/MarginContainer/VBoxContainer"]
@@ -831,6 +832,53 @@ alignment = 2
 [node name="CellularJitterInputLock" type="CheckButton" parent="Margin/GlobalContainer/Left/Cellular/MarginContainer/VBoxContainer/CellularJitter/HBox"]
 layout_mode = 2
 button_pressed = true
+
+[node name="Source" type="MarginContainer" parent="Margin/GlobalContainer/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="Margin/GlobalContainer/Left/Source"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Margin/GlobalContainer/Left/Source"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Margin/GlobalContainer/Left/Source/MarginContainer"]
+layout_mode = 2
+
+[node name="Cellular" type="MarginContainer" parent="Margin/GlobalContainer/Left/Source/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Margin/GlobalContainer/Left/Source/MarginContainer/VBoxContainer/Cellular"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Source"
+
+[node name="HSeparator2" type="HSeparator" parent="Margin/GlobalContainer/Left/Source/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SourceSelector" type="MarginContainer" parent="Margin/GlobalContainer/Left/Source/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Margin/GlobalContainer/Left/Source/MarginContainer/VBoxContainer/SourceSelector"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Select source:"
+
+[node name="HBox" type="HBoxContainer" parent="Margin/GlobalContainer/Left/Source/MarginContainer/VBoxContainer/SourceSelector"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="SourceSelector" type="OptionButton" parent="Margin/GlobalContainer/Left/Source/MarginContainer/VBoxContainer/SourceSelector/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+alignment = 2
 
 [node name="FileDialog" type="FileDialog" parent="."]
 initial_position = 2

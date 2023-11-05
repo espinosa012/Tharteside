@@ -1,6 +1,6 @@
 using System;
 
-public partial class Temperature : WorldGenerator
+public partial class Temperature : Tartheside.mono.world.generators.WorldGenerator
 {
     private int _equatorLine;
 

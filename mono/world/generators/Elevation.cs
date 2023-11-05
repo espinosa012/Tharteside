@@ -3,7 +3,7 @@ using System;
 
 // algoritmo marzo '23
 
-public partial class Elevation : WorldGenerator
+public partial class Elevation : Tartheside.mono.world.generators.WorldGenerator
 {
     private MFNL _baseElevationNoise;
     private MFNL _continentalnessNoise;

@@ -1,11 +1,13 @@
 using System.Text.RegularExpressions;
 using Godot;
 
+namespace Tartheside.mono.world.generators;
+
 public partial class WorldGenerator : GodotObject
 {
-    private Vector2I _worldSize;    
-    private Vector2I _chunkSize;    
-    private int _nTiers;    
+	private Vector2I _worldSize;    
+	private Vector2I _chunkSize;    
+	private int _nTiers;    
 
 	public virtual float GetChunkAverage(int x, int y){
 		return 0.0f;
@@ -15,19 +17,19 @@ public partial class WorldGenerator : GodotObject
 		return 0.0f;
 	}//TODO
 	
-    public virtual float GetValueAt(int x, int y) => 0.0f;
+	public virtual float GetValueAt(int x, int y) => 0.0f;
 
-    public int GetValueTierAt(Vector2I pos) =>
+	public int GetValueTierAt(Vector2I pos) =>
 		GetValueTierAt(pos.X, pos.Y);
     
-    public int GetValueTierAt(int x, int y) =>
-         GetValueTier(GetValueAt(x, y));
+	public int GetValueTierAt(int x, int y) =>
+		GetValueTier(GetValueAt(x, y));
 
-    public int GetValueTier(float value) =>
+	public int GetValueTier(float value) =>
 		(int)(value / (1.0f / _nTiers));
     
 
-    // NEIGHBOUR EVALUATION (untested)
+	// NEIGHBOUR EVALUATION (untested)
 	public bool IsStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0)
 	{
 		return GetValueTierAt(x, y) > GetValueTierAt(x + xOffset, y + yOffset);
@@ -59,31 +61,31 @@ public partial class WorldGenerator : GodotObject
 	}
 
 
-    // getters & setters	TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
-    public Vector2I GetParameterWorldSize() => _worldSize;
-    public void SetParameterWorldSize(Vector2I value) => _worldSize = value;
+	// getters & setters	TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
+	public Vector2I GetParameterWorldSize() => _worldSize;
+	public void SetParameterWorldSize(Vector2I value) => _worldSize = value;
     
-    public int GetParameterNTiers() => _nTiers;
-    public void SetParameterNTiers(int value) => _nTiers = value;
+	public int GetParameterNTiers() => _nTiers;
+	public void SetParameterNTiers(int value) => _nTiers = value;
 
-    public Vector2I GetParameterChunkSize() => _chunkSize;		// guardamos esto para calcular averages y demás.
-    public void SetParameterChunkSize(Vector2I value) => _chunkSize = value;
+	public Vector2I GetParameterChunkSize() => _chunkSize;		// guardamos esto para calcular averages y demás.
+	public void SetParameterChunkSize(Vector2I value) => _chunkSize = value;
 
     
     
-    // utilities
+	// utilities
     
-    private string CamelCaseToSnakeCase(string str)  => 
-	    Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();// llevar a clase utilities
+	private string CamelCaseToSnakeCase(string str)  => 
+		Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();// llevar a clase utilities
     
     
-    public void GeneratorToPng()
-    {
+	public void GeneratorToPng()
+	{
 	    
-    }
+	}
 
-    public void ChunkToPng(Vector2I chunkPos)
-    {
+	public void ChunkToPng(Vector2I chunkPos)
+	{
 	    
-    }
+	}
 }

@@ -8,7 +8,7 @@ public class World
 	// WORLD PARAMETERS AND NOISES
 	private Dictionary<string, Variant> _worldParameters;
 	private Dictionary<string, MFNL> _worldNoises;
-	private Dictionary<string, WorldGenerator> _worldGenerators;
+	private Dictionary<string, world.generators.WorldGenerator> _worldGenerators;
 
 	// CONSTRUCTOR
 	public World()
@@ -63,21 +63,21 @@ public class World
 	
 	private void InitWorldGenerators()
     {
-        _worldGenerators = new Dictionary<string, WorldGenerator>();
+        _worldGenerators = new Dictionary<string, world.generators.WorldGenerator>();
     }
 
 	//  WORLD GENERATORS
 	
-	public void AddWorldGenerator(string generatorName, WorldGenerator generator) => _worldGenerators[generatorName] = generator;
+	public void AddWorldGenerator(string generatorName, world.generators.WorldGenerator generator) => _worldGenerators[generatorName] = generator;
 	
-	public WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
+	public world.generators.WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
 	
 	public void RemoveWorldGenerator(string gen)
 	{
 		if (_worldGenerators.ContainsKey(gen)) _worldParameters.Remove(gen);
 	}
 	
-	public void SetGlobalGeneratorParameters(WorldGenerator generator)
+	public void SetGlobalGeneratorParameters(world.generators.WorldGenerator generator)
 	{
 		// parámetros presentes en todos los generadores (atributos de la clase madre WorldGenerator)
 		// puede ser un problema si se se actualizan los valores en el world después de inicializarse
@@ -95,7 +95,7 @@ public class World
 		}
 	}
 
-	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
+	public Dictionary<string, world.generators.WorldGenerator> GetWorldGenerators() => _worldGenerators;
 
 	// init world generators
 	public void InitTemperature()
@@ -142,7 +142,16 @@ public class World
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
 		riverGenerator.SetParameterBaseElevation(GetWorldNoise("BaseElevation"));
 		riverGenerator.SetParameterBaseNoise(GetWorldNoise("RiverNoise"));
+		
 		AddWorldGenerator("River", riverGenerator);
+		
+		riverGenerator.GenerateRiver(new Vector2I(31020, 1360));
+		riverGenerator.GenerateRiver(new Vector2I(31022, 1323));
+		riverGenerator.GenerateRiver(new Vector2I(30970, 1340));
+		riverGenerator.GenerateRiver(new Vector2I(30916, 1422));
+		riverGenerator.GenerateRiver(new Vector2I(30986, 1354));
+		riverGenerator.GenerateRiver(new Vector2I(31011, 1376));
+		
 	}
 	
 	public void InitHumidity()

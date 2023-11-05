@@ -15,6 +15,8 @@ public partial class WorldTileMap : TileMap
 	private Vector2I _chunks; // Chunks que se inicializarán al principio
 	private World _world;
 
+	//TODO: no inicializar aquí el npc
+	
 	// getters & setters
 	public Callable GetProceduralSourceByName(string name)
 	{
@@ -116,7 +118,7 @@ public partial class WorldTileMap : TileMap
 		return new Vector2I(worldPos.X + squarePosX, worldPos.Y + squarePosY);
 	}
 
-	private Vector3I GetTileToPlace(Vector2I worldPos,  int tileSetSourceId, Callable valueSourceCallable)
+	private Vector3I GetTileToPlace(Vector2I worldPos, int tileSetSourceId, Callable valueSourceCallable)
 	{
 		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
 		return GetValueTileByPalette(worldPosition, valueSourceCallable, tileSetSourceId);

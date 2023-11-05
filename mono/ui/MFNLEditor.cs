@@ -10,8 +10,11 @@ public partial class MFNLEditor : Control
 	private MarginContainer _fractal; 
 	private MarginContainer _general; 
 	private MarginContainer _cellular;
-
+	private OptionButton _sourceSelector;
+	
 	private MFNL _noise;
+	private WorldTileMap _tileMap;
+	
 	
 	public override void _Ready()
 	{
@@ -20,14 +23,11 @@ public partial class MFNLEditor : Control
 		_fractal = GetNode<MarginContainer>("%Fractal");
 		_general = GetNode<MarginContainer>("%General");
 		_cellular = GetNode<MarginContainer>("%Cellular");
-
-		UiSetUp();
+		_sourceSelector = GetNode<OptionButton>("%SourceSelector");
 		
-		// test
-		var baseElevation = new MFNL("BaseElevation", 24);
-		baseElevation.LoadFromJson("BaseElevation");
-		SetNoiseObject(baseElevation);
-		UpdateUI();
+		TileMapWindowSetUp();
+		
+		UiSetUp();
 	}
 
 	private void UiSetUp()
@@ -82,37 +82,84 @@ public partial class MFNLEditor : Control
 		returnType.AddItem(FastNoiseLite.CellularReturnTypeEnum.Distance2Sub.ToString());
 		returnType.AddItem(FastNoiseLite.CellularReturnTypeEnum.Distance2Mul.ToString());
 		returnType.AddItem(FastNoiseLite.CellularReturnTypeEnum.Distance2Div.ToString());
+
+		foreach (var noise in _tileMap.GetWorld().GetWorldNoises().Keys)
+			_sourceSelector.AddItem(noise);
+		foreach (var generator in _tileMap.GetWorld().GetWorldGenerators().Keys)
+			_sourceSelector.AddItem(generator);	// no hay generadores, se inicializan en el manager
 	}
+
+
 	
-	public void SetNoiseObject(MFNL noise) => _noise = noise;
+	public void SetNoiseObject(MFNL noise)
+	{
+		_noise = noise;
+		UpdateUI();
+	}
 
 	public void UpdateUI()
 	{
 		foreach (var prop in _noise.GetNoiseProperties())
-		{
 			SetParameterInput(prop, _noise.GetNoiseProperty(prop));
-		}
 	}
 
-	public void SetParameterInput(string param, Variant value)
+	private void SetParameterInput(string param, Variant value)
 	{
 		MarginContainer container;
-		string inputNodePath = string.Format("MarginContainer/VBoxContainer/{0}/HBox/{0}Input", param);
+		string relativeInputNodePath = string.Format("MarginContainer/VBoxContainer/{0}/HBox/{0}Input", param);
 		
 		if (param.StartsWith("DomainWarpFractal"))	container = _domainWarpFractal;
 		else if (param.StartsWith("DomainWarp"))	container = _domainWarp;
 		else if (param.StartsWith("Fractal"))	container = _fractal;
-		else if (param.StartsWith("General"))	container = _general;
-		else container = _cellular;
+		else if (param.StartsWith("Cellular"))	container = _cellular;
+		else container = _general;
 		
-		if (param.Contains("Type") || param.Contains("CellularDistanceFunction"))
-			container.GetNode<OptionButton>(inputNodePath).Selected = -1;		// TODO: indicar valor
-		else if (param.Contains("Enabled"))
-			container.GetNode<CheckBox>("Margin/GlobalContainer/Right/DomainWarp/MarginContainer/VBoxContainer/DomainWarpEnabled/HBox/DomainWarpEnabledInput");
-		else
-			container.GetNode<SpinBox>(inputNodePath).Value = value;	
+		try {	
+			if (param.Contains("Type") || param.Contains("CellularDistanceFunction"))	
+				container.GetNode<OptionButton>(relativeInputNodePath).Selected = (int)value;		// TODO: indicar valor
+			else if (param.Contains("Enabled"))
+				container.GetNode<CheckButton>(relativeInputNodePath).ButtonPressed = (bool)value;
+			else
+				if (param.Contains("Octaves") || param.Contains("Seed")) // int
+					container.GetNode<SpinBox>(relativeInputNodePath).Value = (int) value;
+				else
+					container.GetNode<SpinBox>(relativeInputNodePath).Value = (float) value;
+		} catch (Exception e) {
+			GD.Print("Error setting param input: " + param);
+		}
 	}
 	
+	//	TODO: tenemos que incluir los parámetros de renderización en la interfaz para poder indicar valores del mundo
+	//	como el tamaño, squareSize, offset, etc.
 	
+	// tilemap
+	private void TileMapWindowSetUp()
+	{
+		Window tileMapWindow = new Window();
+		_tileMap = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<WorldTileMap>();
+
+		tileMapWindow.Size = new Vector2I(720, 720);
+		tileMapWindow.Position = new Vector2I(64, 84);
+		
+		_tileMap.Name = "NoiseEditorTileMap";
+		_tileMap.Position = new Vector2I(8, 8);
+
+		SetWorld();
+		
+		tileMapWindow.AddChild(_tileMap);		
+		AddChild(tileMapWindow);
+		
+		_tileMap.RenderChunks("RiverNoise", 1);
+	}
+
+	public void SetWorld()
+	{
+		_tileMap.SetWorld(new World());
+		_tileMap.SetWorldSize(new Vector2I(256, 256));
+		_tileMap.SetChunkSize(new Vector2I(16, 16));
+		_tileMap.SetSquareSize(new Vector2I(1, 1));
+		_tileMap.SetTileMapChunks(new Vector2I(16, 16));
+	}
 	
 }
+
