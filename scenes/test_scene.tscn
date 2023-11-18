@@ -8,9 +8,9 @@ scale = Vector2(1.00501, 0.996241)
 script = ExtResource("1_bymoe")
 ProceduralSource = "River"
 WorldSize = Vector2i(1024, 1024)
-TileMapOffset = Vector2i(30900, 1300)
+TileMapOffset = Vector2i(86586, 687)
 ChunkSize = Vector2i(64, 64)
 SquareSize = Vector2i(1, 1)
-Chunks = Vector2i(2, 2)
+Chunks = Vector2i(12, 12)
 
 [node name="cmd" parent="." instance=ExtResource("2_6exry")]

@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -12,18 +10,11 @@ public partial class River : WorldGenerator
     private MFNL _continentalness;
     private MFNL _baseNoise;
     private MFNL _baseElevation;
-    private int _thresholdTier = 0;     
+    private int _thresholdTier = 0;        // TODO parametrizar
     
-    public RiverTAstar PathfindingAstar;
+    private RiverTAstar _pathfindingAStar;
+    private Array<entities.RiverEntity> _rivers = new Array<entities.RiverEntity>();
 
-
-    private Array<RiverEntity> _rivers;
-
-    public River()
-    {
-        _rivers = new Array<RiverEntity>();
-    }
-    
     
     public override float GetValueAt(int x, int y)
     {
@@ -31,73 +22,28 @@ public partial class River : WorldGenerator
         float falseValue = -1.0f;
         
         //return RiverAlgorithm(x, y);
-
         foreach (var river in _rivers)
-            for (int i = 0; i < river.RiverPath.Count; i++)
-                if (river.RiverPath.Contains(new Vector2I(x, y)))
+            for (int i = 0; i < river.GetPointsCount(); i++)
+                if (river.ContainsPoint(new Vector2I(x, y)))
                     return trueValue;
         return falseValue;
     }
 
     
     //TODO crear funcion para calcular el caudal en cierta posición x,y
-    private float CellularAutomataRiverTest(int x, int y)
-    {
-        float trueValue = 0.9999f;
-        float falseValue = -1.0f;
-
-        if (x == 31014 && y == 1362)
-            return trueValue;
-
-        return falseValue;
-    }
 
     public void GenerateRiverAstar(Vector2I birthPos, Vector2I mouthPos)
     {
-        RiverEntity riverEntity = new RiverEntity();
+        entities.RiverEntity riverEntity = new entities.RiverEntity();
         riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
         riverEntity.SetMouthPosition(mouthPos.X, mouthPos.Y);
 
-        foreach (var point in PathfindingAstar.GetPath(birthPos, mouthPos))
+        foreach (var point in _pathfindingAStar.GetPath(birthPos, mouthPos))
             riverEntity.AddPoint(point);
         _rivers.Add(riverEntity);
     }
     
-    
-    public void GenerateRiver(Vector2I birthPos)
-    {
-        RiverEntity river = new RiverEntity();
-        river.SetBirthPosition(birthPos.X, birthPos.Y);
-        
-        var worldCursor = birthPos;
-        Vector2I[] neighbours = new[] {Vector2I.Left, Vector2I.Up, Vector2I.Right, Vector2I.Down};
-        var nextStep = neighbours[(new Random()).Next(4)];
-
-        //(_elevation.IsLand(worldCursor.X, worldCursor.Y))    // cambiar e implementar un tamaño máximo del path.
-        for (int i = 0; i < 256; i++)
-        {
-            river.RiverPath.Add(worldCursor);
-            var lowestNeighbourElevation = 1.0f;
-            foreach (var neighbour in neighbours)
-            {
-                var neighbourValue = _elevation.GetValueAt(worldCursor.X + neighbour.X, worldCursor.Y + neighbour.Y);
-                if (!(lowestNeighbourElevation > neighbourValue)
-                    || river.RiverPath.Contains(worldCursor + neighbour)) continue;
-                lowestNeighbourElevation = neighbourValue;
-                nextStep = neighbour;
-            }
-            worldCursor += nextStep;
-            // Condición de finalización
-            if (_elevation.GetValueTierAt(worldCursor.X, worldCursor.Y) == 0)
-                break;
-        }
-        river.SetMouthPosition(worldCursor.X, worldCursor.Y);
-        _rivers.Add(river);
-    }
-    
-    
-    private float RiverAlgorithm(int x, int y)
-    
+    private float RiverNoiseAlgorithm(int x, int y)
     {   // sep23
         const int nTiers = 32;  // tomer el valor del parámetro.
         var isNotSea = _elevation.GetValueTierAt(x, y) != 0;
@@ -126,7 +72,7 @@ public partial class River : WorldGenerator
     public int GetParameterThresholdTier() => _thresholdTier;   
     public void SetParameterThresholdTier(int thresholdTier) => _thresholdTier = thresholdTier;
 
-    public void SetPathfindingAstar(RiverTAstar pathfinding) => PathfindingAstar = pathfinding;
-    public RiverTAstar GetParameterPathfindingAstar() => PathfindingAstar;
+    public void SetPathfindingAstar(RiverTAstar pathfinding) => _pathfindingAStar = pathfinding;
+    public RiverTAstar GetParameterPathfindingAstar() => _pathfindingAStar;
 }
 

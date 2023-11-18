@@ -7,8 +7,10 @@ public partial class WorldGenerator : GodotObject
 {
 	private Vector2I _worldSize;    
 	private Vector2I _chunkSize;    
-	private int _nTiers;    
-
+	private int _nTiers;
+	private float[,] _values;
+	
+	
 	public virtual float GetChunkAverage(int x, int y){
 		return 0.0f;
 	}//TODO

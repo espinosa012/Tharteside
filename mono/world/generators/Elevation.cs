@@ -18,6 +18,7 @@ public partial class Elevation : Tartheside.mono.world.generators.WorldGenerator
     private float _outToSeaFactor;    
 
 
+    
     public override float GetValueAt(int x, int y)
 	{
 		if (IsLand(x, y))
@@ -29,14 +30,14 @@ public partial class Elevation : Tartheside.mono.world.generators.WorldGenerator
 	}
 
     
-    public float GetVolcanicIslandElevation(int x, int y)	// march23
+    private float GetVolcanicIslandElevation(int x, int y)	// march23
 	{
 		return _peaksAndValleysNoise.GetNormalizedNoise2D(x, y) * 
 		        _continentalScaleValue * _baseElevationNoise.GetNormalizedNoise2D(x, y) *
 		        _volcanicIslandsNoise.GetNormalizedNoise2D(x, y) * _islandScaleValue;
 	}
 
-    public float GetContinentalElevation(int x, int y)	// march23
+    private float GetContinentalElevation(int x, int y)	// march23
 	{
 		return Math.Min(1f, Math.Max(_minContinentalHeight, _peaksAndValleysNoise.GetNormalizedNoise2D(x, y) * 
 			_continentalScaleValue * _baseElevationNoise.GetNormalizedNoise2D(x, y) -

@@ -139,23 +139,16 @@ public class World
 		world.generators.River riverGenerator = new world.generators.River();
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
-		riverGenerator.SetPathfindingAstar(new RiverTAstar(new Vector2I(30900, 1300), 
-			new Vector2I(30900+128, 31300+128), (Elevation) GetWorldGenerator("Elevation")));
+		//riverGenerator.SetPathfindingAstar(new RiverTAstar(new Vector2I(62000, 3000), new Vector2I(62000+128, 3000+128), (Elevation) GetWorldGenerator("Elevation")));
+		riverGenerator.SetPathfindingAstar(new RiverTAstar(new Vector2I(86000, 600), new Vector2I(86000+2048, 600+2048), (Elevation) GetWorldGenerator("Elevation")));
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
 		riverGenerator.SetParameterBaseElevation(GetWorldNoise("BaseElevation"));
 		riverGenerator.SetParameterBaseNoise(GetWorldNoise("RiverNoise"));
 		
 		AddWorldGenerator("River", riverGenerator);
 		
-		/*riverGenerator.GenerateRiver(new Vector2I(31020, 1360));
-		riverGenerator.GenerateRiver(new Vector2I(31022, 1323));
-		riverGenerator.GenerateRiver(new Vector2I(30970, 1340));
-		riverGenerator.GenerateRiver(new Vector2I(30916, 1422));
-		riverGenerator.GenerateRiver(new Vector2I(30986, 1354));
-		riverGenerator.GenerateRiver(new Vector2I(31011, 1376));
-		*/
-		riverGenerator.GenerateRiverAstar(new Vector2I(31020, 1360), new Vector2I(31000, 1400));
-		riverGenerator.GenerateRiverAstar(new Vector2I(30972, 1347), new Vector2I(30944, 1363));
+		riverGenerator.GenerateRiverAstar(new Vector2I(86959, 665), new Vector2I(86995, 693));
+		//riverGenerator.GenerateRiverAstar(new Vector2I(30972, 1347), new Vector2I(30944, 1363));
 	}
 	
 	public void InitHumidity()
