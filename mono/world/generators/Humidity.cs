@@ -14,8 +14,12 @@ public partial class Humidity : WorldGenerator
 
     private float _continentalnessFactor;
     private float _riverFactor;
+
     
-    public override float GetValueAt(int x, int y) => HumidityAlgorithm(x, y);
+    public Humidity(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+    {}
+    
+    public override float GenerateValueAt(int x, int y) => HumidityAlgorithm(x, y);
 
     private float HumidityAlgorithm(int x, int y) => _elevation.IsLand(x, y) ? 
         Mathf.Min(1.0f, GetContinentalnessInfluence(x, y) + GetRiverInfluence(x, y)) : 0.0f;
@@ -41,7 +45,5 @@ public partial class Humidity : WorldGenerator
 
     public float GetParameterRiverFactor() => _riverFactor;
     public void SetParameterRiverFactor(float riverFactor) => _riverFactor = riverFactor;
-    
-    
 
 }

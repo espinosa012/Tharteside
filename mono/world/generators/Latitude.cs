@@ -6,7 +6,11 @@ public partial class Latitude : WorldGenerator
 {
     private int _equatorLine;
     
-    public override float GetValueAt(int x, int y) => 
+    
+    public Latitude(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+    {}
+    
+    public override float GenerateValueAt(int x, int y) => 
         GetNormalizedSignedDistanceToEquator(y);
     
     public float GetValueDegrees(int y) =>

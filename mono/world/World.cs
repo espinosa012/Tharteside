@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Godot;
@@ -22,9 +21,17 @@ public class World
 		InitWorldGenerators();
 	}
 
+	private void InitParameters()
+	{
+		_worldParameters = new Dictionary<string, Variant>();
+		LoadParametersFromJson();
+		UpdateWorldParameter("WorldSize", new Vector2I((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY")));	//TODO: usar las X e Y que están en el json y cambiar las llamadas al parámetro "WorldSize"
+	}
+	
 	private void InitNoises()
 	{
-		_worldNoises = new Dictionary<string, utilities.random.MFNL>();
+		_worldNoises = new Dictionary<string, MFNL>();
 		
 		var baseElevation = new MFNL("BaseElevation", (int) GetWorldParameter("NTiers"));
 		baseElevation.LoadFromJson("BaseElevation");
@@ -47,11 +54,11 @@ public class World
 		AddWorldNoise("RiverNoise", riverNoise);
 	}
 
-	private void InitParameters()
+	private void InitWorldGenerators()
 	{
-		_worldParameters = new Dictionary<string, Variant>();
-		LoadParametersFromJson();
+		_worldGenerators = new Dictionary<string, WorldGenerator>();
 	}
+
 
 	private void LoadParametersFromJson()
 	{
@@ -60,10 +67,6 @@ public class World
 		foreach (var kvp in noiseDict) AddWorldParameter(kvp.Key,kvp.Value);
 	}
 	
-	private void InitWorldGenerators()
-    {
-        _worldGenerators = new Dictionary<string, WorldGenerator>();
-    }
 
 	//  WORLD GENERATORS
 	private void AddWorldGenerator(string generatorName, WorldGenerator generator) => 
@@ -77,6 +80,7 @@ public class World
 		// parámetros presentes en todos los generadores (atributos de la clase madre WorldGenerator)
 		// puede ser un problema si se se actualizan los valores en el world después de inicializarse
 		// por eso, creamos UpdateGlobalGeneratorParameters
+		// Ninguno de estos valores debe cambiarse una vez el mundo se ha creado
 		generator.SetParameterWorldSize((Vector2I) GetWorldParameter("WorldSize"));
 		generator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
 		generator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
@@ -90,10 +94,11 @@ public class World
 
 	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
 
-	// init world generators
+	// init world generators (¿no debería ir mejor en el manager?)
 	public void InitLatitude()
 	{
-		Latitude latitudeGenerator = new Latitude();
+		Latitude latitudeGenerator = new Latitude((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(latitudeGenerator);
 		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
 		AddWorldGenerator("Latitude", latitudeGenerator);
@@ -102,7 +107,8 @@ public class World
 	
 	public void InitTemperature()
 	{
-		Temperature temperatureGenerator = new Temperature();
+		Temperature temperatureGenerator = new Temperature((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(temperatureGenerator);
 		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
 		
@@ -111,7 +117,8 @@ public class World
 	
 	public void InitElevation()
 	{	
-		Elevation elevationGenerator = new Elevation();
+		Elevation elevationGenerator = new Elevation((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(elevationGenerator);
 		elevationGenerator.SetParameterBaseElevationNoise(_worldNoises["BaseElevation"]);
 		elevationGenerator.SetParameterContinentalnessNoise(_worldNoises["Continentalness"]);
@@ -124,12 +131,15 @@ public class World
 		elevationGenerator.SetParameterIslandThresholdLevel((float) _worldParameters["IslandThresholdLevel"]);
 		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
 
+		
+		
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 
 	public void InitRiver()
 	{
-		River riverGenerator = new River();
+		River riverGenerator = new River((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		//riverGenerator.SetPathfindingAstar(new RiverTAstar(new Vector2I(62000, 3000), new Vector2I(62000+128, 3000+128), (Elevation) GetWorldGenerator("Elevation")));
@@ -146,7 +156,8 @@ public class World
 	
 	public void InitHumidity()
 	{
-		Humidity humidityGenerator = new Humidity();
+		Humidity humidityGenerator = new Humidity((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(humidityGenerator);
 		humidityGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		humidityGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
@@ -160,12 +171,12 @@ public class World
 	public void AddHeightMap(string generatorName, string filename)
 	{
 		// podremos utilizar heightmaps deterministas para distintos propoósitos
-		HeightMap heightMapGenerator = new HeightMap();
+		HeightMap heightMapGenerator = new HeightMap((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY"));
 		heightMapGenerator.LoadHeighMap(filename);
 		SetGlobalGeneratorParameters(heightMapGenerator);
 		AddWorldGenerator(generatorName, heightMapGenerator);
 	}
-	
 	
 	//  WORLD PARAMETERS
 	public void AddWorldParameter(string param, Variant value)

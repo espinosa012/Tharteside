@@ -1,7 +1,4 @@
-using System;
-using System.Threading.Tasks;
 using Godot;
-using Godot.Collections;
 using Tartheside.mono.world;
 
 namespace Tartheside.mono;
@@ -19,8 +16,9 @@ public partial class WorldTileMap : TileMap
 	//TODO: no inicializar aquí el npc
 	
 	// getters & setters
-	public Callable GetProceduralSourceByName(string name)
+	public Callable GetValueSourceByName(string name)
 	{
+		// TODO: aquí deberíamos consultar las matrices del generador que corresponda (si es ruido, no)
 		name ??= "Elevation";
 		if (_world.GetWorldGenerators().ContainsKey(name))
 			return new Callable(_world.GetWorldGenerator(name), "GetValueTierAt");
@@ -48,11 +46,13 @@ public partial class WorldTileMap : TileMap
 	public void SetSquareSize(Vector2I newSize) => _squareSize = newSize;
 
 	// tilemap
-	public void TileMapSetup(Vector2I worldSize, Vector2I offset, Vector2I chunkSize, Vector2I squareSize,
+	public void TileMapSetup(Vector2I offset, Vector2I chunkSize, Vector2I squareSize,
 		Vector2I initChunks)
 	{
+		_worldSize = new Vector2I((int)_world.GetWorldParameter("WorldSizeX"),
+			(int)_world.GetWorldParameter("WorldSizeY")); 
+		
 		//TODO: cambiar por getters y setters para acceder desde afuera
-		_worldSize = worldSize;
 		_tileMapOffset = offset;
 		_chunkSize = chunkSize;
 		_squareSize = squareSize;
@@ -71,12 +71,8 @@ public partial class WorldTileMap : TileMap
 	{
 		ClearLayer(layer);
 		for (var i = 0; i < _chunks.X; i++)
-		{
 			for (var j = 0; j < _chunks.Y; j++)
-			{
 				RenderChunk(new Vector2I(i, j), source, layer);
-			}
-		}
 	}
 	
 	private void RenderChunk(Vector2I chunkPosition, string source, int layer) // hacer asíncrono para renderizar los chunks en paralelo
@@ -92,7 +88,7 @@ public partial class WorldTileMap : TileMap
 			     y += _squareSize.Y)
 			{
 				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
-				FulfillSquare(squarePos, GetProceduralSourceByName(source), 10, layer); 
+				FulfillSquare(squarePos, GetValueSourceByName(source), 10, layer); 
 			}
 		}
 	}	

@@ -1,18 +1,17 @@
-using System.Collections.Generic;
 using Godot;
 using Tartheside.mono.utilities.command_line;
 using Tartheside.mono.world;
 
 namespace Tartheside.mono;
 
+
 public partial class WorldManager : Node2D
 {	
-	//[Export] public string HeightMap;
-	[Export] private Vector2I _worldSize;
+	//[Export] public string HeightMap;	// testing
 	[Export] private Vector2I _tileMapOffset;
 	[Export] private Vector2I _chunkSize;
 	[Export] private Vector2I _squareSize;
-	[Export] private Vector2I _chunks;	
+	[Export] private Vector2I _initChunks;	
 
 	private World _world;
 	private WorldTileMap _tileMap;
@@ -22,7 +21,7 @@ public partial class WorldManager : Node2D
 	{
 		InitializeWorld();
 		InitializeTileMap();	
-		InitializeCommandLine();
+		//InitializeCommandLine();
 	}
 
 	private void InitializeCommandLine()
@@ -50,14 +49,16 @@ public partial class WorldManager : Node2D
 	{
 		InstantiateTileMap();
 		_tileMap.SetWorld(_world);
-		_tileMap.TileMapSetup(_worldSize, _tileMapOffset, _chunkSize, _squareSize, _chunks);
+		_tileMap.TileMapSetup(_tileMapOffset, _chunkSize, _squareSize, _initChunks);
+		// pasamos al tilemap los parámetros que no afectan a los valores generados, a excepción del tamaño, que lo
+		// guardamos en el json como parámetro del mundo también (¿seguro que debería ser así?)
 	}
 	
 	private void InitializeWorld()
 	{
 		_world = new World();
-		_world.UpdateWorldParameter("WorldSize", _worldSize);
-		_world.UpdateWorldParameter("ChunkSize", _chunkSize);
+		_world.UpdateWorldParameter("ChunkSize", _chunkSize);	
+		//TODO: lo dejamos aquí para cogerlo del editor. no afecta a los valores generados
 		
 		_world.InitElevation();
 		_world.InitRiver();

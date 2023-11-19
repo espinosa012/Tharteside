@@ -1,4 +1,5 @@
 using System;
+using Godot;
 using Tartheside.mono.utilities.random;
 
 // algoritmo marzo '23
@@ -18,8 +19,13 @@ public partial class Elevation : WorldGenerator
 	private float _islandScaleValue;    
 	private float _islandThresholdLevel;    
 	private float _outToSeaFactor;    
-
-	public override float GetValueAt(int x, int y) => IsLand(x, y) ? IsVolcanicIsland(x, y) ? 
+	
+	
+	public Elevation(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+	{}
+	
+	
+	public override float GenerateValueAt(int x, int y) => IsLand(x, y) ? IsVolcanicIsland(x, y) ? 
 				GetVolcanicIslandElevation(x, y) : GetContinentalElevation(x, y) : 0.0f;  
     
 	private float GetVolcanicIslandElevation(int x, int y) => _peaksAndValleysNoise.GetNormalizedNoise2D(x, y) * 
@@ -78,4 +84,5 @@ public partial class Elevation : WorldGenerator
     
 	public float GetParameterOutToSeaFactor() => _outToSeaFactor;
 	public void SetParameterOutToSeaFactor(float value) => _outToSeaFactor = value;
+	
 }

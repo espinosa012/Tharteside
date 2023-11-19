@@ -16,7 +16,10 @@ public partial class River : WorldGenerator
     private Array<RiverEntity> _rivers = new Array<RiverEntity>();
 
     
-    public override float GetValueAt(int x, int y)
+    public River(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+    {}
+    
+    public override float GenerateValueAt(int x, int y)
     {
         float trueValue = 0.999f;
         float falseValue = -1.0f;

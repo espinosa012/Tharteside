@@ -12,7 +12,11 @@ public partial class HeightMap : WorldGenerator
     private string _imageFilename;
     private Image<Rgba32> _heightMap;
     
-    public override float GetValueAt(int x, int y)
+    
+    public HeightMap(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+    {}
+    
+    public override float GenerateValueAt(int x, int y)
     {
         if (x >= _heightMap.Width || y >= _heightMap.Height || x < 0 || y < 0)
             return 0.0f;

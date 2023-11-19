@@ -1,4 +1,6 @@
 {
+	"WorldSizeX":"1024",
+	"WorldSizeY":"1024",
 	"NTiers":"24",
 	"EquatorLine":"512",
 	"MinContinentalHeight":"0.023",
