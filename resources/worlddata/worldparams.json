@@ -1,4 +1,10 @@
 {
+	"WorldSizeX":"1024",
+	"WorldSizeY":"1024",
+	"ChunkSizeX":"64",
+	"ChunkSizeY":"64",
+	"SquareSizeX":"1",
+	"SquareSizeY":"1",
 	"NTiers":"24",
 	"EquatorLine":"512",
 	"MinContinentalHeight":"0.023",

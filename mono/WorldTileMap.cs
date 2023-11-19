@@ -1,23 +1,19 @@
-using System;
-using System.Threading.Tasks;
 using Godot;
-using Godot.Collections;
 using Tartheside.mono.world;
 
 namespace Tartheside.mono;
 
 public partial class WorldTileMap : TileMap
 {
+	private World _world;
+
 	private TileMapEventManager _eventManager;
 	private Vector2I _worldSize;
 	private Vector2I _tileMapOffset;
 	private Vector2I _chunkSize;
 	private Vector2I _squareSize;
 	private Vector2I _chunks; // Chunks que se inicializarán al principio
-	private World _world;
 
-	//TODO: no inicializar aquí el npc
-	
 	// getters & setters
 	public Callable GetProceduralSourceByName(string name)
 	{
@@ -71,12 +67,8 @@ public partial class WorldTileMap : TileMap
 	{
 		ClearLayer(layer);
 		for (var i = 0; i < _chunks.X; i++)
-		{
 			for (var j = 0; j < _chunks.Y; j++)
-			{
 				RenderChunk(new Vector2I(i, j), source, layer);
-			}
-		}
 	}
 	
 	private void RenderChunk(Vector2I chunkPosition, string source, int layer) // hacer asíncrono para renderizar los chunks en paralelo
