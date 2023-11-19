@@ -1,6 +1,5 @@
-using Godot;
-using System;
+namespace Tartheside.mono.world.generators;
 
-public partial class Pressure : Tartheside.mono.world.generators.WorldGenerator
+public partial class Pressure : WorldGenerator
 {
 }

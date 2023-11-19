@@ -1,20 +1,21 @@
 using System;
 
-public partial class Temperature : Tartheside.mono.world.generators.WorldGenerator
+namespace Tartheside.mono.world.generators;
+
+public partial class Temperature : WorldGenerator
 {
-    private int _equatorLine;
-
-
+    private Latitude _latitude;
 
     public override float GetValueAt(int x, int y)
     {
+        // TODO: utilizar valores de elevación, regiones de latitud, humedad, etc. (¿¿temperatura dinámica -> generadores dinámicos??)
         return GetNormalizedDistanceToEquator(y);
     }
 
-    public float GetNormalizedDistanceToEquator(int y) => (float) Math.Abs(y - _equatorLine) / _equatorLine;
+    private float GetNormalizedDistanceToEquator(int y) => (float) Math.Abs(y - _latitude.GetParameterEquatorLine()) 
+                                                          / _latitude.GetParameterEquatorLine();
 
     // getters & setters
-    public int GetParameterEquatorLine() => _equatorLine;
-    public void SetParameterEquatorLine(int value) => _equatorLine = value;
-
+    public Latitude GetParameterLatitude() => _latitude;
+    public void SetParameterLatitude(Latitude latitude) => _latitude = latitude;
 }

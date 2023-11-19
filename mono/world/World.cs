@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Godot;
-namespace Tartheside.mono;
+using Tartheside.mono.utilities.random;
+using Tartheside.mono.world.generators;
+
+namespace Tartheside.mono.world;
 
 public class World
 {
 	// WORLD PARAMETERS AND NOISES
 	private Dictionary<string, Variant> _worldParameters;
 	private Dictionary<string, MFNL> _worldNoises;
-	private Dictionary<string, world.generators.WorldGenerator> _worldGenerators;
+	private Dictionary<string, WorldGenerator> _worldGenerators;
 
 	// CONSTRUCTOR
 	public World()
@@ -20,9 +24,8 @@ public class World
 
 	private void InitNoises()
 	{
-		_worldNoises = new Dictionary<string, MFNL>();
+		_worldNoises = new Dictionary<string, utilities.random.MFNL>();
 		
-		// Formamos los objetos de ruido desde los .json correspondientes
 		var baseElevation = new MFNL("BaseElevation", (int) GetWorldParameter("NTiers"));
 		baseElevation.LoadFromJson("BaseElevation");
 		AddWorldNoise("BaseElevation", baseElevation);
@@ -46,38 +49,30 @@ public class World
 
 	private void InitParameters()
 	{
-		//TODO: llevarlo a un fichero json, y/o crear una clase WorldParameters
 		_worldParameters = new Dictionary<string, Variant>();
-		
-		AddWorldParameter("NTiers", 24);
-		AddWorldParameter("EquatorLine", 512);
-		AddWorldParameter("MinContinentalHeight", 0.023f);
-		AddWorldParameter("ContinentalScaleValue", 1.22f);
-		AddWorldParameter("SeaScaleValue", 1f/0.85f);
-		AddWorldParameter("IslandScaleValue", 0.81f);
-		AddWorldParameter("IslandThresholdLevel", 0.76f); 
-		AddWorldParameter("OutToSeaFactor", 0.7f);  
-		AddWorldParameter("HumidityContinentalnessFactor", 0.715f);  
-		AddWorldParameter("HumidityRiverFactor", 1.0f - 0.715f);  
+		LoadParametersFromJson();
+	}
+
+	private void LoadParametersFromJson()
+	{
+		var file = FileAccess.Open("res://resources/worlddata/worldparams.json", FileAccess.ModeFlags.Read);
+		var noiseDict = JsonSerializer.Deserialize<Dictionary<string, string>>(file.GetAsText());
+		foreach (var kvp in noiseDict) AddWorldParameter(kvp.Key,kvp.Value);
 	}
 	
 	private void InitWorldGenerators()
     {
-        _worldGenerators = new Dictionary<string, world.generators.WorldGenerator>();
+        _worldGenerators = new Dictionary<string, WorldGenerator>();
     }
 
 	//  WORLD GENERATORS
+	private void AddWorldGenerator(string generatorName, WorldGenerator generator) => 
+		_worldGenerators[generatorName] = generator;
 	
-	public void AddWorldGenerator(string generatorName, world.generators.WorldGenerator generator) => _worldGenerators[generatorName] = generator;
-	
-	public world.generators.WorldGenerator GetWorldGenerator(string generator) => _worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
-	
-	public void RemoveWorldGenerator(string gen)
-	{
-		if (_worldGenerators.ContainsKey(gen)) _worldParameters.Remove(gen);
-	}
-	
-	public void SetGlobalGeneratorParameters(world.generators.WorldGenerator generator)
+	public WorldGenerator GetWorldGenerator(string generator) => 
+		_worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
+
+	private void SetGlobalGeneratorParameters(WorldGenerator generator)
 	{
 		// parámetros presentes en todos los generadores (atributos de la clase madre WorldGenerator)
 		// puede ser un problema si se se actualizan los valores en el world después de inicializarse
@@ -90,23 +85,12 @@ public class World
 	private void UpdateGlobalGeneratorsParameters()
 	{
 		foreach (var generator in GetWorldGenerators().Values)
-		{
 			SetGlobalGeneratorParameters(generator);
-		}
 	}
 
-	public Dictionary<string, world.generators.WorldGenerator> GetWorldGenerators() => _worldGenerators;
+	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
 
 	// init world generators
-	public void InitTemperature()
-	{
-		Temperature temperatureGenerator = new Temperature();
-		SetGlobalGeneratorParameters(temperatureGenerator);
-		temperatureGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
-			
-		AddWorldGenerator("Temperature", temperatureGenerator);
-	}
-	
 	public void InitLatitude()
 	{
 		Latitude latitudeGenerator = new Latitude();
@@ -114,6 +98,15 @@ public class World
 		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
 		AddWorldGenerator("Latitude", latitudeGenerator);
 		//TODO: intervalos de regiones como parámetros
+	}
+	
+	public void InitTemperature()
+	{
+		Temperature temperatureGenerator = new Temperature();
+		SetGlobalGeneratorParameters(temperatureGenerator);
+		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
+		
+		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
 	
 	public void InitElevation()
@@ -136,28 +129,28 @@ public class World
 
 	public void InitRiver()
 	{
-		world.generators.River riverGenerator = new world.generators.River();
+		River riverGenerator = new River();
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		//riverGenerator.SetPathfindingAstar(new RiverTAstar(new Vector2I(62000, 3000), new Vector2I(62000+128, 3000+128), (Elevation) GetWorldGenerator("Elevation")));
-		riverGenerator.SetPathfindingAstar(new RiverTAstar(new Vector2I(86000, 600), new Vector2I(86000+2048, 600+2048), (Elevation) GetWorldGenerator("Elevation")));
+		riverGenerator.SetPathfindingAstar(new RiverTAStar(new Vector2I(86000, 600), new Vector2I(86000+2048, 600+2048), (generators.Elevation) GetWorldGenerator("Elevation")));
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
 		riverGenerator.SetParameterBaseElevation(GetWorldNoise("BaseElevation"));
 		riverGenerator.SetParameterBaseNoise(GetWorldNoise("RiverNoise"));
 		
 		AddWorldGenerator("River", riverGenerator);
 		
-		riverGenerator.GenerateRiverAstar(new Vector2I(86959, 665), new Vector2I(86995, 693));
+		riverGenerator.GenerateRiverAStar(new Vector2I(86959, 665), new Vector2I(86995, 693));
 		//riverGenerator.GenerateRiverAstar(new Vector2I(30972, 1347), new Vector2I(30944, 1363));
 	}
 	
 	public void InitHumidity()
 	{
-		world.generators.Humidity humidityGenerator = new world.generators.Humidity();
+		Humidity humidityGenerator = new Humidity();
 		SetGlobalGeneratorParameters(humidityGenerator);
 		humidityGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		humidityGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		humidityGenerator.SetParameterRiver((world.generators.River) GetWorldGenerator("River"));
+		humidityGenerator.SetParameterRiver((River) GetWorldGenerator("River"));
 		humidityGenerator.SetParameterContinentalnessFactor((float) GetWorldParameter("HumidityContinentalnessFactor"));
 		humidityGenerator.SetParameterRiverFactor((float) GetWorldParameter("HumidityRiverFactor"));
 		AddWorldGenerator("Humidity", humidityGenerator);
@@ -183,11 +176,6 @@ public class World
 			_worldParameters[param] = value;
 	} 
 
-	public void RemoveWorldParameter(string param)
-	{
-		if (_worldParameters.ContainsKey(param)) _worldParameters.Remove(param);
-	}
-
 	public void UpdateWorldParameter(string param, Variant value) 
 	{
 		if (_worldParameters.ContainsKey(param))
@@ -199,7 +187,6 @@ public class World
 		}
 		else
 			AddWorldParameter(param, value);
-		
 	}
 
 	public Variant GetWorldParameter(string param) => _worldParameters[param];
@@ -226,30 +213,9 @@ public class World
 	private void RandomizeWorld()
 	{
 		foreach (MFNL noise in _worldNoises.Values)
-		{
 			noise.RandomizeSeed();  
-		}
 	}
 	
-	
-	// OBSTACLES
-	public bool ISWorldObstacle(int x, int y)
-	{
-		// para pathfinding (tanto de humanos como de otros elementos como ríos, etc.)
-		return false;
-	}
-	
-	// CHUNKS
-	public Vector2I GetChunkByWorldPosition(int x, int y) => new Vector2I((int) Math.Floor((double) (x / 
-		((Vector2I) GetWorldParameter("ChunkSize")).X)), (int) Math.Floor((double) (y / 
-		((Vector2I) GetWorldParameter("ChunkSize")).Y)));
-	
-	// UTILITIES
-	public void WorldToPng()
-	{
-		/*
-		 *	TODO: para calcular distancia al mar, detectar islas, 
-		 * 
-		 */
-	}
+
+
 }

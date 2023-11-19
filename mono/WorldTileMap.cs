@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
+using Tartheside.mono.world;
 
 namespace Tartheside.mono;
 

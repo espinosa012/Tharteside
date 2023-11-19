@@ -1,14 +1,16 @@
-using System;
-using Godot;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Text.Json;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using Godot;
+
+namespace Tartheside.mono.utilities.random;
 
 public partial class MFNL : FastNoiseLite
 {
-    string Name;
-    RandomNumberGenerator Rng;
+    private string _name;
+    private RandomNumberGenerator _rng;
     private int _nTiers;
 
     private string[] _noiseProperties = {
@@ -29,34 +31,19 @@ public partial class MFNL : FastNoiseLite
     // CONSTRUCTOR
     public MFNL(string name="Noise", int nTiers = 24)
     {
-        Name = name;
-        Rng = new RandomNumberGenerator();  // inicializamos el rng
+        _name = name;
+        _rng = new RandomNumberGenerator();  // inicializamos el rng
         _nTiers = nTiers;
     }
 
-    public void Rename(string newName)
-    {
-        Name = newName;
-    }
-
-
     // NOISE VALUES
-    public float GetAbsoluteValueNoise(int x, int y)
-    {
-        return Mathf.Abs(GetNoise2D(x, y));
-    }
+    public float GetAbsoluteValueNoise(int x, int y) => Mathf.Abs(GetNoise2D(x, y));
 
-    public float GetNormalizedInverseNoise2D(int x, int y)
-    {
-        return 1.0f - GetNormalizedNoise2D(x, y);
-    }
+    public float GetNormalizedInverseNoise2D(int x, int y) => 1.0f - GetNormalizedNoise2D(x, y);
     
-    public float GetNormalizedNoise2D(int x, int y)
-    {
-        return (GetNoise2D(x, y) + 1f) * 0.5f;  // pasamos del rango [-1, 1] a [0, 1]
-    }
+    public float GetNormalizedNoise2D(int x, int y) => (GetNoise2D(x, y) + 1f) * 0.5f;
 
-    public int GetValueTier(float value, int nTiers = 0)
+    private int GetValueTier(float value, int nTiers = 0)
     {
         nTiers = (nTiers == 0) ? _nTiers : nTiers;
         return (int)(value / (1.0f / nTiers));
@@ -78,7 +65,7 @@ public partial class MFNL : FastNoiseLite
 
     public Variant GetNoiseProperty(string param) => Get(CamelCaseToSnakeCase(param));
 
-    public void RandomizeSeed() => SetSeed(Rng.RandiRange(0, 999999999));   // luego hau que recargar
+    public void RandomizeSeed() => SetSeed(_rng.RandiRange(0, 999999999));   // luego hau que recargar
 
     public void SetSeed(int seed) => Seed = seed;
 
@@ -86,30 +73,20 @@ public partial class MFNL : FastNoiseLite
     //  NOISE JSON
     public void SaveToJson(string filename="")
     {
-        Dictionary<string, string> noiseDict = new Dictionary<string, string>();
-        
-        foreach (string vts in _noiseProperties) noiseDict.Add(vts, Get(CamelCaseToSnakeCase(vts)).ToString());
+        var noiseDict = _noiseProperties.ToDictionary(vts => vts, vts => Get(CamelCaseToSnakeCase(vts)).ToString());
+        var jsonString = JsonSerializer.Serialize(noiseDict);
 
-        string jsonString = JsonSerializer.Serialize(noiseDict);
-        
-        // Si no indicamos un nombre para el archivo json en que queremos guardar el ruido, establecemos el nombre del ruido
-        if (filename == ""){filename = Name;}
-
-        // si no viene la extensión, la indicamos
+        if (filename == ""){filename = _name;}
         if (!Regex.IsMatch(filename, @"\.json$", RegexOptions.IgnoreCase)){filename += ".json";}    
-
-        // hacer con la librería de Godot
-        File.WriteAllText("resources/noise/" + filename, jsonString);   
+        File.WriteAllText("resources/noise/" + filename, jsonString);   // TODO: hacer con la librería de Godot
     }
 
     public void LoadFromJson(string filename)
     {
         if (!Regex.IsMatch(filename, @"\.json$", RegexOptions.IgnoreCase)){filename += ".json";}    // si no viene la extensión, la indicamos
         var file = Godot.FileAccess.Open("res://resources/noise/" + filename, Godot.FileAccess.ModeFlags.Read);
-		
-        // formamos el diccionario
-		Dictionary<string, string> noiseDict = JsonSerializer.Deserialize<Dictionary<string, string>>(file.GetAsText());
-		foreach (var kvp in noiseDict) Set(CamelCaseToSnakeCase(kvp.Key), kvp.Value);
+        var noiseDict = JsonSerializer.Deserialize<Dictionary<string, string>>(file.GetAsText());
+        foreach (var kvp in noiseDict) Set(CamelCaseToSnakeCase(kvp.Key), kvp.Value);
     }
 
     // AUX FUNCTIONS
@@ -118,29 +95,11 @@ public partial class MFNL : FastNoiseLite
         return Get(param).ToString();
     }
     
-    private string CamelCaseToSnakeCase(string str)  // static function
-    {
-        // Reemplaza los caracteres en mayúsculas con un guión bajo seguido de la misma letra en minúscula
-        return Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();
-    }
+    private static string CamelCaseToSnakeCase(string str) 
+        => Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();
 
-    public MFNL FromFastNoiseLite(FastNoiseLite toClone)
-    {
-        return (MFNL) this.MemberwiseClone();
-    }
+    public MFNL FromFastNoiseLite(FastNoiseLite toClone) => (MFNL) MemberwiseClone();
 
     public string[] GetNoiseProperties() => _noiseProperties;
-    
-    public override string ToString()
-    {
-        string delimeter = "----------------------------------------\n";
-        string toReturn = delimeter + "----" + Name + "----\n";
-        Dictionary<string, Variant> noiseDict = new Dictionary<string, Variant>();
-        foreach (var prop in _noiseProperties)
-        {
-            toReturn += prop + ": " + Get(CamelCaseToSnakeCase(prop)) + "\n";
-        }
-        return toReturn + delimeter;
-    }
 
 }

@@ -1,32 +1,33 @@
 using System.Collections.Generic;
 using Godot;
+using Tartheside.mono.utilities.command_line;
+using Tartheside.mono.world;
 
 namespace Tartheside.mono;
 
 public partial class WorldManager : Node2D
 {	
-	[Export] public string HeightMap;
-	[Export] public string ProceduralSource;
-	[Export] public Vector2I WorldSize;
-	[Export] public Vector2I TileMapOffset;
-	[Export] public Vector2I ChunkSize;
-	[Export] public Vector2I SquareSize;
-	[Export] public Vector2I Chunks;	
+	//[Export] public string HeightMap;
+	[Export] private Vector2I _worldSize;
+	[Export] private Vector2I _tileMapOffset;
+	[Export] private Vector2I _chunkSize;
+	[Export] private Vector2I _squareSize;
+	[Export] private Vector2I _chunks;	
 
 	private World _world;
 	private WorldTileMap _tileMap;
-	private utilities.command_line.TCommandLine _commandLine;
+	private TCommandLine _commandLine;
 	
 	public override void _Ready()
 	{
 		InitializeWorld();
-		InitializeTileMap();	// TODO: cambiar el enfoque. No habrá un tilemap, sino una lista
+		InitializeTileMap();	
 		InitializeCommandLine();
 	}
 
 	private void InitializeCommandLine()
 	{
-		_commandLine = (utilities.command_line.TCommandLine) GetNode<LineEdit>("cmd");
+		_commandLine = (TCommandLine) GetNode<LineEdit>("cmd");
 		_commandLine.Init(_world, _tileMap);
 	}
 	
@@ -49,28 +50,22 @@ public partial class WorldManager : Node2D
 	{
 		InstantiateTileMap();
 		_tileMap.SetWorld(_world);
-		_tileMap.TileMapSetup(WorldSize, TileMapOffset, ChunkSize, SquareSize, Chunks);
+		_tileMap.TileMapSetup(_worldSize, _tileMapOffset, _chunkSize, _squareSize, _chunks);
 	}
 	
 	private void InitializeWorld()
 	{
 		_world = new World();
-		_world.UpdateWorldParameter("WorldSize", WorldSize);
-		_world.UpdateWorldParameter("ChunkSize", ChunkSize);
+		_world.UpdateWorldParameter("WorldSize", _worldSize);
+		_world.UpdateWorldParameter("ChunkSize", _chunkSize);
 		
 		_world.InitElevation();
 		_world.InitRiver();
-		_world.InitHumidity();
+		//_world.InitHumidity();
 		//_world.InitTemperature();
 		//_world.InitTerrain();
 		//_world.InitHeightMap(HeightMap + ".png");
 	}
-	
-	// info
-	public Dictionary<string, Variant> GetWorldParameters() => _world.GetWorldParameters();
-
-	public Dictionary<string, MFNL> GetWorldNoises() => _world.GetWorldNoises();
-    
 
 
 }

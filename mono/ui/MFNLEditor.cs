@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using Tartheside.mono.world;
 
 namespace Tartheside.mono.ui;
 
@@ -12,7 +13,7 @@ public partial class MFNLEditor : Control
 	private MarginContainer _cellular;
 	private OptionButton _sourceSelector;
 	
-	private MFNL _noise;
+	private utilities.random.MFNL _noise;
 	private WorldTileMap _tileMap;
 	
 	
@@ -91,7 +92,7 @@ public partial class MFNLEditor : Control
 
 
 	
-	public void SetNoiseObject(MFNL noise)
+	public void SetNoiseObject(utilities.random.MFNL noise)
 	{
 		_noise = noise;
 		UpdateUI();

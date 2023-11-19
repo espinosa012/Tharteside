@@ -1,4 +1,5 @@
 using Godot;
+using Tartheside.mono.utilities.random;
 
 namespace Tartheside.mono.world.generators;
 
@@ -14,33 +15,17 @@ public partial class Humidity : WorldGenerator
     private float _continentalnessFactor;
     private float _riverFactor;
     
-    public override float GetValueAt(int x, int y)
-    {
-        return HumidityAlgorithm(x, y);
-    }
+    public override float GetValueAt(int x, int y) => HumidityAlgorithm(x, y);
+
+    private float HumidityAlgorithm(int x, int y) => _elevation.IsLand(x, y) ? 
+        Mathf.Min(1.0f, GetContinentalnessInfluence(x, y) + GetRiverInfluence(x, y)) : 0.0f;
+    
+    private float GetContinentalnessInfluence(int x, int y) => 
+        _continentalnessFactor * _continentalness.GetNormalizedNoise2D(x, y);
+    
+    private float GetRiverInfluence(int x, int y) => 0.0f;  // TODO: implementar influencia de los ríos con el enfoque AStar
 
 
-    private float HumidityAlgorithm(int x, int y)
-    {   
-        return _elevation.IsLand(x, y) ? GetHumidityValue(x, y) : 0.0f;
-    }
-
-    private float GetHumidityValue(int x, int y)
-    {
-        return Mathf.Min(1.0f, GetContinentalnessInfluence(x, y) + GetRiverInfluence(x, y));
-    }
-    
-    private float GetContinentalnessInfluence(int x, int y)
-    {
-        return _continentalnessFactor * _continentalness.GetNormalizedNoise2D(x, y);
-    }
-    
-    private float GetRiverInfluence(int x, int y)
-    {
-        return _riverFactor * _river.GetParameterBaseNoise().GetNormalizedInverseNoise2D(x, y);
-    }
-    
-    
     // getters & setters
     public Elevation GetParameterElevation() => _elevation;
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;

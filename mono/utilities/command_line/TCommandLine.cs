@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Godot;
 using Godot.Collections;
+using Tartheside.mono.world;
 using Tartheside.mono.world.generators;
 
 namespace Tartheside.mono.utilities.command_line;

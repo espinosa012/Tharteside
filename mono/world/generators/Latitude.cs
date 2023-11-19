@@ -1,12 +1,10 @@
-using Godot;
 using System;
-using System.Collections.Generic;
 
-public partial class Latitude : Tartheside.mono.world.generators.WorldGenerator
+namespace Tartheside.mono.world.generators;
+
+public partial class Latitude : WorldGenerator
 {
     private int _equatorLine;
-    
-    
     
     public override float GetValueAt(int x, int y) => 
         GetNormalizedSignedDistanceToEquator(y);
@@ -21,7 +19,7 @@ public partial class Latitude : Tartheside.mono.world.generators.WorldGenerator
         (float) Math.Abs(y - _equatorLine) / _equatorLine;
 
 
-    // regiones de latitud (parametrizar los intervalos)
+    // TODO: regiones de latitud (parametrizar los intervalos)
     public bool IsLatitudRegionEquator(int y)
     {
         return GetNormalizedDistanceToEquator(y) < 0.1f;

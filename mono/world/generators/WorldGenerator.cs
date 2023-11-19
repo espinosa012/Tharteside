@@ -11,11 +11,11 @@ public partial class WorldGenerator : GodotObject
 	private float[,] _values;
 	
 	
-	public virtual float GetChunkAverage(int x, int y){
+	public float GetChunkAverage(int x, int y){
 		return 0.0f;
 	}//TODO
 	
-	public virtual float GetRegionAverage(Vector2I center, Vector2I size){
+	public float GetRegionAverage(Vector2I center, Vector2I size){
 		return 0.0f;
 	}//TODO
 	
@@ -27,7 +27,7 @@ public partial class WorldGenerator : GodotObject
 	public int GetValueTierAt(int x, int y) =>
 		GetValueTier(GetValueAt(x, y));
 
-	public int GetValueTier(float value) =>
+	protected int GetValueTier(float value) =>
 		(int)(value / (1.0f / _nTiers));
     
 
