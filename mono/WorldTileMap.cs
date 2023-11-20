@@ -64,7 +64,7 @@ public partial class WorldTileMap : TileMap
 	private void InitializeChunks()
 	{
 		RenderChunks("Elevation", 0);		// TODO: paralelizar
-		RenderChunks("River", 1);
+		RenderChunks("River", 1);			// TODO: en vez del name de la source, pasar una matriz de valores, así además se simplifica el considerar tamaños, etc- 
 	}
 
 	public void RenderChunks(string source, int layer)
@@ -77,6 +77,7 @@ public partial class WorldTileMap : TileMap
 	
 	private void RenderChunk(Vector2I chunkPosition, string source, int layer) // hacer asíncrono para renderizar los chunks en paralelo
 	{
+		// TODO: considerar en los bucles el tamaño establecido del mundo
 		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X;
 		     x < _chunkSize.X * _squareSize.X +
 		     chunkPosition.X * _chunkSize.X * _squareSize.X;
@@ -117,7 +118,7 @@ public partial class WorldTileMap : TileMap
 
 	private Vector3I GetTileToPlace(Vector2I worldPos, int tileSetSourceId, Callable valueSourceCallable)
 	{
-		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset
+		Vector2I worldPosition = GetWorldPosBySquare(worldPos);	// para considerar el offset (separar el offset en otra función)
 		return GetValueTileByPalette(worldPosition, valueSourceCallable, tileSetSourceId);
 	}
 

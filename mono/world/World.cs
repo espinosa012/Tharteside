@@ -27,6 +27,7 @@ public class World
 		LoadParametersFromJson();
 		UpdateWorldParameter("WorldSize", new Vector2I((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY")));	//TODO: usar las X e Y que están en el json y cambiar las llamadas al parámetro "WorldSize"
+		GD.Print( GetWorldParameter("WorldSize"));
 	}
 	
 	private void InitNoises()
@@ -81,6 +82,8 @@ public class World
 		// puede ser un problema si se se actualizan los valores en el world después de inicializarse
 		// por eso, creamos UpdateGlobalGeneratorParameters
 		// Ninguno de estos valores debe cambiarse una vez el mundo se ha creado
+		
+		// TODO: quitar
 		generator.SetParameterWorldSize((Vector2I) GetWorldParameter("WorldSize"));
 		generator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
 		generator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
@@ -130,9 +133,9 @@ public class World
 		elevationGenerator.SetParameterIslandScaleValue((float) _worldParameters["IslandScaleValue"]);
 		elevationGenerator.SetParameterIslandThresholdLevel((float) _worldParameters["IslandThresholdLevel"]);
 		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
-
 		
-		
+		elevationGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
+			(int) GetWorldParameter("OffsetY"));
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 

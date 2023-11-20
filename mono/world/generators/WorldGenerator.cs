@@ -7,29 +7,37 @@ public partial class WorldGenerator : GodotObject
 	private Vector2I _worldSize;    
 	private Vector2I _chunkSize;    
 	private int _nTiers;
-	private readonly float[,] _values;
+	private readonly float[,] _valueMatrix;
 
 
 	public WorldGenerator(int matrixSizeX, int matrixSizeY)
 	{
-		_values = new float[matrixSizeX, matrixSizeY];
+		_valueMatrix = new float[matrixSizeX, matrixSizeY];
 	}
 
 
-	public void FillValueMatrix()
+	public void FillValueMatrix(int offsetX, int offsetY)
 	{
-		for (int i = 0; i < _values.GetLength(0); i++)
-		for (int j = 0; i < _values.GetLength(0); j++)
-			_values[i, j] = GenerateValueAt(i, j);
+		// TODO: necesitamos conocer el offset
+		for (int i = offsetX; i < _worldSize.X + offsetX; i++)
+		for (int j = offsetY; j < _worldSize.Y + offsetY; j++)
+			_valueMatrix[i-offsetX, j-offsetY] = GenerateValueAt(i, j);
+		GD.Print(_valueMatrix[74, 127]);
 	}
 	
-	public void SetValueAt(int x, int y, float value) => _values[x, y] = value;
+	public void SetValueAt(int x, int y, float value) => _valueMatrix[x, y] = value;
+
+	public float GetValueAt(int x, int y) => _valueMatrix[x-86500, y-630];
+		// se llama una vez se han rellenado los valores de la matriz (al menos los de la región a mostrar)
 	
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
-
+		// se implementa en cada uno de los generadores
+	
+	
 	public int GetValueTierAt(Vector2I pos) => GetValueTierAt(pos.X, pos.Y);
     
-	public int GetValueTierAt(int x, int y) => GetValueTier(GenerateValueAt(x, y));
+	//public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
+	public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 
 	protected int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));
 

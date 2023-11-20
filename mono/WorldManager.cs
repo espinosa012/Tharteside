@@ -8,7 +8,7 @@ namespace Tartheside.mono;
 public partial class WorldManager : Node2D
 {	
 	//[Export] public string HeightMap;	// testing
-	[Export] private Vector2I _tileMapOffset;
+	[Export] private Vector2I _tileMapOffset;	//TODO: hacer el offset por chunks, considerando squaresize
 	[Export] private Vector2I _chunkSize;
 	[Export] private Vector2I _squareSize;
 	[Export] private Vector2I _initChunks;	
