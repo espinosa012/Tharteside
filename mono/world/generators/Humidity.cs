@@ -16,6 +16,8 @@ public partial class Humidity : WorldGenerator
     private float _riverFactor;
 
     
+    // TODO: adaptar al nuevo enfoque de los ríos
+    
     public Humidity(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {}
     

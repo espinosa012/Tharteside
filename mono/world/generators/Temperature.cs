@@ -4,8 +4,10 @@ namespace Tartheside.mono.world.generators;
 
 public partial class Temperature : WorldGenerator
 {
+    private Elevation _elevation;
     private Latitude _latitude;
-
+    
+    
     public Temperature(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {}
     
@@ -21,4 +23,8 @@ public partial class Temperature : WorldGenerator
     // getters & setters
     public Latitude GetParameterLatitude() => _latitude;
     public void SetParameterLatitude(Latitude latitude) => _latitude = latitude;
+    
+    public Elevation GetParameterElevation() => _elevation;
+    public Elevation SetParameterElevation(Elevation elevation) => _elevation = elevation;
+
 }

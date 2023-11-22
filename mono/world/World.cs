@@ -79,9 +79,10 @@ public class World
 		// Ninguno de estos valores debe cambiarse una vez el mundo se ha creado
 		
 		// TODO: quitar
-		generator.SetParameterWorldSize((Vector2I) GetWorldParameter("WorldSize"));
+		generator.SetParameterWorldSize(new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")));
 		generator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
 		generator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
+		generator.SetParameterOffset(new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")));
 	}
 
 	private void UpdateGlobalGeneratorsParameters()
@@ -108,6 +109,7 @@ public class World
 		Temperature temperatureGenerator = new Temperature((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(temperatureGenerator);
+		temperatureGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
 		
 		AddWorldGenerator("Temperature", temperatureGenerator);
@@ -140,11 +142,12 @@ public class World
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
+		
+		// TODO: hacer en el propio river???
 		riverGenerator.SetPathfindingAstar(new RiverTAStar(new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
 			new Vector2I((int) GetWorldParameter("OffsetX") + (int) GetWorldParameter("WorldSizeX"), 
 				(int) GetWorldParameter("OffsetY") + (int) GetWorldParameter("WorldSizeX")), (generators.Elevation) GetWorldGenerator("Elevation")));
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		
 		AddWorldGenerator("River", riverGenerator);
 	}
 	
@@ -173,7 +176,7 @@ public class World
 	}
 	
 	//  WORLD PARAMETERS
-	public void AddWorldParameter(string param, Variant value)
+	private void AddWorldParameter(string param, Variant value)
 	{
 		if (_worldParameters.ContainsKey(param))
 			UpdateWorldParameter(param, value);
@@ -191,7 +194,7 @@ public class World
 				generator.Call("SetParameter"+param, value);
 		}
 		else
-			AddWorldParameter(param, value);
+			AddWorldParameter(param, value);	// TODO: ¿se deberia poder desde fuera? AddWorldParameter es privado  
 	}
 
 	public Variant GetWorldParameter(string param) => _worldParameters[param];
@@ -201,11 +204,6 @@ public class World
 	
 	//  WORLD NOISE
 	private void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
-
-	private void RemoveWorldNoise(string name)
-	{
-        if (_worldNoises.ContainsKey(name.StripEdges()))	_worldNoises.Remove(name);
-    }
 
 	public MFNL GetWorldNoise(string name)
 	{

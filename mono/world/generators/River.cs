@@ -10,6 +10,7 @@ public partial class River : WorldGenerator
     private utilities.random.MFNL _continentalness;
     
     private RiverTAStar _pathfindingAStar;
+    private Vector2I _worldSize;
     private Array<RiverEntity> _rivers;
 
     
@@ -18,7 +19,7 @@ public partial class River : WorldGenerator
     public River(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {}
     
-    public override float GenerateValueAt(int x, int y)
+    public override float GetValueAt(int x, int y) 
     {
         float trueValue = 0.999f;
         float falseValue = -1.0f;
@@ -49,9 +50,11 @@ public partial class River : WorldGenerator
     
     public utilities.random.MFNL GetParameterContinentalness() => _continentalness;
     public void SetParameterContinentalness(utilities.random.MFNL continentalness) => _continentalness = continentalness;
-
-
+    
+    
+    // TODO: deberiamos cear los parametros de tipo numericoo para formar el astar, no el propio astar
     public void SetPathfindingAstar(RiverTAStar pathfinding) => _pathfindingAStar = pathfinding;
     public RiverTAStar GetParameterPathfindingAstar() => _pathfindingAStar;
+
 }
 

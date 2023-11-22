@@ -6,6 +6,7 @@ public partial class WorldGenerator : GodotObject
 {
 	private Vector2I _worldSize;    
 	private Vector2I _chunkSize;    
+	private Vector2I _offset;    
 	private int _nTiers;
 	private readonly float[,] _valueMatrix;
 
@@ -27,7 +28,7 @@ public partial class WorldGenerator : GodotObject
 	public void SetValueAt(int x, int y, float value) => _valueMatrix[x, y] = value;
 
 	//public float GetValueAt(int x, int y) => _valueMatrix[x, y];
-	public float GetValueAt(int x, int y) => _valueMatrix[x, y];
+	public virtual float GetValueAt(int x, int y) => _valueMatrix[x, y];
 		// se llama una vez se han rellenado los valores de la matriz (al menos los de la región a mostrar)
 	
 	public virtual float GenerateValueAt(int x, int y) => 0.3f;
@@ -71,4 +72,7 @@ public partial class WorldGenerator : GodotObject
 	public Vector2I GetParameterChunkSize() => _chunkSize;		// guardamos esto para calcular averages y demás.
 	public void SetParameterChunkSize(Vector2I value) => _chunkSize = value;
 	
+	public Vector2I GetParameterOffset() => _offset;
+	public void SetParameterOffset(Vector2I offset) => _offset = offset;
+
 }

@@ -55,8 +55,9 @@ public partial class TMap : TileMap
 			     chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
 			     y += _squareSize.Y)
 			{
-				var squarePos = new Vector2I(x, y); // posición en el mundo de la celda superior izquierda del cuadro
-				FulfillSquare(squarePos, layer);  
+				var worldPos = new Vector2I(x/_squareSize.X, y/_squareSize.Y); // posición en el mundo de la celda superior izquierda del cuadro
+					
+				FulfillSquare(worldPos, layer);  
 			}
 		}
 	}
@@ -67,12 +68,9 @@ public partial class TMap : TileMap
 		// podríamos separar en scripts los métodos para renderizar cada una de las sources (o métodos estáticos)
 		var palette24Id = 10;
 		var tier = _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPos.X, worldPos.Y);
-		for (var i = 0; i < _squareSize.X; i++)
-		for (var j = 0; j < _squareSize.Y; j++)
-		{
-			worldPos = new Vector2I(worldPos.X + i, worldPos.Y + j);
-			SetCell(layer, worldPos, palette24Id, new Vector2I(tier, 0));
-		}
+		for (int i = 0; i < _squareSize.X; i++)
+		for (int j = 0; j < _squareSize.Y; j++)
+			SetCell(layer, worldPos + new Vector2I(i, j), palette24Id, new Vector2I(tier, 0));	// tODO: considerar squareSize
 	}
 	
 	public void ReloadTileMap()
