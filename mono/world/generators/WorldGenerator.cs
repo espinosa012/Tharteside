@@ -27,10 +27,11 @@ public partial class WorldGenerator : GodotObject
 	
 	public void SetValueAt(int x, int y, float value) => _valueMatrix[x, y] = value;
 
-	public float GetValueAt(int x, int y) => _valueMatrix[x-86500, y-630];
+	//public float GetValueAt(int x, int y) => _valueMatrix[x, y];
+	public float GetValueAt(int x, int y) => _valueMatrix[x, y];
 		// se llama una vez se han rellenado los valores de la matriz (al menos los de la región a mostrar)
 	
-	public virtual float GenerateValueAt(int x, int y) => 0.0f;
+	public virtual float GenerateValueAt(int x, int y) => 0.3f;
 		// se implementa en cada uno de los generadores
 	
 	

@@ -6,7 +6,6 @@ namespace Tartheside.mono.tilemap;
 public partial class TMap : TileMap
 {
 	private Vector2I _worldSize;
-	private Vector2I _tileMapOffset;
 	private Vector2I _chunkSize;
 	private Vector2I _squareSize;
 	private Vector2I _chunks;
@@ -16,13 +15,12 @@ public partial class TMap : TileMap
 	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
 	
-	public void TileMapSetup(Vector2I offset, Vector2I chunkSize, Vector2I squareSize,
+	public void TileMapSetup(Vector2I chunkSize, Vector2I squareSize,
 		Vector2I initChunks)
 	{
 		_worldSize = new Vector2I((int)_world.GetWorldParameter("WorldSizeX"),
 			(int)_world.GetWorldParameter("WorldSizeY")); 
 		
-		_tileMapOffset = offset;
 		_chunkSize = chunkSize;
 		_squareSize = squareSize;
 		_chunks = initChunks;
@@ -32,7 +30,7 @@ public partial class TMap : TileMap
 	
 	private void InitializeChunks()
 	{
-		
+		RenderChunks("Elevation", 1);
 	}
 
 	public void RenderChunks(string source, int layer)
@@ -69,12 +67,10 @@ public partial class TMap : TileMap
 		// podríamos separar en scripts los métodos para renderizar cada una de las sources (o métodos estáticos)
 		var palette24Id = 10;
 		var tier = _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPos.X, worldPos.Y);
-		
 		for (var i = 0; i < _squareSize.X; i++)
 		for (var j = 0; j < _squareSize.Y; j++)
 		{
 			worldPos = new Vector2I(worldPos.X + i, worldPos.Y + j);
-			worldPos = new Vector2I((worldPos.X/_squareSize.X)+_tileMapOffset.X, (worldPos.Y/_squareSize.Y)+_tileMapOffset.Y);
 			SetCell(layer, worldPos, palette24Id, new Vector2I(tier, 0));
 		}
 	}

@@ -9,7 +9,6 @@ namespace Tartheside.mono;
 public partial class WorldManager : Node2D
 {	
 	//[Export] public string HeightMap;	// testing
-	[Export] private Vector2I _tileMapOffset;	//TODO: hacer el offset por chunks, considerando squaresize
 	[Export] private Vector2I _chunkSize;
 	[Export] private Vector2I _squareSize;
 	[Export] private Vector2I _initChunks;	
@@ -22,6 +21,7 @@ public partial class WorldManager : Node2D
 	public override void _Ready()
 	{
 		InitializeWorld();
+		GD.Print(_world.GetWorldGenerator("Elevation").GetValueAt(74, 127));
 		InitializeTileMap();	
 		//InitializeCommandLine();
 	}
@@ -51,7 +51,7 @@ public partial class WorldManager : Node2D
 	{
 		InstantiateTileMap();
 		_tileMap.SetWorld(_world);
-		_tileMap.TileMapSetup(_tileMapOffset, _chunkSize, _squareSize, _initChunks);
+		_tileMap.TileMapSetup(_chunkSize, _squareSize, _initChunks);
 		// pasamos al tilemap los parámetros que no afectan a los valores generados, a excepción del tamaño, que lo
 		// guardamos en el json como parámetro del mundo también (¿seguro que debería ser así?)
 	}

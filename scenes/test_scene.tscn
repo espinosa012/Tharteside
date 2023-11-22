@@ -6,7 +6,7 @@
 [node name="TWorldManager" type="Node2D"]
 scale = Vector2(1.00501, 0.996241)
 script = ExtResource("1_bymoe")
-_tileMapOffset = Vector2i(86500, 630)
+_tileMapOffset = Vector2i(865, 630)
 _chunkSize = Vector2i(64, 64)
 _squareSize = Vector2i(1, 1)
 _initChunks = Vector2i(4, 4)
