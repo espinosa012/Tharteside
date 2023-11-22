@@ -1,6 +1,7 @@
 using Godot;
 using Tartheside.mono.utilities.command_line;
 using Tartheside.mono.world;
+using Tartheside.mono.tilemap;
 
 namespace Tartheside.mono;
 
@@ -14,7 +15,8 @@ public partial class WorldManager : Node2D
 	[Export] private Vector2I _initChunks;	
 
 	private World _world;
-	private WorldTileMap _tileMap;
+	//private WorldTileMap _tileMap;
+	private TMap _tileMap;
 	private TCommandLine _commandLine;
 	
 	public override void _Ready()
@@ -27,11 +29,11 @@ public partial class WorldManager : Node2D
 	private void InitializeCommandLine()
 	{
 		_commandLine = (TCommandLine) GetNode<LineEdit>("cmd");
-		_commandLine.Init(_world, _tileMap);
+		//_commandLine.Init(_world, _tileMap);
 	}
 	
-	private WorldTileMap GetWorldTileMapFromTscn() =>
-		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<WorldTileMap>();
+	private TMap GetWorldTileMapFromTscn() =>
+		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
 	
 	private void InstantiateTileMap(string name = "Tilemap")
 	{

@@ -1,16 +1,17 @@
 using Godot;
 using Godot.Collections;
 using Tartheside.mono;
+using TMap = Tartheside.mono.tilemap.TMap;
 
 public partial class TileMapEventManager : Node
 {
-    private WorldTileMap _tileMap;
+    private TMap _tileMap;
     public Label PositionLabel;
     //public HumanCharacter TestHumanCharacter;
     
     public override void _Ready()
     {
-        _tileMap = GetParent<WorldTileMap>();
+        _tileMap = GetParent<Tartheside.mono.tilemap.TMap>();
         //TestHumanCharacter = (HumanCharacter) GetNode<CharacterBody2D>("../TestCharacter");
         PositionLabel = new Label();
         AddChild(PositionLabel);
@@ -18,6 +19,7 @@ public partial class TileMapEventManager : Node
 
     public void HandleRightClick()
     {
+        /*
         Vector2I clickedPosition = (Vector2I)(_tileMap.GetLocalMousePosition() / _tileMap.TileSet.TileSize);
         //Array<Vector2I> path = TestHumanCharacter.PathfindingAstar.GetPath(TestHumanCharacter.CurrentMapPosition, clickedPosition);
 
@@ -25,7 +27,8 @@ public partial class TileMapEventManager : Node
         PositionLabel.Text = (clickedPosition + _tileMap.GetTileMapOffset()).ToString();
         
         
-        //  TestHumanCharacter.RunPath(path);   
+        //  TestHumanCharacter.RunPath(path); 
+        */  
     }
     
 }

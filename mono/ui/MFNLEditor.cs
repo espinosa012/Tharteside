@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Tartheside.mono.world;
+using Tartheside.mono.tilemap;
 
 namespace Tartheside.mono.ui;
 
@@ -14,7 +15,7 @@ public partial class MFNLEditor : Control
 	private OptionButton _sourceSelector;
 	
 	private utilities.random.MFNL _noise;
-	private WorldTileMap _tileMap;
+	private TMap _tileMap;
 	
 	
 	public override void _Ready()
@@ -137,7 +138,7 @@ public partial class MFNLEditor : Control
 	private void TileMapWindowSetUp()
 	{
 		Window tileMapWindow = new Window();
-		_tileMap = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<WorldTileMap>();
+		_tileMap = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
 
 		tileMapWindow.Size = new Vector2I(720, 720);
 		tileMapWindow.Position = new Vector2I(64, 84);
@@ -156,10 +157,10 @@ public partial class MFNLEditor : Control
 	public void SetWorld()
 	{
 		_tileMap.SetWorld(new World());
-		_tileMap.SetWorldSize(new Vector2I(256, 256));
+		/*_tileMap.SetWorldSize(new Vector2I(256, 256));
 		_tileMap.SetChunkSize(new Vector2I(16, 16));
 		_tileMap.SetSquareSize(new Vector2I(1, 1));
-		_tileMap.SetTileMapChunks(new Vector2I(16, 16));
+		_tileMap.SetTileMapChunks(new Vector2I(16, 16));*/
 	}
 	
 }

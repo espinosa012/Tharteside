@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dqeqdmyqm8noq" path="res://resources/MiniWorldSprites/Ground/green.png" id="10_nyc5l"]
 [ext_resource type="Texture2D" uid="uid://bnmugrorvl3xw" path="res://resources/MiniWorldSprites/Ground/palette.png" id="11_ijo8e"]
 [ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://resources/MiniWorldSprites/green16.png" id="12_i8iov"]
-[ext_resource type="Script" path="res://mono/WorldTileMap.cs" id="13_6x4al"]
+[ext_resource type="Script" path="res://mono/tilemap/TMap.cs" id="13_dmimv"]
 [ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="14_vxcuv"]
 [ext_resource type="Script" path="res://mono/TileMapEventManager.cs" id="15_coiq5"]
 [ext_resource type="Script" path="res://mono/human/HumanCharacter.cs" id="16_cjy8w"]
@@ -307,7 +307,7 @@ layer_1/y_sort_enabled = false
 layer_1/y_sort_origin = 0
 layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
-script = ExtResource("13_6x4al")
+script = ExtResource("13_dmimv")
 
 [node name="TileMapCamera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true

@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Godot;
-using Godot.Collections;
 using Tartheside.mono.world;
+using Tartheside.mono.tilemap;
 using Tartheside.mono.world.generators;
 
 namespace Tartheside.mono.utilities.command_line;
@@ -12,14 +12,14 @@ public partial class TCommandLine : LineEdit
 {
 
 	private World _world;
-	private WorldTileMap _tileMap;
+	private TMap _tileMap;
 	
 	public override void _Ready()
 	{
 		TextSubmitted += _ProcessCommand;
 	}
 
-	public void Init(World w, WorldTileMap tm)
+	public void Init(World w, TMap tm)
 	{
 		_world = w;
 		_tileMap = tm;

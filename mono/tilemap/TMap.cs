@@ -1,6 +1,7 @@
 using Godot;
-using System;
 using Tartheside.mono.world;
+
+namespace Tartheside.mono.tilemap;
 
 public partial class TMap : TileMap
 {
@@ -12,6 +13,7 @@ public partial class TMap : TileMap
 	private World _world;
 
 
+	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
 	
 	public void TileMapSetup(Vector2I offset, Vector2I chunkSize, Vector2I squareSize,
@@ -68,10 +70,17 @@ public partial class TMap : TileMap
 		var palette24Id = 10;
 		var tier = _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPos.X, worldPos.Y);
 		
-		// está mal, hay que hacerlo en un bucle como en WorldTileMap
 		for (var i = 0; i < _squareSize.X; i++)
 		for (var j = 0; j < _squareSize.Y; j++)
+		{
+			worldPos = new Vector2I(worldPos.X + i, worldPos.Y + j);
+			worldPos = new Vector2I((worldPos.X/_squareSize.X)+_tileMapOffset.X, (worldPos.Y/_squareSize.Y)+_tileMapOffset.Y);
 			SetCell(layer, worldPos, palette24Id, new Vector2I(tier, 0));
-
+		}
 	}
-}
+	
+	public void ReloadTileMap()
+	{
+		Clear();
+		InitializeChunks();
+	}}
