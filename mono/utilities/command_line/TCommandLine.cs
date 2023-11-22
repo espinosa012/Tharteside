@@ -97,13 +97,7 @@ public partial class TCommandLine : LineEdit
     
 	private void RandomizeRiver(string[] args)
 	{
-		((River)_world.GetWorldGenerator("River")).Randomize();
-		_tileMap.RenderChunks("River", 1);
-	}
-    
-	private void SetRiverFreq(string[] args)
-	{
-		((River)_world.GetWorldGenerator("River")).GetParameterBaseNoise().Frequency = float.Parse(args[0]);
+		//((River)_world.GetWorldGenerator("River")).Randomize();
 		_tileMap.RenderChunks("River", 1);
 	}
     

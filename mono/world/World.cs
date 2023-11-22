@@ -49,17 +49,12 @@ public class World
 		var volcanicIslands = new MFNL("VolcanicIslands", (int) GetWorldParameter("NTiers"));
 		volcanicIslands.LoadFromJson("VolcanicIslands");
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
-		
-		var riverNoise = new MFNL("RiverNoise", (int) GetWorldParameter("NTiers"));
-		riverNoise.LoadFromJson("RiverNoise");
-		AddWorldNoise("RiverNoise", riverNoise);
 	}
 
 	private void InitWorldGenerators()
 	{
 		_worldGenerators = new Dictionary<string, WorldGenerator>();
 	}
-
 
 	private void LoadParametersFromJson()
 	{
@@ -145,16 +140,12 @@ public class World
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
-		//riverGenerator.SetPathfindingAstar(new RiverTAstar(new Vector2I(62000, 3000), new Vector2I(62000+128, 3000+128), (Elevation) GetWorldGenerator("Elevation")));
-		riverGenerator.SetPathfindingAstar(new RiverTAStar(new Vector2I(86000, 600), new Vector2I(86000+2048, 600+2048), (generators.Elevation) GetWorldGenerator("Elevation")));
+		riverGenerator.SetPathfindingAstar(new RiverTAStar(new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+			new Vector2I((int) GetWorldParameter("OffsetX") + (int) GetWorldParameter("WorldSizeX"), 
+				(int) GetWorldParameter("OffsetY") + (int) GetWorldParameter("WorldSizeX")), (generators.Elevation) GetWorldGenerator("Elevation")));
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		riverGenerator.SetParameterBaseElevation(GetWorldNoise("BaseElevation"));
-		riverGenerator.SetParameterBaseNoise(GetWorldNoise("RiverNoise"));
 		
 		AddWorldGenerator("River", riverGenerator);
-		
-		riverGenerator.GenerateRiverAStar(new Vector2I(86959, 665), new Vector2I(86995, 693));
-		//riverGenerator.GenerateRiverAstar(new Vector2I(30972, 1347), new Vector2I(30944, 1363));
 	}
 	
 	public void InitHumidity()

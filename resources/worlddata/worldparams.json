@@ -1,8 +1,8 @@
 {
 	"WorldSizeX":"1024",
 	"WorldSizeY":"1024",
-	"OffsetX":"86500",
-	"OffsetY":"630",
+	"OffsetX":"8500",
+	"OffsetY":"6390",
 	"NTiers":"24",
 	"EquatorLine":"512",
 	"MinContinentalHeight":"0.023",
