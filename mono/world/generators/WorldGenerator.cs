@@ -1,5 +1,6 @@
 using Godot;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace Tartheside.mono.world.generators;
 
@@ -9,13 +10,13 @@ public partial class WorldGenerator : GodotObject
 	private Vector2I _chunkSize;    
 	private Vector2I _offset;    
 	private int _nTiers;
-	private readonly float[,] _valueMatrix;
+	private readonly Matrix<float> _valueMatrix;
+
 	
-	// TODO: plantearnos para las matries usar alguna librería específica que nos de más flexibilidad 
 	
 	public WorldGenerator(int matrixSizeX, int matrixSizeY)
 	{
-		_valueMatrix = new float[matrixSizeX, matrixSizeY];
+		_valueMatrix = DenseMatrix.Build.Dense(matrixSizeX, matrixSizeY, -1.0f);
 	}
 
 	public void FillValueMatrix(int offsetX, int offsetY)
@@ -29,11 +30,8 @@ public partial class WorldGenerator : GodotObject
 	public void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;	// TODO: da problemas con el offset
 
 	public virtual float GetValueAt(int x, int y) => _valueMatrix[x, y];
-		// se llama una vez se han rellenado los valores de la matriz (al menos los de la región a mostrar)
 	
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
-		// se implementa en cada uno de los generadores
-	
 	
 	public int GetValueTierAt(Vector2I pos) => GetValueTierAt(pos.X, pos.Y);
     
