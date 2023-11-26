@@ -15,22 +15,12 @@ public partial class River : WorldGenerator
     private Array<RiverEntity> _rivers;
 
     private const float TrueValue = 0.999f;
-    private const float FalseValue = -1.0f;
     
     // TODO: hacer limpieza, QUITAR LO QUE NO SE VAYA A USAR y eliminar funciones, etc
 
     public River(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {
         _rivers = new Array<RiverEntity>();
-    }
-    
-    public override float GetValueAt(int x, int y) 
-    {
-        foreach (var river in _rivers)
-            for (int i = 0; i < river.GetPointsCount(); i++)
-                if (river.ContainsPoint(new Vector2I(x, y)))
-                    return TrueValue;
-        return FalseValue;
     }
 
     //TODO crear funcion para calcular el caudal en cierta posición x,y

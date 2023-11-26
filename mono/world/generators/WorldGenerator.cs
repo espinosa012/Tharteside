@@ -12,11 +12,11 @@ public partial class WorldGenerator : GodotObject
 	private int _nTiers;
 	private readonly Matrix<float> _valueMatrix;
 
-	
-	
-	public WorldGenerator(int matrixSizeX, int matrixSizeY)
+	private const float _initValue = -1.0f;
+
+	protected WorldGenerator(int matrixSizeX, int matrixSizeY)
 	{
-		_valueMatrix = DenseMatrix.Build.Dense(matrixSizeX, matrixSizeY, -1.0f);
+		_valueMatrix = DenseMatrix.Build.Dense(matrixSizeX, matrixSizeY, _initValue);
 	}
 
 	public void FillValueMatrix(int offsetX, int offsetY)
@@ -26,14 +26,14 @@ public partial class WorldGenerator : GodotObject
 		for (int j = offsetY; j < _worldSize.Y + offsetY; j++)
 			_valueMatrix[i-offsetX, j-offsetY] = GenerateValueAt(i, j);
 	}
-	
-	public void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;	// TODO: da problemas con el offset
 
-	public virtual float GetValueAt(int x, int y) => _valueMatrix[x, y];
+	protected void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;	// TODO: da problemas con el offset
+
+	protected virtual float GetValueAt(int x, int y) => _valueMatrix[x, y];
 	
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
-	
-	public int GetValueTierAt(Vector2I pos) => GetValueTierAt(pos.X, pos.Y);
+
+	private int GetValueTierAt(Vector2I pos) => GetValueTierAt(pos.X, pos.Y);
     
 	//public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 	public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
