@@ -27,7 +27,6 @@ public class World
 		LoadParametersFromJson();
 		UpdateWorldParameter("WorldSize", new Vector2I((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY")));	//TODO: usar las X e Y que están en el json y cambiar las llamadas al parámetro "WorldSize"
-		GD.Print( GetWorldParameter("WorldSize"));
 	}
 	
 	private void InitNoises()
@@ -117,7 +116,7 @@ public class World
 	
 	public void InitElevation()
 	{	
-		Elevation elevationGenerator = new Elevation((int) GetWorldParameter("WorldSizeX"), 
+		var elevationGenerator = new Elevation((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(elevationGenerator);
 		elevationGenerator.SetParameterBaseElevationNoise(_worldNoises["BaseElevation"]);
@@ -138,16 +137,18 @@ public class World
 
 	public void InitRiver()
 	{
-		River riverGenerator = new River((int) GetWorldParameter("WorldSizeX"), 
+		var riverGenerator = new River((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		
 		// TODO: hacer en el propio river???
-		riverGenerator.SetPathfindingAstar(new RiverTAStar(new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+		riverGenerator.SetPathfindingAStar(new RiverTAStar(new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
 			new Vector2I((int) GetWorldParameter("OffsetX") + (int) GetWorldParameter("WorldSizeX"), 
-				(int) GetWorldParameter("OffsetY") + (int) GetWorldParameter("WorldSizeX")), (generators.Elevation) GetWorldGenerator("Elevation")));
+				(int) GetWorldParameter("OffsetY") + (int) GetWorldParameter("WorldSizeX")), 
+			(Elevation) GetWorldGenerator("Elevation")));
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
+		riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
 		AddWorldGenerator("River", riverGenerator);
 	}
 	

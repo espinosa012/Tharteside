@@ -21,7 +21,6 @@ public partial class WorldManager : Node2D
 	public override void _Ready()
 	{
 		InitializeWorld();
-		GD.Print(_world.GetWorldGenerator("Elevation").GetValueAt(74, 127));
 		InitializeTileMap();	
 		//InitializeCommandLine();
 	}

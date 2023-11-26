@@ -1,4 +1,5 @@
 using Godot;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Tartheside.mono.world.generators;
 
@@ -9,29 +10,28 @@ public partial class WorldGenerator : GodotObject
 	private Vector2I _offset;    
 	private int _nTiers;
 	private readonly float[,] _valueMatrix;
-
-
+	
+	// TODO: plantearnos para las matries usar alguna librería específica que nos de más flexibilidad 
+	
 	public WorldGenerator(int matrixSizeX, int matrixSizeY)
 	{
 		_valueMatrix = new float[matrixSizeX, matrixSizeY];
 	}
 
-
 	public void FillValueMatrix(int offsetX, int offsetY)
 	{
-		// TODO: necesitamos conocer el offset
+		// TODO: necesitamos poder indicar qué region de la matriz queremos generar, por eficiencia.
 		for (int i = offsetX; i < _worldSize.X + offsetX; i++)
 		for (int j = offsetY; j < _worldSize.Y + offsetY; j++)
 			_valueMatrix[i-offsetX, j-offsetY] = GenerateValueAt(i, j);
 	}
 	
-	public void SetValueAt(int x, int y, float value) => _valueMatrix[x, y] = value;
+	public void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;	// TODO: da problemas con el offset
 
-	//public float GetValueAt(int x, int y) => _valueMatrix[x, y];
 	public virtual float GetValueAt(int x, int y) => _valueMatrix[x, y];
 		// se llama una vez se han rellenado los valores de la matriz (al menos los de la región a mostrar)
 	
-	public virtual float GenerateValueAt(int x, int y) => 0.3f;
+	public virtual float GenerateValueAt(int x, int y) => 0.0f;
 		// se implementa en cada uno de los generadores
 	
 	
@@ -40,10 +40,11 @@ public partial class WorldGenerator : GodotObject
 	//public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 	public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 
-	protected int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));
+	private int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));
 
 	
 	// NEIGHBOUR EVALUATION (untested)
+	// TODO: quitar todos los parámetros offset y usar el miembro.
 	public bool IsStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0) =>
 		GetValueTierAt(x, y) > GetValueTierAt(x + xOffset, y + yOffset);
 

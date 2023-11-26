@@ -1,7 +1,8 @@
 using Godot;
-using Godot.Collections;
-using Tartheside.mono;
+using Tartheside.mono.utilities.logger;
 using TMap = Tartheside.mono.tilemap.TMap;
+
+namespace Tartheside.mono;
 
 public partial class TileMapEventManager : Node
 {
@@ -19,16 +20,12 @@ public partial class TileMapEventManager : Node
 
     public void HandleRightClick()
     {
-        /*
-        Vector2I clickedPosition = (Vector2I)(_tileMap.GetLocalMousePosition() / _tileMap.TileSet.TileSize);
-        //Array<Vector2I> path = TestHumanCharacter.PathfindingAstar.GetPath(TestHumanCharacter.CurrentMapPosition, clickedPosition);
-
-        PositionLabel.Position = _tileMap.GetLocalMousePosition();
-        PositionLabel.Text = (clickedPosition + _tileMap.GetTileMapOffset()).ToString();
-        
-        
-        //  TestHumanCharacter.RunPath(path); 
-        */  
+        // TODO: no vale cuando squareSize es mayor que 1
+        var clickedPosition = (Vector2I)(_tileMap.GetLocalMousePosition() / _tileMap.TileSet.TileSize);
+        var worldPosition = clickedPosition + new Vector2I(
+            (int)_tileMap.GetWorld().GetWorldParameter("OffsetX"),
+            (int)_tileMap.GetWorld().GetWorldParameter("OffsetY"));
+        TLogger.Info("Clicked position: " + worldPosition);
     }
     
 }

@@ -12,6 +12,8 @@ public partial class TMap : TileMap
 	private World _world;
 
 
+	// TODO: crear un Tilemap utilities para renderizar rios, minas, etc
+	
 	public World GetWorld() => _world;
 	public void SetWorld(World world) => _world = world;
 	
@@ -30,7 +32,9 @@ public partial class TMap : TileMap
 	
 	private void InitializeChunks()
 	{
-		RenderChunks("Elevation", 1);
+		//TODO: ¿quizás la generación por sources deberíamos hacerla a nivel de square y no de chunk?
+		RenderChunks("Elevation", 0);
+		RenderChunks("River", 1);
 	}
 
 	public void RenderChunks(string source, int layer)
@@ -54,20 +58,16 @@ public partial class TMap : TileMap
 			     y < _chunkSize.Y * _squareSize.Y +
 			     chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
 			     y += _squareSize.Y)
-			{
-				var worldPos = new Vector2I(x/_squareSize.X, y/_squareSize.Y); // posición en el mundo de la celda superior izquierda del cuadro
-					
-				FulfillSquare(worldPos, layer);  
-			}
+				FulfillSquare(new Vector2I(x/_squareSize.X, y/_squareSize.Y), layer, source);  
 		}
 	}
 
-	private void FulfillSquare(Vector2I worldPos, int layer)
+	private void FulfillSquare(Vector2I worldPos, int layer, string source)
 	{
 		// TODO: tomar la fuente de las tiles asignándole un nombre en editor (gradiente, rocas, árboles, río, biome, etc.)
 		// podríamos separar en scripts los métodos para renderizar cada una de las sources (o métodos estáticos)
 		var palette24Id = 10;
-		var tier = _world.GetWorldGenerator("Elevation").GetValueTierAt(worldPos.X, worldPos.Y);
+		var tier = _world.GetWorldGenerator(source).GetValueTierAt(worldPos.X, worldPos.Y);
 		for (int i = 0; i < _squareSize.X; i++)
 		for (int j = 0; j < _squareSize.Y; j++)
 			SetCell(layer, worldPos + new Vector2I(i, j), palette24Id, new Vector2I(tier, 0));	// tODO: considerar squareSize
@@ -77,4 +77,17 @@ public partial class TMap : TileMap
 	{
 		Clear();
 		InitializeChunks();
-	}}
+	}
+	
+	
+	// TODO: Eventos. Llevar a clase externa 
+	public override void _Input(InputEvent @event)
+	{
+		if (@event.IsPressed() && @event.AsText().Equals("Left Mouse Button"))	// optimizar
+		{
+			GetNode<TileMapEventManager>("%TileMapEventManager").HandleRightClick();
+		}
+	}
+	
+	
+}
