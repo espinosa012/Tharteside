@@ -7,8 +7,8 @@ public partial class RiverTAStar : TAStar
     private Elevation _elevation;
     public float ElevationPenalty;
     
-    public RiverTAStar(Vector2I regionOrigin, Vector2I regionEnd, Elevation elevation = null, 
-        float elevationPenalty = 1.75f) : base(regionOrigin, regionEnd)     // TODO: parametrizar ElevationPenalty
+    public RiverTAStar(Vector2I regionOrigin, Vector2I regionEnd, Elevation elevation, 
+        float elevationPenalty) : base(regionOrigin, regionEnd)     // TODO: parametrizar ElevationPenalty
     {
         ElevationPenalty = elevationPenalty;
         if (elevation != null)

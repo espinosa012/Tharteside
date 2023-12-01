@@ -143,10 +143,7 @@ public class World
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		
 		// TODO: hacer en el propio river???
-		riverGenerator.SetPathfindingAStar(new RiverTAStar(new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
-			new Vector2I((int) GetWorldParameter("OffsetX") + (int) GetWorldParameter("WorldSizeX"), 
-				(int) GetWorldParameter("OffsetY") + (int) GetWorldParameter("WorldSizeX")), 
-			(Elevation) GetWorldGenerator("Elevation")));
+		riverGenerator.SetPathfindingAStar();
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
 		riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
 		AddWorldGenerator("River", riverGenerator);

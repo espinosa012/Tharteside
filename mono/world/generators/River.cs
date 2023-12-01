@@ -1,6 +1,6 @@
 using Godot;
 using Godot.Collections;
-using Tartheside.mono.utilities.logger;
+using Tartheside.mono.utilities.random;
 using Tartheside.mono.world.entities;
 
 namespace Tartheside.mono.world.generators;
@@ -8,10 +8,10 @@ namespace Tartheside.mono.world.generators;
 public partial class River : WorldGenerator
 {
     private Elevation _elevation;
-    private utilities.random.MFNL _continentalness;
+    private MFNL _continentalness;
     
     private RiverTAStar _pathfindingAStar;
-    private Vector2I _worldSize;
+    //private Vector2I _worldSize;
     private Array<RiverEntity> _rivers;
 
     private const float TrueValue = 0.999f;
@@ -43,11 +43,15 @@ public partial class River : WorldGenerator
     // getters & setters
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
     
-    public void SetParameterContinentalness(utilities.random.MFNL continentalness) => _continentalness = continentalness;
+    public void SetParameterContinentalness(MFNL continentalness) => _continentalness = continentalness;
     
     
-    // TODO: deberiamos cear los parametros de tipo numericoo para formar el astar, no el propio astar
-    public void SetPathfindingAStar(RiverTAStar pathfinding) => _pathfindingAStar = pathfinding;
+    // TODO: deberiamos cear los parametros de tipo numérico para formar el astar, no el propio astar
+    public void SetPathfindingAStar()
+    {
+        var aStarElevationPenalty = 1.75f;
+        _pathfindingAStar = new RiverTAStar(_offset, _offset + _worldSize, _elevation, aStarElevationPenalty);
+    } 
 
 }
 

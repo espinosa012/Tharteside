@@ -6,17 +6,17 @@ namespace Tartheside.mono.world.generators;
 
 public partial class WorldGenerator : GodotObject
 {
-	private Vector2I _worldSize;    
-	private Vector2I _chunkSize;    
-	private Vector2I _offset;    
-	private int _nTiers;
+	protected Vector2I _worldSize;    
+	protected Vector2I _chunkSize;    
+	protected Vector2I _offset;    
+	protected int _nTiers;
 	private readonly Matrix<float> _valueMatrix;
 
-	private const float _initValue = -1.0f;
+	private const float InitValue = -1.0f;
 
 	protected WorldGenerator(int matrixSizeX, int matrixSizeY)
 	{
-		_valueMatrix = DenseMatrix.Build.Dense(matrixSizeX, matrixSizeY, _initValue);
+		_valueMatrix = DenseMatrix.Build.Dense(matrixSizeX, matrixSizeY, InitValue);
 	}
 
 	public void FillValueMatrix(int offsetX, int offsetY)
@@ -27,41 +27,23 @@ public partial class WorldGenerator : GodotObject
 			_valueMatrix[i-offsetX, j-offsetY] = GenerateValueAt(i, j);
 	}
 
-	protected void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;	// TODO: da problemas con el offset
+	protected void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;
 
-	protected virtual float GetValueAt(int x, int y) => _valueMatrix[x, y];
+	private float GetValueAt(int x, int y) => _valueMatrix[x, y];
 	
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
 
 	private int GetValueTierAt(Vector2I pos) => GetValueTierAt(pos.X, pos.Y);
     
-	//public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 	public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 
 	private int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));
 
 	
-	// NEIGHBOUR EVALUATION (untested)
-	// TODO: quitar todos los parámetros offset y usar el miembro.
-	public bool IsStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0) =>
-		GetValueTierAt(x, y) > GetValueTierAt(x + xOffset, y + yOffset);
-
-	public bool IsNStepDownAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, int n = 1) => 
-		GetValueTierAt(x, y) - GetValueTierAt(x + xOffset, y + yOffset) == n;
+	// TODO: NEIGHBOUR EVALUATION 
 	
-	public bool IsNStepUpAtOffset(int x, int y, int xOffset = 0, int yOffset = 0, int n = 1) => 
-		GetValueTierAt(x + xOffset, y + yOffset) - GetValueTierAt(x, y) == n;
 	
-	public bool IsStepUpAtOffset(int x, int y, int xOffset = 0, int yOffset = 0) => 
-		GetValueTierAt(x, y) < GetValueTierAt(x + xOffset, y + yOffset);
-
-	public bool IsStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0) => 
-		!IsNoStepAtOffset(x, y, xOffset, yOffset);
-
-	public bool IsNoStepAtOffset(int x, int y, int xOffset = 0, int yOffset = 0) => 
-		GetValueTierAt(x, y) == GetValueTierAt(x + xOffset, y + yOffset);
-
-	// getters & setters	TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
+	// TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
 	public Vector2I GetParameterWorldSize() => _worldSize;
 	public void SetParameterWorldSize(Vector2I value) => _worldSize = value;
     
