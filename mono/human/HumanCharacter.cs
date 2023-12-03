@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 using Tartheside.mono.utilities.pathfinding;
-using Array = Godot.Collections.Array;
 
 public partial class HumanCharacter : CharacterBody2D
 {
@@ -20,13 +19,11 @@ public partial class HumanCharacter : CharacterBody2D
     // Human Attributes
     public float MaxSpeed = 40.0f;  // esto perteneceria al Human, no al character
     
-    
-    
     public override void _Ready()
     {
         _tileMap = GetParent<TileMap>();    // !!!
         PathfindingAstar = new TAStar(CurrentMapPosition, 
-            CurrentMapPosition + new Vector2I(128, 128));   // ateción al tamaño de la región A*
+            CurrentMapPosition + new Vector2I(128, 128));   // atención al tamaño de la región A*
         MoveToMapPosition(InitialMapPosition);
         IsMoving = false;
     }
@@ -40,7 +37,7 @@ public partial class HumanCharacter : CharacterBody2D
     public async void RunPath(Array<Vector2I> path)
     {
         IsMoving = true;
-        for (int i = 0; i < path.Count; i++)
+        for (var i = 0; i < path.Count; i++)
         {
             TargetMapPosition = path[i];
             while (!CurrentMapPosition.Equals(TargetMapPosition))

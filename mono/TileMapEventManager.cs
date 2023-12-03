@@ -8,14 +8,14 @@ public partial class TileMapEventManager : Node
 {
     private TMap _tileMap;
     public Label PositionLabel;
-    //public HumanCharacter TestHumanCharacter;
+    public HumanCharacter TestHumanCharacter;
     
     public override void _Ready()
     {
-        _tileMap = GetParent<Tartheside.mono.tilemap.TMap>();
-        //TestHumanCharacter = (HumanCharacter) GetNode<CharacterBody2D>("../TestCharacter");
+        _tileMap = GetParent<TMap>();
+        /*TestHumanCharacter = (HumanCharacter) GetNode<CharacterBody2D>("../TestCharacter");
         PositionLabel = new Label();
-        AddChild(PositionLabel);
+        AddChild(PositionLabel);*/
     }
 
     public void HandleRightClick()

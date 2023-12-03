@@ -145,7 +145,7 @@ public class World
 		// TODO: hacer en el propio river???
 		riverGenerator.SetPathfindingAStar();
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
+		//riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
 		AddWorldGenerator("River", riverGenerator);
 	}
 	

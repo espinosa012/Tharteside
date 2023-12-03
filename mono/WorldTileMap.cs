@@ -110,6 +110,12 @@ public partial class WorldTileMap : TileMap
 			}
 		}
 	}
+		
+	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId, 
+		int tileMapLayer)
+	{
+		base.SetCell(tileMapLayer, tileMapPosition, tileSetSourceId, tileSetAtlasCoordinates);
+	}
 	
 	private Vector2I GetTilePositionByWorldPosition(Vector2I worldPos, int squarePosX, int squarePosY)
 	{
@@ -132,13 +138,6 @@ public partial class WorldTileMap : TileMap
 	{
 		// consideramos offset
 		return new Vector2I((squarePos.X/_squareSize.X)+_tileMapOffset.X, (squarePos.Y/_squareSize.Y)+_tileMapOffset.Y);
-	}
-	
-	private void SetCell(Vector2I tileMapPosition, Vector2I tileSetAtlasCoordinates, int tileSetSourceId, 
-		int tileMapLayer)
-	{
-		base.SetCell(tileMapLayer, new Vector2I(tileMapPosition.X, tileMapPosition.Y), tileSetSourceId, 
-			tileSetAtlasCoordinates);
 	}
 
 	public new void ClearLayer(int layer)

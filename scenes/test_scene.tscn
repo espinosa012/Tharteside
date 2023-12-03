@@ -7,7 +7,7 @@
 scale = Vector2(1.0056, 0.993048)
 script = ExtResource("1_bymoe")
 _chunkSize = Vector2i(256, 256)
-_squareSize = Vector2i(1, 1)
+_squareSize = Vector2i(6, 6)
 _initChunks = Vector2i(1, 1)
 
 [node name="cmd" parent="." instance=ExtResource("2_6exry")]

@@ -300,12 +300,6 @@ sources/13 = SubResource("TileSetAtlasSource_svcgn")
 [node name="TileMap" type="TileMap"]
 tile_set = SubResource("TileSet_fqw7f")
 format = 2
-layer_1/name = ""
-layer_1/enabled = true
-layer_1/modulate = Color(1, 1, 1, 1)
-layer_1/y_sort_enabled = false
-layer_1/y_sort_origin = 0
-layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("13_dmimv")
 
@@ -325,7 +319,7 @@ script = ExtResource("15_coiq5")
 unique_name_in_owner = true
 visible = false
 script = ExtResource("16_cjy8w")
-InitialMapPosition = Vector2i(8, 4)
+InitialMapPosition = Vector2i(123, 122)
 
 [node name="Sprite2D" type="Sprite2D" parent="TestCharacter"]
 scale = Vector2(1, 1.41691)

@@ -21,8 +21,7 @@ public partial class TMap : TileMap
 		Vector2I initChunks)
 	{
 		_worldSize = new Vector2I((int)_world.GetWorldParameter("WorldSizeX"),
-			(int)_world.GetWorldParameter("WorldSizeY")); 
-		
+			(int)_world.GetWorldParameter("WorldSizeY"));
 		_chunkSize = chunkSize;
 		_squareSize = squareSize;
 		_chunks = initChunks;
@@ -45,7 +44,6 @@ public partial class TMap : TileMap
 			RenderChunk(new Vector2I(i, j), source, layer);
 	}
 
-
 	private void RenderChunk(Vector2I chunkPosition, string source, int layer)
 	{
 		// TODO: considerar en los bucles el tamaño establecido del mundo. cuando x,y esté fuera de los límites, devolvemos 0.0f
@@ -58,7 +56,10 @@ public partial class TMap : TileMap
 			     y < _chunkSize.Y * _squareSize.Y +
 			     chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
 			     y += _squareSize.Y)
-				FulfillSquare(new Vector2I(x/_squareSize.X, y/_squareSize.Y), layer, source);  
+			{
+				var worldPosition = new Vector2I(x / _squareSize.X, y / _squareSize.Y);
+				FulfillSquare(worldPosition, layer, source);  
+			}
 		}
 	}
 
@@ -68,10 +69,20 @@ public partial class TMap : TileMap
 		// podríamos separar en scripts los métodos para renderizar cada una de las sources (o métodos estáticos)
 		var palette24Id = 10;
 		var tier = _world.GetWorldGenerator(source).GetValueTierAt(worldPos.X, worldPos.Y);
+		Vector2I mapPosition = new Vector2I(worldPos.X * _squareSize.X, worldPos.Y * _squareSize.Y);
+		
 		for (int i = 0; i < _squareSize.X; i++)
-		for (int j = 0; j < _squareSize.Y; j++)
-			SetCell(layer, worldPos + new Vector2I(i, j), palette24Id, new Vector2I(tier, 0));	// tODO: considerar squareSize
+		{
+			for (int j = 0; j < _squareSize.Y; j++)
+			{
+				var tilePosition = GetTilePositionByWorldPosition(mapPosition, i, j);
+				SetCell(layer, tilePosition, palette24Id, new Vector2I(tier, 0));	
+			}	
+		}
 	}
+	
+	private Vector2I GetTilePositionByWorldPosition(Vector2I mapPos, int squarePosX, int squarePosY) => 
+		mapPos + new Vector2I(squarePosX, squarePosY);
 	
 	public void ReloadTileMap()
 	{

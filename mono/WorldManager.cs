@@ -14,7 +14,6 @@ public partial class WorldManager : Node2D
 	[Export] private Vector2I _initChunks;	
 
 	private World _world;
-	//private WorldTileMap _tileMap;
 	private TMap _tileMap;
 	private TCommandLine _commandLine;
 	
