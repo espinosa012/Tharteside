@@ -1,16 +1,26 @@
 {
 	"WorldSizeX":"1024",
 	"WorldSizeY":"1024",
+	
 	"OffsetX":"86500",
 	"OffsetY":"630",
+	
 	"NTiers":"24",
+	
 	"EquatorLine":"512",
+	"CancerTropicLine":"",
+	"CapricornTropicLine":"",
+	"NorthSubtropicLine":"",
+	"SouthSubtropicLine":"",
+	
+	
 	"MinContinentalHeight":"0.023",
 	"ContinentalScaleValue":"1.22",
 	"SeaScaleValue":"1.17647",
 	"IslandScaleValue":"0.81",
 	"IslandThresholdLevel":"0.76",
 	"OutToSeaFactor":"0.7",
+	
 	"RiverPathfindingElevationPenalty":"1.75",
 	"HumidityContinentalnessFactor":"0.715",
 	"HumidityRiverFactor":"0.285"

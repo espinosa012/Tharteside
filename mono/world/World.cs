@@ -159,16 +159,6 @@ public class World
 		AddWorldGenerator("Humidity", humidityGenerator);
 	}
 	
-	// HEIGHTMAP
-	public void AddHeightMap(string generatorName, string filename)
-	{
-		// podremos utilizar heightmaps deterministas para distintos propósitos
-		HeightMap heightMapGenerator = new HeightMap((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY"));
-		heightMapGenerator.LoadHeighMap(filename);
-		SetGlobalGeneratorParameters(heightMapGenerator);
-		AddWorldGenerator(generatorName, heightMapGenerator);
-	}
 	
 	//  WORLD PARAMETERS
 	private void AddWorldParameter(string param, Variant value)

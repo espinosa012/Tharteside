@@ -34,6 +34,7 @@ public partial class Elevation : WorldGenerator
 			_continentalScaleValue * _baseElevationNoise.GetNormalizedNoise2D(x, y) - _seaScaleValue * 
 			_continentalnessNoise.GetNormalizedNoise2D(x, y)));    
     
+	
 	// For biome determination
 	public bool IsLand(int x, int y) => IsContinentalLand(x, y) || IsVolcanicIsland(x, y);
 
@@ -48,7 +49,8 @@ public partial class Elevation : WorldGenerator
 
 	public bool IsOutToSea(int x, int y) => _baseElevationNoise.GetNormalizedNoise2D(x, y) - _minContinentalHeight < 
 	                                        _seaScaleValue * _continentalnessNoise.GetNormalizedNoise2D(x, y) * 
-	                                        _outToSeaFactor; // devuelve si está lo suficientemente mar adentro según el factor OutToSeaFactor
+	                                        _outToSeaFactor; // devuelve si está lo suficientemente mar adentro según
+															 // el factor OutToSeaFactor
 	
 	
 	// getters & setters

@@ -4,9 +4,15 @@ namespace Tartheside.mono.world.generators;
 
 public partial class Latitude : WorldGenerator
 {
+    // TODO: expresarlos en grados para hacerlo robusto frente a cambios en el tamaño del mundo.
     private int _equatorLine;
-    
-    
+    private int _cancerTropicLine;
+    private int _capricornTropicLine;
+    private int _northSubtropicLine;
+    private int _southSubtropicLine;
+    private int _arcticCircleLine;
+    private int _antarcticCircleLine;
+       
     public Latitude(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {}
     
@@ -34,5 +40,11 @@ public partial class Latitude : WorldGenerator
     
     // getters & setters
     public void SetParameterEquatorLine(int value) => _equatorLine = value;
+    public void SetParameterCancerTropicLine(int value) => _cancerTropicLine = value;
+    public void SetParameterCapricornTropicLine(int value) => _capricornTropicLine = value;
+    public void SetParameterNorthSubtropicLine(int value) => _northSubtropicLine = value;
+    public void SetParameterSouthSubtropicLine(int value) => _southSubtropicLine = value;
+    public void SetParameterArcticCircleLine(int value) => _arcticCircleLine = value;
+    public void SetParameterAntarcticCircleLine(int value) => _antarcticCircleLine = value;
     
 }
