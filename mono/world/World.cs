@@ -8,12 +8,10 @@ namespace Tartheside.mono.world;
 
 public class World
 {
-	// WORLD PARAMETERS AND NOISES
 	private Dictionary<string, Variant> _worldParameters;
 	private Dictionary<string, MFNL> _worldNoises;
 	private Dictionary<string, WorldGenerator> _worldGenerators;
 
-	// CONSTRUCTOR
 	public World()
 	{
 		InitParameters();
@@ -50,10 +48,7 @@ public class World
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
 	}
 
-	private void InitWorldGenerators()
-	{
-		_worldGenerators = new Dictionary<string, WorldGenerator>();
-	}
+	private void InitWorldGenerators() => _worldGenerators = new Dictionary<string, WorldGenerator>();
 
 	private void LoadParametersFromJson()
 	{
@@ -78,10 +73,12 @@ public class World
 		// Ninguno de estos valores debe cambiarse una vez el mundo se ha creado
 		
 		// TODO: quitar
-		generator.SetParameterWorldSize(new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")));
+		generator.SetParameterWorldSize(new Vector2I((int) GetWorldParameter("WorldSizeX"), 
+			(int) GetWorldParameter("WorldSizeY")));
 		generator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
 		generator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
-		generator.SetParameterOffset(new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")));
+		generator.SetParameterOffset(new Vector2I((int) GetWorldParameter("OffsetX"), 
+			(int) GetWorldParameter("OffsetY")));
 	}
 
 	private void UpdateGlobalGeneratorsParameters()
@@ -92,7 +89,7 @@ public class World
 
 	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
 
-	// init world generators (¿no debería ir mejor en el manager?)
+	// init world generators TODO: (¿no debería ir mejor en el manager?)
 	public void InitLatitude()
 	{
 		Latitude latitudeGenerator = new Latitude((int) GetWorldParameter("WorldSizeX"), 
@@ -110,7 +107,6 @@ public class World
 		SetGlobalGeneratorParameters(temperatureGenerator);
 		temperatureGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
-		
 		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
 	
@@ -141,11 +137,12 @@ public class World
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(riverGenerator);
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
-		
+		riverGenerator.SetParameterRiverPathfindingElevationPenalty(
+			(float)GetWorldParameter("RiverPathfindingElevationPenalty"));
 		// TODO: hacer en el propio river???
-		riverGenerator.SetPathfindingAStar();
+		riverGenerator.PathfindingAStarSetup();
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		//riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
+		riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
 		AddWorldGenerator("River", riverGenerator);
 	}
 	
@@ -165,7 +162,7 @@ public class World
 	// HEIGHTMAP
 	public void AddHeightMap(string generatorName, string filename)
 	{
-		// podremos utilizar heightmaps deterministas para distintos propoósitos
+		// podremos utilizar heightmaps deterministas para distintos propósitos
 		HeightMap heightMapGenerator = new HeightMap((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY"));
 		heightMapGenerator.LoadHeighMap(filename);
@@ -198,25 +195,17 @@ public class World
 	public Variant GetWorldParameter(string param) => _worldParameters[param];
 
 	public Dictionary<string, Variant> GetWorldParameters() => _worldParameters;
-
 	
 	//  WORLD NOISE
 	private void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
 
-	public MFNL GetWorldNoise(string name)
-	{
-		if (_worldNoises.TryGetValue(name, out var noise)) {return noise;}
-		return null;
-	}
+	public MFNL GetWorldNoise(string name) => _worldNoises.TryGetValue(name, out var noise) ? noise : null;
 
 	public Dictionary<string, MFNL> GetWorldNoises() => _worldNoises;
 	
 	private void RandomizeWorld()
 	{
-		foreach (MFNL noise in _worldNoises.Values)
-			noise.RandomizeSeed();  
+		foreach (MFNL noise in _worldNoises.Values) noise.RandomizeSeed();  
 	}
 	
-
-
 }

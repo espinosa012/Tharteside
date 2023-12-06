@@ -11,6 +11,7 @@
 	"IslandScaleValue":"0.81",
 	"IslandThresholdLevel":"0.76",
 	"OutToSeaFactor":"0.7",
+	"RiverPathfindingElevationPenalty":"1.75",
 	"HumidityContinentalnessFactor":"0.715",
 	"HumidityRiverFactor":"0.285"
 }

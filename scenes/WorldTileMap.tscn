@@ -1,10 +1,12 @@
-[gd_scene load_steps=31 format=3 uid="uid://buiaq85ypaais"]
+[gd_scene load_steps=35 format=3 uid="uid://buiaq85ypaais"]
 
 [ext_resource type="Texture2D" uid="uid://dodsbqs334e1f" path="res://resources/MiniWorldSprites/Ground/Grass.png" id="1_3b3xx"]
 [ext_resource type="Texture2D" uid="uid://h45rq6wtrrg2" path="res://resources/MiniWorldSprites/Ground/Shore.png" id="2_67w6g"]
 [ext_resource type="Texture2D" uid="uid://eyk8oreoy2fk" path="res://resources/MiniWorldSprites/p24.png" id="3_1ny2x"]
 [ext_resource type="Texture2D" uid="uid://3rr2hygl5ngu" path="res://resources/MiniWorldSprites/elevation_palette.png" id="4_gd8gf"]
+[ext_resource type="Texture2D" uid="uid://ddnndamt8fnth" path="res://p48.png" id="4_yugdq"]
 [ext_resource type="Texture2D" uid="uid://c7r057wjkhcxt" path="res://resources/MiniWorldSprites/Ground/TexturedGrass.png" id="5_o26ht"]
+[ext_resource type="Texture2D" uid="uid://ct2uldb78l220" path="res://resources/MiniWorldSprites/binary.png" id="6_jyvx4"]
 [ext_resource type="Texture2D" uid="uid://b31ihx4beedq8" path="res://resources/MiniWorldSprites/Ground/Winter.png" id="6_xaxr7"]
 [ext_resource type="Texture2D" uid="uid://b74obn5pufulf" path="res://resources/MiniWorldSprites/Ground/DeadGrass.png" id="7_ur8ey"]
 [ext_resource type="Texture2D" uid="uid://df11gjce04ldq" path="res://resources/MiniWorldSprites/Ground/Cliff.png" id="8_w582u"]
@@ -61,6 +63,57 @@ texture = ExtResource("3_1ny2x")
 22:0/0 = 0
 23:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ch2gf"]
+texture = ExtResource("4_yugdq")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+16:0/0 = 0
+17:0/0 = 0
+18:0/0 = 0
+19:0/0 = 0
+20:0/0 = 0
+21:0/0 = 0
+22:0/0 = 0
+23:0/0 = 0
+24:0/0 = 0
+25:0/0 = 0
+26:0/0 = 0
+27:0/0 = 0
+28:0/0 = 0
+29:0/0 = 0
+30:0/0 = 0
+31:0/0 = 0
+32:0/0 = 0
+33:0/0 = 0
+34:0/0 = 0
+35:0/0 = 0
+36:0/0 = 0
+37:0/0 = 0
+38:0/0 = 0
+39:0/0 = 0
+40:0/0 = 0
+41:0/0 = 0
+42:0/0 = 0
+43:0/0 = 0
+44:0/0 = 0
+45:0/0 = 0
+46:0/0 = 0
+47:0/0 = 0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_svcgn"]
 texture = ExtResource("4_gd8gf")
 0:0/0 = 0
@@ -87,6 +140,11 @@ texture = ExtResource("4_gd8gf")
 21:0/0 = 0
 22:0/0 = 0
 23:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a4t3x"]
+texture = ExtResource("6_jyvx4")
+0:0/0 = 0
+1:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_d2gag"]
 texture = ExtResource("5_o26ht")
@@ -296,6 +354,8 @@ sources/8 = SubResource("TileSetAtlasSource_mojx5")
 sources/9 = SubResource("TileSetAtlasSource_43v17")
 sources/10 = SubResource("TileSetAtlasSource_fkms1")
 sources/13 = SubResource("TileSetAtlasSource_svcgn")
+sources/12 = SubResource("TileSetAtlasSource_ch2gf")
+sources/14 = SubResource("TileSetAtlasSource_a4t3x")
 
 [node name="TileMap" type="TileMap"]
 tile_set = SubResource("TileSet_fqw7f")

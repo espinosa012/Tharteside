@@ -37,23 +37,16 @@ public partial class WorldGenerator : GodotObject
     
 	public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 
-	private int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));
+	private int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));	// TODO: algo falla cuando se usa nTiers = 2
 
 	
 	// TODO: NEIGHBOUR EVALUATION 
 	
 	
 	// TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
-	public Vector2I GetParameterWorldSize() => _worldSize;
 	public void SetParameterWorldSize(Vector2I value) => _worldSize = value;
-    
-	public int GetParameterNTiers() => _nTiers;
 	public void SetParameterNTiers(int value) => _nTiers = value;
-
-	public Vector2I GetParameterChunkSize() => _chunkSize;		// guardamos esto para calcular averages y demás.
 	public void SetParameterChunkSize(Vector2I value) => _chunkSize = value;
-	
-	public Vector2I GetParameterOffset() => _offset;
 	public void SetParameterOffset(Vector2I offset) => _offset = offset;
 
 }

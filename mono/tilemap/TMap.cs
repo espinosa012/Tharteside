@@ -11,21 +11,18 @@ public partial class TMap : TileMap
 	private Vector2I _chunks;
 	private World _world;
 
-
 	// TODO: crear un Tilemap utilities para renderizar rios, minas, etc
-	
 	public World GetWorld() => _world;
+	
 	public void SetWorld(World world) => _world = world;
 	
-	public void TileMapSetup(Vector2I chunkSize, Vector2I squareSize,
-		Vector2I initChunks)
+	public void TileMapSetup(Vector2I chunkSize, Vector2I squareSize, Vector2I initChunks)
 	{
 		_worldSize = new Vector2I((int)_world.GetWorldParameter("WorldSizeX"),
 			(int)_world.GetWorldParameter("WorldSizeY"));
 		_chunkSize = chunkSize;
 		_squareSize = squareSize;
 		_chunks = initChunks;
-
 		InitializeChunks();
 	}
 	
@@ -48,37 +45,25 @@ public partial class TMap : TileMap
 	{
 		// TODO: considerar en los bucles el tamaño establecido del mundo. cuando x,y esté fuera de los límites, devolvemos 0.0f
 		for (var x = chunkPosition.X * _chunkSize.X * _squareSize.X;
-		     x < _chunkSize.X * _squareSize.X +
-		     chunkPosition.X * _chunkSize.X * _squareSize.X;
+		     x < _chunkSize.X * _squareSize.X + chunkPosition.X * _chunkSize.X * _squareSize.X;
 		     x += _squareSize.X)
-		{
 			for (var y = chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
-			     y < _chunkSize.Y * _squareSize.Y +
-			     chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
+			     y < _chunkSize.Y * _squareSize.Y + chunkPosition.Y * _chunkSize.Y * _squareSize.Y;
 			     y += _squareSize.Y)
-			{
-				var worldPosition = new Vector2I(x / _squareSize.X, y / _squareSize.Y);
-				FulfillSquare(worldPosition, layer, source);  
-			}
-		}
+				RenderSquare(new Vector2I(x / _squareSize.X, y / _squareSize.Y), layer, source);  
 	}
 
-	private void FulfillSquare(Vector2I worldPos, int layer, string source)
+	private void RenderSquare(Vector2I worldPos, int layer, string source)
 	{
 		// TODO: tomar la fuente de las tiles asignándole un nombre en editor (gradiente, rocas, árboles, río, biome, etc.)
 		// podríamos separar en scripts los métodos para renderizar cada una de las sources (o métodos estáticos)
 		var palette24Id = 10;
 		var tier = _world.GetWorldGenerator(source).GetValueTierAt(worldPos.X, worldPos.Y);
-		Vector2I mapPosition = new Vector2I(worldPos.X * _squareSize.X, worldPos.Y * _squareSize.Y);
-		
 		for (int i = 0; i < _squareSize.X; i++)
-		{
 			for (int j = 0; j < _squareSize.Y; j++)
-			{
-				var tilePosition = GetTilePositionByWorldPosition(mapPosition, i, j);
-				SetCell(layer, tilePosition, palette24Id, new Vector2I(tier, 0));	
-			}	
-		}
+				SetCell(layer, GetTilePositionByWorldPosition(new Vector2I(worldPos.X * _squareSize.X, 
+						worldPos.Y * _squareSize.Y), i, j), 
+					palette24Id, new Vector2I(tier, 0));
 	}
 	
 	private Vector2I GetTilePositionByWorldPosition(Vector2I mapPos, int squarePosX, int squarePosY) => 
@@ -95,9 +80,7 @@ public partial class TMap : TileMap
 	public override void _Input(InputEvent @event)
 	{
 		if (@event.IsPressed() && @event.AsText().Equals("Left Mouse Button"))	// optimizar
-		{
 			GetNode<TileMapEventManager>("%TileMapEventManager").HandleRightClick();
-		}
 	}
 	
 	

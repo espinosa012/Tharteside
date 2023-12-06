@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using Godot;
 using Tartheside.mono.world;
 using Tartheside.mono.tilemap;
-using Tartheside.mono.world.generators;
+
 
 namespace Tartheside.mono.utilities.command_line;
 
@@ -23,11 +23,6 @@ public partial class TCommandLine : LineEdit
 	{
 		_world = w;
 		_tileMap = tm;
-	}
-
-	private void Output(string message)
-	{
-		GD.Print("console message >> " + message);
 	}
 	
 	private void _ProcessCommand(string text)
@@ -53,20 +48,6 @@ public partial class TCommandLine : LineEdit
 		if (args[0] == "")
 			args = null;
 		return new Tuple<string, string[]>(match.Groups["cmd"].Value.Trim(), args);	
-	}
-	
-	
-	// COMMANDS
-	private void Get(string[] args)
-	{
-		if (_world.GetWorldNoises().ContainsKey(args[0]))
-		{
-			GD.Print(_world.GetWorldNoise(args[0]).GetParamValueAsString(args[1]));
-		}
-		else if (_world.GetWorldGenerators().ContainsKey(args[0]))
-		{
-
-		}
 	}
     
 	private void Set(string[] args)
@@ -94,23 +75,8 @@ public partial class TCommandLine : LineEdit
 		_tileMap.Clear();
 		_tileMap.RenderChunks(args[0].Trim(), 0);
 	}
-    
-	private void RandomizeRiver(string[] args)
-	{
-		//((River)_world.GetWorldGenerator("River")).Randomize();
-		_tileMap.RenderChunks("River", 1);
-	}
-    
-	private void PrintNoise(string[] args)
-	{
-		string noise = args[0].Split()[0];
-		if (!_world.GetWorldNoises().Keys.Contains(noise))
-		{
-			GD.Print(noise + " not available");
-			return;
-		}
-		GD.Print(_world.GetWorldNoise(noise)); 
-	}
+	
+	
 
 	private void ReloadTileMap(string[] args) => _tileMap.ReloadTileMap();
 

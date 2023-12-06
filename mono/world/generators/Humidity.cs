@@ -16,7 +16,7 @@ public partial class Humidity : WorldGenerator
     private float _riverFactor;
 
     
-    // TODO: adaptar al nuevo enfoque de los ríos
+    // TODO: Necesita un refactor. Adaptar al nuevo enfoque de los ríos
     
     public Humidity(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {}
@@ -33,19 +33,10 @@ public partial class Humidity : WorldGenerator
 
 
     // getters & setters
-    public Elevation GetParameterElevation() => _elevation;
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
-
-    public River GetParameterRiver() => _river;
     public void SetParameterRiver(River river) => _river = river;
-    
-    public MFNL GetParameterContinentalness() => _continentalness;
     public void SetParameterContinentalness(MFNL continentalness) => _continentalness = continentalness;
-
-    public float GetParameterContinentalnessFactor() => _continentalnessFactor;
     public void SetParameterContinentalnessFactor(float continentalnessFactor) => _continentalnessFactor = continentalnessFactor;
-
-    public float GetParameterRiverFactor() => _riverFactor;
     public void SetParameterRiverFactor(float riverFactor) => _riverFactor = riverFactor;
 
 }

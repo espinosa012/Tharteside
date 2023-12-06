@@ -8,10 +8,10 @@ namespace Tartheside.mono.world.generators;
 public partial class River : WorldGenerator
 {
     private Elevation _elevation;
+    private float _riverPathfindingElevationPenalty;
     private MFNL _continentalness;
     
     private RiverTAStar _pathfindingAStar;
-    //private Vector2I _worldSize;
     private Array<RiverEntity> _rivers;
 
     private const float TrueValue = 0.999f;
@@ -21,6 +21,7 @@ public partial class River : WorldGenerator
     public River(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {
         _rivers = new Array<RiverEntity>();
+        PathfindingAStarSetup();
     }
 
     //TODO crear funcion para calcular el caudal en cierta posición x,y
@@ -44,14 +45,13 @@ public partial class River : WorldGenerator
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
     
     public void SetParameterContinentalness(MFNL continentalness) => _continentalness = continentalness;
+
+    public void SetParameterRiverPathfindingElevationPenalty(float riverPathfindingElevationPenalty) =>
+        _riverPathfindingElevationPenalty = riverPathfindingElevationPenalty;
     
-    
-    // TODO: deberiamos cear los parametros de tipo numérico para formar el astar, no el propio astar
-    public void SetPathfindingAStar()
-    {
-        var aStarElevationPenalty = 1.75f;
-        _pathfindingAStar = new RiverTAStar(_offset, _offset + _worldSize, _elevation, aStarElevationPenalty);
-    } 
+    public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(_offset, 
+        _offset + _worldSize, _elevation, _riverPathfindingElevationPenalty);
+     
 
 }
 
