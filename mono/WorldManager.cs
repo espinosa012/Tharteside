@@ -61,9 +61,10 @@ public partial class WorldManager : Node2D
 		//TODO: lo dejamos aquí para cogerlo del editor. no afecta a los valores generados
 		
 		_world.InitElevation();
-		_world.InitRiver();
+		//_world.InitRiver();
+		_world.InitLatitude();
 		//_world.InitHumidity();
-		_world.InitTemperature();
+		//_world.InitTemperature();
 	}
 
 

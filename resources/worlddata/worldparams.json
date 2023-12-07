@@ -7,7 +7,7 @@
 	
 	"NTiers":"24",
 	
-	"EquatorLine":"512",
+	"EquatorLine":"256",
 	"CancerTropicLine":"25",
 	"CapricornTropicLine":"-25",
 	"NorthSubtropicLine":"32",

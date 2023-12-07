@@ -29,8 +29,10 @@ public partial class TMap : TileMap
 	private void InitializeChunks()
 	{
 		//TODO: ¿quizás la generación por sources deberíamos hacerla a nivel de square y no de chunk?
-		RenderChunks("Elevation", 0);
-		RenderChunks("River", 1);
+		//RenderChunks("Elevation", 0);
+		//RenderChunks("River", 1);
+		RenderChunks("Latitude", 0);
+		
 	}
 
 	public void RenderChunks(string source, int layer)

@@ -73,8 +73,7 @@ public class World
 		// Ninguno de estos valores debe cambiarse una vez el mundo se ha creado
 		
 		// TODO: quitar
-		generator.SetParameterWorldSize(new Vector2I((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY")));
+		generator.SetParameterWorldSize((Vector2I) GetWorldParameter("WorldSize"));
 		generator.SetParameterNTiers((int) GetWorldParameter("NTiers"));
 		generator.SetParameterChunkSize((Vector2I) GetWorldParameter("ChunkSize"));
 		generator.SetParameterOffset(new Vector2I((int) GetWorldParameter("OffsetX"), 
@@ -96,8 +95,9 @@ public class World
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(latitudeGenerator);
 		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
+		latitudeGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
+			(int) GetWorldParameter("OffsetY"));
 		AddWorldGenerator("Latitude", latitudeGenerator);
-		//TODO: intervalos de regiones como parámetros
 	}
 	
 	public void InitTemperature()

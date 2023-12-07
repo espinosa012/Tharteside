@@ -37,7 +37,7 @@ public partial class WorldGenerator : GodotObject
     
 	public int GetValueTierAt(int x, int y) => GetValueTier(GetValueAt(x, y));
 
-	private int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));	// TODO: algo falla cuando se usa nTiers = 2
+	private int GetValueTier(float value) => (int)(value / (1.0f / _nTiers));
 
 	
 	// TODO: NEIGHBOUR EVALUATION 
