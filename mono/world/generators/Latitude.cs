@@ -1,34 +1,34 @@
 using System;
+using Godot;
+using MathNet.Numerics;
 
 namespace Tartheside.mono.world.generators;
 
 public partial class Latitude : WorldGenerator
 {
     // TODO: expresarlos en grados para hacerlo robusto frente a cambios en el tamaño del mundo.
-    private int _equatorLine;
+    public int _equatorLine;
     private int _cancerTropicLine;
     private int _capricornTropicLine;
     private int _northSubtropicLine;
     private int _southSubtropicLine;
     private int _arcticCircleLine;
     private int _antarcticCircleLine;
-       
+
     public Latitude(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {}
     
-    public override float GenerateValueAt(int x, int y) => 
-        GetNormalizedSignedDistanceToEquator(y);
+    // testing
 
-    private float GetValueDegrees(int y) =>
-        90.0f * GetNormalizedSignedDistanceToEquator(y);
+    public override float GenerateValueAt(int _x, int y) => 
+        Math.Abs((y - _offset.Y) - _worldSize.Y / 2.0f) / (_worldSize.Y / 2.0f);
+
+    private int DegreesToLatitude(float degrees) => 
+        (int)((_worldSize.Y / 2.0f) * (1.0f - Math.Sin(degrees * Math.PI / 180.0f))); // untested
+
+    public float GetNormalizedDistanceToEquator(int y) => (Math.Abs(y - _equatorLine) / _equatorLine) / _worldSize.Y;
     
-    private float GetNormalizedSignedDistanceToEquator(int y) => 
-        (float) (y - _equatorLine) / _equatorLine;
     
-    public float GetNormalizedDistanceToEquator(int y) => 
-        (float) Math.Abs(y - _equatorLine) / _equatorLine;
-
-
     // TODO: regiones de latitud (parametrizar los intervalos)
     // For biome determination
     public bool IsLatitudRegionEquator(int y) => GetNormalizedDistanceToEquator(y) < 0.1f;
