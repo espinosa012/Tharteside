@@ -7,7 +7,7 @@
 	
 	"NTiers":"24",
 	
-	"EquatorLine":"256",
+	"EquatorLine":"512",
 	"CancerTropicLine":"25",
 	"CapricornTropicLine":"-25",
 	"NorthSubtropicLine":"32",
@@ -15,7 +15,6 @@
 	"ArticCircleLine":"65",
 	"AntarticCircleLine":"-65",
 
-	
 	"MinContinentalHeight":"0.023",
 	"ContinentalScaleValue":"1.22",
 	"SeaScaleValue":"1.17647",

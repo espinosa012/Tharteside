@@ -95,6 +95,7 @@ public class World
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(latitudeGenerator);
 		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
+		
 		latitudeGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
 			(int) GetWorldParameter("OffsetY"));
 		AddWorldGenerator("Latitude", latitudeGenerator);

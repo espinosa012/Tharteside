@@ -26,7 +26,7 @@ public partial class WorldGenerator : GodotObject
 		for (int j = offsetY; j < _worldSize.Y + offsetY; j++)
 			_valueMatrix[i-offsetX, j-offsetY] = GenerateValueAt(i, j);
 	}
-
+	
 	protected void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;
 
 	private float GetValueAt(int x, int y) => _valueMatrix[x, y];

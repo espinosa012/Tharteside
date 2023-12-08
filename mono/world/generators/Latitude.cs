@@ -19,10 +19,12 @@ public partial class Latitude : WorldGenerator
     {}
     
     // testing
-    public override float GenerateValueAt(int _x, int y) => 
-        Math.Min(0.999999f, Math.Abs((y - _offset.Y) - (float) _equatorLine) / (_worldSize.Y / 2.0f));
-
-    public float GetNormalizedDistanceToEquator(int y) => (Math.Abs(y - _equatorLine) / _equatorLine) / _worldSize.Y;
+    public override float GenerateValueAt(int _x, int y) => GetNormalizedDistanceToEquator(y);
+    
+    public float YToLatitudeDegrees(int y) => -180f * y / _worldSize.Y + 90f;
+    
+    public float GetNormalizedDistanceToEquator(int y) => Math.Min(0.999999f, Math.Abs((y - _offset.Y) -
+        (float)_equatorLine) / (_worldSize.Y / 2.0f));
     
     
     // TODO: regiones de latitud (parametrizar los intervalos)
