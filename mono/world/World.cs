@@ -91,10 +91,18 @@ public class World
 	// init world generators TODO: (¿no debería ir mejor en el manager?)
 	public void InitLatitude()
 	{
-		Latitude latitudeGenerator = new Latitude((int) GetWorldParameter("WorldSizeX"), 
+		var latitudeGenerator = new Latitude((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(latitudeGenerator);
 		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
+		latitudeGenerator.SetParameterCancerTropicLine((int) GetWorldParameter("CancerTropicLine"));
+		latitudeGenerator.SetParameterCapricornTropicLine((int) GetWorldParameter("CapricornTropicLine"));
+		latitudeGenerator.SetParameterNorthSubtropicLine((int) GetWorldParameter("NorthSubtropicLine"));
+		latitudeGenerator.SetParameterSouthSubtropicLine((int) GetWorldParameter("SouthSubtropicLine"));
+		latitudeGenerator.SetParameterArcticCircleLine((int) GetWorldParameter("ArcticCircleLine"));
+		latitudeGenerator.SetParameterAntarcticCircleLine((int) GetWorldParameter("AntarcticCircleLine"));
+
+		GD.Print(latitudeGenerator.LatitudeDegreesToY(0));
 		latitudeGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
 			(int) GetWorldParameter("OffsetY"));
 		AddWorldGenerator("Latitude", latitudeGenerator);
@@ -102,11 +110,15 @@ public class World
 	
 	public void InitTemperature()
 	{
-		Temperature temperatureGenerator = new Temperature((int) GetWorldParameter("WorldSizeX"), 
+		var temperatureGenerator = new Temperature((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY"));
 		SetGlobalGeneratorParameters(temperatureGenerator);
 		temperatureGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
+		
+		temperatureGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
+			(int) GetWorldParameter("OffsetY"));
+		
 		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
 	

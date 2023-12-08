@@ -7,7 +7,7 @@ namespace Tartheside.mono.world.generators;
 public partial class Latitude : WorldGenerator
 {
     // TODO: expresarlos en grados para hacerlo robusto frente a cambios en el tamaño del mundo.
-    public int _equatorLine;
+    private int _equatorLine;
     private int _cancerTropicLine;
     private int _capricornTropicLine;
     private int _northSubtropicLine;
@@ -18,27 +18,40 @@ public partial class Latitude : WorldGenerator
     public Latitude(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
     {}
     
-    // testing
-    public override float GenerateValueAt(int _x, int y) => GetNormalizedDistanceToEquator(y);
+    public override float GenerateValueAt(int _x, int y) => GetNormalizedDistanceToEquator(y - _offset.Y);
 
-    public int LatitudeDegreesToY(float degrees)
-    {
+    public int LatitudeDegreesToY(float degrees) => (int) Math.Round(_worldSize.Y * (90f - degrees) / 180f);
         // TODO: asegurare de que los grados están en el rango -90,90
-        return (int) Math.Round(_worldSize.Y * (90f - degrees) / 180f);  
-    } 
+
+    private float YToLatitudeDegrees(int y) => 90f - 180f * y / _worldSize.Y;
     
-    public float YToLatitudeDegrees(int y) => 90f - 180f * y / _worldSize.Y;
+    public float GetNormalizedDistanceToEquator(int y) => Math.Min(0.999999f, Math.Abs(y - 
+        LatitudeDegreesToY(_equatorLine)) / (_worldSize.Y / 2.0f));
     
-    public float GetNormalizedDistanceToEquator(int y) => Math.Min(0.999999f, Math.Abs((y - _offset.Y) -
-        (float)_equatorLine) / (_worldSize.Y / 2.0f));
-    
-    // TODO: regiones de latitud (parametrizar los intervalos)
     // For biome determination
-    public bool IsLatitudRegionEquator(int y) => GetNormalizedDistanceToEquator(y) < 0.1f;
-    public bool IsLatitudRegionTropical(int y) => GetNormalizedDistanceToEquator(y) is >= 0.1f and < 0.5f;
-    public bool IsLatitudRegionSubtropical(int y) => GetNormalizedDistanceToEquator(y) is >= 0.1f and < 0.5f;
-    public bool IsLatitudRegionTemperate(int y) => GetNormalizedDistanceToEquator(y) is >= 0.5f and < 0.8f;
-    public bool IsLatitudRegionPolar(int y) => GetNormalizedDistanceToEquator(y) >= 0.8f;
+    public bool IsLatitudeRegionTropicalCancer(int y) => YToLatitudeDegrees(y) > 0 
+                                                         && YToLatitudeDegrees(y) < _cancerTropicLine;
+    public bool IsLatitudeRegionTropicalCapricorn(int y) => YToLatitudeDegrees(y) < 0 
+                                                            && YToLatitudeDegrees(y) > _capricornTropicLine;
+    public bool IsLatitudeRegionSubtropicalNorth(int y) => YToLatitudeDegrees(y) > _cancerTropicLine 
+                                                           && YToLatitudeDegrees(y) < _northSubtropicLine;
+    public bool IsLatitudeRegionSubtropicalSouth(int y) => YToLatitudeDegrees(y) < _capricornTropicLine 
+                                                           && YToLatitudeDegrees(y) > _southSubtropicLine;
+    public bool IsLatitudeRegionTemperateNorth(int y) =>  YToLatitudeDegrees(y) > _northSubtropicLine 
+                                                          && YToLatitudeDegrees(y) < _arcticCircleLine;
+    public bool IsLatitudeRegionTemperateSouth(int y) => YToLatitudeDegrees(y) < _southSubtropicLine
+                                                         && YToLatitudeDegrees(y) > _antarcticCircleLine;
+    public bool IsLatitudeRegionArctic(int y) => YToLatitudeDegrees(y) > _arcticCircleLine; 
+    public bool IsLatitudeRegionAntarctic(int y) => YToLatitudeDegrees(y) < _antarcticCircleLine; 
+    
+    public bool IsLatitudeRegionTropical(int y) => IsLatitudeRegionTropicalCancer(y) 
+                                                   || IsLatitudeRegionTropicalCapricorn(y); 
+    public bool IsLatitudeRegionSubtropical(int y) => IsLatitudeRegionSubtropicalNorth(y) 
+                                                      || IsLatitudeRegionSubtropicalSouth(y);
+    public bool IsLatitudeRegionTemperate(int y) => IsLatitudeRegionTemperateNorth(y) 
+                                                    || IsLatitudeRegionTemperateSouth(y);
+    public bool IsLatitudeRegionPolar(int y) => IsLatitudeRegionArctic(y) 
+                                                || IsLatitudeRegionAntarctic(y);
     
     
     // getters & setters
