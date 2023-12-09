@@ -5,7 +5,7 @@ using Tartheside.mono.world.entities;
 
 namespace Tartheside.mono.world.generators;
 
-public partial class River : WorldGenerator
+public partial class River : BaseGenerator
 {
     private Elevation _elevation;
     private float _riverPathfindingElevationPenalty;

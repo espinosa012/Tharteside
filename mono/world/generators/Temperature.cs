@@ -1,6 +1,6 @@
 namespace Tartheside.mono.world.generators;
 
-public partial class Temperature : WorldGenerator
+public partial class Temperature : BaseGenerator
 {
     private Elevation _elevation;
     private Latitude _latitude;

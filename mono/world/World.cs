@@ -10,7 +10,7 @@ public class World
 {
 	private Dictionary<string, Variant> _worldParameters;
 	private Dictionary<string, MFNL> _worldNoises;
-	private Dictionary<string, WorldGenerator> _worldGenerators;
+	private Dictionary<string, BaseGenerator> _worldGenerators;
 
 	public World()
 	{
@@ -48,7 +48,7 @@ public class World
 		AddWorldNoise("VolcanicIslands", volcanicIslands);
 	}
 
-	private void InitWorldGenerators() => _worldGenerators = new Dictionary<string, WorldGenerator>();
+	private void InitWorldGenerators() => _worldGenerators = new Dictionary<string, BaseGenerator>();
 
 	private void LoadParametersFromJson()
 	{
@@ -59,15 +59,15 @@ public class World
 	
 
 	//  WORLD GENERATORS
-	private void AddWorldGenerator(string generatorName, WorldGenerator generator) => 
+	private void AddWorldGenerator(string generatorName, BaseGenerator generator) => 
 		_worldGenerators[generatorName] = generator;
 	
-	public WorldGenerator GetWorldGenerator(string generator) => 
+	public BaseGenerator GetWorldGenerator(string generator) => 
 		_worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
 
-	private void SetGlobalGeneratorParameters(WorldGenerator generator)
+	private void SetGlobalGeneratorParameters(BaseGenerator generator)
 	{
-		// parámetros presentes en todos los generadores (atributos de la clase madre WorldGenerator)
+		// parámetros presentes en todos los generadores (atributos de la clase madre BaseGenerator)
 		// puede ser un problema si se se actualizan los valores en el world después de inicializarse
 		// por eso, creamos UpdateGlobalGeneratorParameters
 		// Ninguno de estos valores debe cambiarse una vez el mundo se ha creado
@@ -83,10 +83,10 @@ public class World
 	private void UpdateGlobalGeneratorsParameters()
 	{
 		foreach (var generator in GetWorldGenerators().Values)
-			SetGlobalGeneratorParameters(generator);
+			SetGlobalGeneratorParameters(generator);	// TODO: si implementamos el BaseGenerator.Setup(), cambiar la llamada
 	}
 
-	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
+	public Dictionary<string, BaseGenerator> GetWorldGenerators() => _worldGenerators;
 
 	// init world generators TODO: (¿no debería ir mejor en el manager? o en un método setup dentro del propio generator)
 	public void InitLatitude()

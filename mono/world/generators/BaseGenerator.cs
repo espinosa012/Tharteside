@@ -4,7 +4,7 @@ using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace Tartheside.mono.world.generators;
 
-public partial class WorldGenerator : GodotObject
+public partial class BaseGenerator : GodotObject
 {
 	protected Vector2I _worldSize;    
 	protected Vector2I _chunkSize;    
@@ -14,11 +14,19 @@ public partial class WorldGenerator : GodotObject
 
 	private const float InitValue = -1.0f;
 
-	protected WorldGenerator(int matrixSizeX, int matrixSizeY)
+	protected BaseGenerator(int matrixSizeX, int matrixSizeY)
 	{
 		_valueMatrix = DenseMatrix.Build.Dense(matrixSizeX, matrixSizeY, InitValue);
 	}
 
+	private void Setup()
+	{
+		/* TODO: podríamos hacer aquí lo que se hace en World.SetGlobalGeneratorParameters(), pero habría que pasarle 
+			todos esos parámetros al constructor. Después, ¿matrixSize es siempre igual que world size (nos podríamos 
+			ahorrar pasarle matrixSize al constructor)?    	
+		*/
+	}
+	
 	public void FillValueMatrix(int offsetX, int offsetY)
 	{
 		// TODO: necesitamos poder indicar qué region de la matriz queremos generar, por eficiencia.

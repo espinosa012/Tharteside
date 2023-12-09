@@ -5,6 +5,8 @@ using Godot.Collections;
 
 public static class PaletteCreator
 {
+    // TODO: Revisar los warnings que salen en Godot
+    
     static int TileSize = 16;
     public static void CreateGradientPalette(int nColors = 48, string filename="palette.png", string initialColor = "#FFFFFF", 
         string finalColor = "#000000", string middleColor = "#749140")

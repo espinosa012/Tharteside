@@ -5,7 +5,7 @@ using Tartheside.mono.utilities.random;
 
 namespace Tartheside.mono.world.generators;
 
-public partial class Elevation : WorldGenerator
+public partial class Elevation : BaseGenerator
 {
 	private MFNL _baseElevationNoise;
 	private MFNL _continentalnessNoise;

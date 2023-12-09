@@ -2,7 +2,7 @@ using System;
 
 namespace Tartheside.mono.world.generators;
 
-public partial class Latitude : WorldGenerator
+public partial class Latitude : BaseGenerator
 {
     // TODO: expresarlos en grados para hacerlo robusto frente a cambios en el tamaño del mundo.
     private int _equatorLine;
