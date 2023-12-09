@@ -20,30 +20,16 @@ public partial class Latitude : BaseGenerator
     
     public override float GenerateValueAt(int _x, int y) => GetNormalizedDistanceToEquator(y - _offset.Y);
     
-    /*public override float GenerateValueAt(int _x, int y)
-    {
-        y -= _offset.Y;
-        if (IsLatitudeRegionPolar(y))
-            return 0.75f;
-        if (IsLatitudeRegionTemperate(y))
-            return 0.60f;
-        if (IsLatitudeRegionSubtropical(y))
-            return 0.45f;
-        if (IsLatitudeRegionTropical(y))
-            return 0.30f;
-        return 0.0f;
-    }*/
-
     public int LatitudeDegreesToY(float degrees) => (int) Math.Round(_worldSize.Y * (90f - degrees) / 180f);
 
     // TODO: asegurare de que los grados están en el rango -90,90
-
     private float YToLatitudeDegrees(int y) => 90f - 180f * y / _worldSize.Y;
     
     public float GetNormalizedDistanceToEquator(int y) => Math.Min(0.999999f, Math.Abs(y - 
         LatitudeDegreesToY(_equatorLine)) / (_worldSize.Y / 2.0f));
     
-    // For biome determination
+    
+    // BIOME DETERMINATION
     public bool IsLatitudeRegionTropicalCancer(int y) => YToLatitudeDegrees(y) > 0 
                                                          && YToLatitudeDegrees(y) <= _cancerTropicLine;
     public bool IsLatitudeRegionTropicalCapricorn(int y) => YToLatitudeDegrees(y) < 0 

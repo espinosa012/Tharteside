@@ -27,9 +27,14 @@ public partial class River : BaseGenerator
         PathfindingAStarSetup();
     }
 
+    public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(_offset, 
+        _offset + _worldSize, _elevation, _riverPathfindingElevationPenalty);
+    
     //TODO crear funcion para calcular el caudal en cierta posición x,y
-    public void GenerateRiverAStar(Vector2I birthPos, Vector2I mouthPos)
+ 
+    public void GenerateRiver(Vector2I birthPos, Vector2I mouthPos)
     {
+        // TODO: mejorar el algoritmo de generación (puntos intermedios, etc)
         var riverEntity = new RiverEntity();
         riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
         riverEntity.SetMouthPosition(mouthPos.X, mouthPos.Y);
@@ -39,22 +44,15 @@ public partial class River : BaseGenerator
             SetValueAt(point.X, point.Y, TrueValue);
         }
         _rivers.Add(riverEntity);
-        // TODO: añadir puntos a la matriz y ya no haría falta sobrescribir GetValueAt
     }
 
     // TODO public void Randomize() => ;
     
     // getters & setters
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
-    
     public void SetParameterContinentalness(MFNL continentalness) => _continentalness = continentalness;
-
     public void SetParameterRiverPathfindingElevationPenalty(float riverPathfindingElevationPenalty) =>
         _riverPathfindingElevationPenalty = riverPathfindingElevationPenalty;
     
-    public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(_offset, 
-        _offset + _worldSize, _elevation, _riverPathfindingElevationPenalty);
-     
-
 }
 

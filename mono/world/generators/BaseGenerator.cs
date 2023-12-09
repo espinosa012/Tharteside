@@ -6,11 +6,11 @@ namespace Tartheside.mono.world.generators;
 
 public partial class BaseGenerator : GodotObject
 {
-	protected Vector2I _worldSize;    
+	protected Vector2I _worldSize;
 	protected Vector2I _chunkSize;    
-	protected Vector2I _offset;    
+	protected Vector2I _offset;
 	protected int _nTiers;
-	private readonly Matrix<float> _valueMatrix;
+	protected Matrix<float> _valueMatrix;	// TODO: poner readonly??? qué es eso??
 
 	private const float InitValue = -1.0f;
 
@@ -20,7 +20,7 @@ public partial class BaseGenerator : GodotObject
 		Setup(worldSize, chunkSize, offset, nTiers);
 	}
 
-	public void Setup(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers)
+	private void Setup(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers)
 	{
 		SetParameterWorldSize(worldSize);
 		SetParameterOffset(chunkSize);
@@ -28,13 +28,15 @@ public partial class BaseGenerator : GodotObject
 		SetParameterNTiers(nTiers);
 	}
 	
+	
 	public void FillValueMatrix(int offsetX, int offsetY)
 	{
 		// TODO: necesitamos poder indicar qué region de la matriz queremos generar, por eficiencia.
-		for (int i = offsetX; i < _worldSize.X + offsetX; i++)
-		for (int j = offsetY; j < _worldSize.Y + offsetY; j++)
-			_valueMatrix[i-offsetX, j-offsetY] = GenerateValueAt(i, j);
+		for (var i = offsetX; i < _worldSize.X + offsetX; i++)
+		for (var j = offsetY; j < _worldSize.Y + offsetY; j++)
+			_valueMatrix[i - offsetX, j - offsetY] = GenerateValueAt(i, j);
 	}
+	
 	
 	protected void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;
 

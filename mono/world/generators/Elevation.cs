@@ -37,7 +37,7 @@ public partial class Elevation : BaseGenerator
 			_continentalnessNoise.GetNormalizedNoise2D(x, y)));    
     
 	
-	// For biome determination
+	// BIOME DETERMINATION
 	public bool IsLand(int x, int y) => IsContinentalLand(x, y) || IsVolcanicIsland(x, y);
 
 	public bool IsContinentalLand(int x, int y) => 
@@ -55,7 +55,7 @@ public partial class Elevation : BaseGenerator
 															 // el factor OutToSeaFactor
 	
 	
-	// getters & setters
+	// setters
 	public void SetParameterBaseElevationNoise(MFNL value) => _baseElevationNoise = value;
 	public void SetParameterContinentalnessNoise(MFNL value) => _continentalnessNoise = value;
 	public void SetParameterPeaksAndValleysNoise(MFNL value) => _peaksAndValleysNoise = value;

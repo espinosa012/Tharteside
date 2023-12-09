@@ -89,43 +89,6 @@ public class World
 	public Dictionary<string, BaseGenerator> GetWorldGenerators() => _worldGenerators;
 
 	// init world generators TODO: (¿no debería ir mejor en el manager? o en un método setup dentro del propio generator)
-	public void InitLatitude()
-	{
-		var latitudeGenerator = new Latitude(
-			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
-			(Vector2I) GetWorldParameter("ChunkSize"), 
-			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
-			(int) GetWorldParameter("NTiers"));
-		
-		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
-		latitudeGenerator.SetParameterCancerTropicLine((int) GetWorldParameter("CancerTropicLine"));
-		latitudeGenerator.SetParameterCapricornTropicLine((int) GetWorldParameter("CapricornTropicLine"));
-		latitudeGenerator.SetParameterNorthSubtropicLine((int) GetWorldParameter("NorthSubtropicLine"));
-		latitudeGenerator.SetParameterSouthSubtropicLine((int) GetWorldParameter("SouthSubtropicLine"));
-		latitudeGenerator.SetParameterArcticCircleLine((int) GetWorldParameter("ArcticCircleLine"));
-		latitudeGenerator.SetParameterAntarcticCircleLine((int) GetWorldParameter("AntarcticCircleLine"));
-
-		latitudeGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
-			(int) GetWorldParameter("OffsetY"));
-		AddWorldGenerator("Latitude", latitudeGenerator);
-	}
-	
-	public void InitTemperature()
-	{
-		var temperatureGenerator = new Temperature(
-			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
-			(Vector2I) GetWorldParameter("ChunkSize"), 
-			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
-			(int) GetWorldParameter("NTiers"));
-		temperatureGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
-		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
-		
-		temperatureGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
-			(int) GetWorldParameter("OffsetY"));
-		
-		AddWorldGenerator("Temperature", temperatureGenerator);
-	}
-	
 	public void InitElevation()
 	{	
 		var elevationGenerator = new Elevation(
@@ -147,6 +110,7 @@ public class World
 		
 		elevationGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
 			(int) GetWorldParameter("OffsetY"));
+		
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 
@@ -165,11 +129,48 @@ public class World
 		// TODO: hacer en el propio river???
 		riverGenerator.PathfindingAStarSetup();
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
+		riverGenerator.GenerateRiver(new Vector2I(86584, 796), new Vector2I(86549, 753));
 		AddWorldGenerator("River", riverGenerator);
 	}
-	
-	
+
+	public void InitLatitude()
+	{
+		var latitudeGenerator = new Latitude(
+			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
+			(Vector2I) GetWorldParameter("ChunkSize"), 
+			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+			(int) GetWorldParameter("NTiers"));
+		
+		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
+		latitudeGenerator.SetParameterCancerTropicLine((int) GetWorldParameter("CancerTropicLine"));
+		latitudeGenerator.SetParameterCapricornTropicLine((int) GetWorldParameter("CapricornTropicLine"));
+		latitudeGenerator.SetParameterNorthSubtropicLine((int) GetWorldParameter("NorthSubtropicLine"));
+		latitudeGenerator.SetParameterSouthSubtropicLine((int) GetWorldParameter("SouthSubtropicLine"));
+		latitudeGenerator.SetParameterArcticCircleLine((int) GetWorldParameter("ArcticCircleLine"));
+		latitudeGenerator.SetParameterAntarcticCircleLine((int) GetWorldParameter("AntarcticCircleLine"));
+
+		latitudeGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
+			(int) GetWorldParameter("OffsetY"));
+		AddWorldGenerator("Latitude", latitudeGenerator);
+	}
+
+	public void InitTemperature()
+	{
+		var temperatureGenerator = new Temperature(
+			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
+			(Vector2I) GetWorldParameter("ChunkSize"), 
+			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+			(int) GetWorldParameter("NTiers"));
+		temperatureGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
+		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
+		
+		temperatureGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
+			(int) GetWorldParameter("OffsetY"));
+		
+		AddWorldGenerator("Temperature", temperatureGenerator);
+	}
+
+
 	//  WORLD PARAMETERS
 	private void AddWorldParameter(string param, Variant value)
 	{
