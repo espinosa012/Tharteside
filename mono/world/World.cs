@@ -88,7 +88,7 @@ public class World
 
 	public Dictionary<string, WorldGenerator> GetWorldGenerators() => _worldGenerators;
 
-	// init world generators TODO: (¿no debería ir mejor en el manager?)
+	// init world generators TODO: (¿no debería ir mejor en el manager? o en un método setup dentro del propio generator)
 	public void InitLatitude()
 	{
 		var latitudeGenerator = new Latitude((int) GetWorldParameter("WorldSizeX"), 
@@ -102,7 +102,6 @@ public class World
 		latitudeGenerator.SetParameterArcticCircleLine((int) GetWorldParameter("ArcticCircleLine"));
 		latitudeGenerator.SetParameterAntarcticCircleLine((int) GetWorldParameter("AntarcticCircleLine"));
 
-		GD.Print(latitudeGenerator.LatitudeDegreesToY(0));
 		latitudeGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
 			(int) GetWorldParameter("OffsetY"));
 		AddWorldGenerator("Latitude", latitudeGenerator);
@@ -156,19 +155,6 @@ public class World
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
 		riverGenerator.GenerateRiverAStar(new Vector2I(86584, 796), new Vector2I(86549, 753));
 		AddWorldGenerator("River", riverGenerator);
-	}
-	
-	public void InitHumidity()
-	{
-		Humidity humidityGenerator = new Humidity((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY"));
-		SetGlobalGeneratorParameters(humidityGenerator);
-		humidityGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
-		humidityGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		humidityGenerator.SetParameterRiver((River) GetWorldGenerator("River"));
-		humidityGenerator.SetParameterContinentalnessFactor((float) GetWorldParameter("HumidityContinentalnessFactor"));
-		humidityGenerator.SetParameterRiverFactor((float) GetWorldParameter("HumidityRiverFactor"));
-		AddWorldGenerator("Humidity", humidityGenerator);
 	}
 	
 	

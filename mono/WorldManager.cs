@@ -63,8 +63,8 @@ public partial class WorldManager : Node2D
 		_world.InitElevation();
 		//_world.InitRiver();
 		_world.InitLatitude();
+		_world.InitTemperature();
 		//_world.InitHumidity();
-		//_world.InitTemperature();
 	}
 
 
