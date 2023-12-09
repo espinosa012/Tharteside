@@ -91,9 +91,12 @@ public class World
 	// init world generators TODO: (¿no debería ir mejor en el manager? o en un método setup dentro del propio generator)
 	public void InitLatitude()
 	{
-		var latitudeGenerator = new Latitude((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY"));
-		SetGlobalGeneratorParameters(latitudeGenerator);
+		var latitudeGenerator = new Latitude(
+			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
+			(Vector2I) GetWorldParameter("ChunkSize"), 
+			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+			(int) GetWorldParameter("NTiers"));
+		
 		latitudeGenerator.SetParameterEquatorLine((int) GetWorldParameter("EquatorLine"));
 		latitudeGenerator.SetParameterCancerTropicLine((int) GetWorldParameter("CancerTropicLine"));
 		latitudeGenerator.SetParameterCapricornTropicLine((int) GetWorldParameter("CapricornTropicLine"));
@@ -109,9 +112,11 @@ public class World
 	
 	public void InitTemperature()
 	{
-		var temperatureGenerator = new Temperature((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY"));
-		SetGlobalGeneratorParameters(temperatureGenerator);
+		var temperatureGenerator = new Temperature(
+			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
+			(Vector2I) GetWorldParameter("ChunkSize"), 
+			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+			(int) GetWorldParameter("NTiers"));
 		temperatureGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
 		
@@ -123,9 +128,12 @@ public class World
 	
 	public void InitElevation()
 	{	
-		var elevationGenerator = new Elevation((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY"));
-		SetGlobalGeneratorParameters(elevationGenerator);
+		var elevationGenerator = new Elevation(
+			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
+			(Vector2I) GetWorldParameter("ChunkSize"), 
+			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+			(int) GetWorldParameter("NTiers"));
+		
 		elevationGenerator.SetParameterBaseElevationNoise(_worldNoises["BaseElevation"]);
 		elevationGenerator.SetParameterContinentalnessNoise(_worldNoises["Continentalness"]);
 		elevationGenerator.SetParameterPeaksAndValleysNoise(_worldNoises["PeaksAndValleys"]);
@@ -144,12 +152,16 @@ public class World
 
 	public void InitRiver()
 	{
-		var riverGenerator = new River((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY"));
-		SetGlobalGeneratorParameters(riverGenerator);
+		var riverGenerator = new River(
+			new Vector2I((int) GetWorldParameter("WorldSizeX"), (int) GetWorldParameter("WorldSizeY")), 
+			(Vector2I) GetWorldParameter("ChunkSize"), 
+			new Vector2I((int) GetWorldParameter("OffsetX"), (int) GetWorldParameter("OffsetY")), 
+			(int) GetWorldParameter("NTiers"));
+		
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		riverGenerator.SetParameterRiverPathfindingElevationPenalty(
 			(float)GetWorldParameter("RiverPathfindingElevationPenalty"));
+		
 		// TODO: hacer en el propio river???
 		riverGenerator.PathfindingAStarSetup();
 		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));

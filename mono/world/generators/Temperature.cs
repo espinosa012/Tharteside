@@ -1,3 +1,5 @@
+using Godot;
+
 namespace Tartheside.mono.world.generators;
 
 public partial class Temperature : BaseGenerator
@@ -5,8 +7,8 @@ public partial class Temperature : BaseGenerator
     private Elevation _elevation;
     private Latitude _latitude;
     
-    
-    public Temperature(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+    public Temperature(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
+        : base(worldSize, chunkSize, offset, nTiers)
     {}
     
     public override float GenerateValueAt(int x, int y)

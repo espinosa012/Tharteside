@@ -1,4 +1,5 @@
 using System;
+using Godot;
 
 namespace Tartheside.mono.world.generators;
 
@@ -13,7 +14,8 @@ public partial class Latitude : BaseGenerator
     private int _arcticCircleLine;
     private int _antarcticCircleLine;
 
-    public Latitude(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+    public Latitude(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
+        : base(worldSize, chunkSize, offset, nTiers)
     {}
     
     public override float GenerateValueAt(int _x, int y) => GetNormalizedDistanceToEquator(y - _offset.Y);

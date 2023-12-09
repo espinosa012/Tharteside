@@ -14,17 +14,18 @@ public partial class BaseGenerator : GodotObject
 
 	private const float InitValue = -1.0f;
 
-	protected BaseGenerator(int matrixSizeX, int matrixSizeY)
+	protected BaseGenerator(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers)
 	{
-		_valueMatrix = DenseMatrix.Build.Dense(matrixSizeX, matrixSizeY, InitValue);
+		_valueMatrix = DenseMatrix.Build.Dense(worldSize.X, worldSize.Y, InitValue);
+		Setup(worldSize, chunkSize, offset, nTiers);
 	}
 
-	private void Setup()
+	public void Setup(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers)
 	{
-		/* TODO: podríamos hacer aquí lo que se hace en World.SetGlobalGeneratorParameters(), pero habría que pasarle 
-			todos esos parámetros al constructor. Después, ¿matrixSize es siempre igual que world size (nos podríamos 
-			ahorrar pasarle matrixSize al constructor)?    	
-		*/
+		SetParameterWorldSize(worldSize);
+		SetParameterOffset(chunkSize);
+		SetParameterOffset(offset); 
+		SetParameterNTiers(nTiers);
 	}
 	
 	public void FillValueMatrix(int offsetX, int offsetY)

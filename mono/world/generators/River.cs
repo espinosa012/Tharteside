@@ -5,6 +5,8 @@ using Tartheside.mono.world.entities;
 
 namespace Tartheside.mono.world.generators;
 
+// TODO: quizás con la Entity no haría falta un generador como tal.
+
 public partial class River : BaseGenerator
 {
     private Elevation _elevation;
@@ -18,7 +20,8 @@ public partial class River : BaseGenerator
     
     // TODO: hacer limpieza, QUITAR LO QUE NO SE VAYA A USAR y eliminar funciones, etc
 
-    public River(int matrixSizeX, int matrixSizeY) : base(matrixSizeX, matrixSizeY)
+    public River(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
+        : base(worldSize, chunkSize, offset, nTiers)
     {
         _rivers = new Array<RiverEntity>();
         PathfindingAStarSetup();
