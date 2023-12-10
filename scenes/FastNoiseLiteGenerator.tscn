@@ -884,3 +884,5 @@ alignment = 2
 initial_position = 2
 size = Vector2i(500, 400)
 filters = PackedStringArray("*.tres, *.res")
+
+[connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/GenerateButton" to="." method="_OnGenerateButtonPressed"]

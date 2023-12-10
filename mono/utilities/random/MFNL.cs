@@ -49,15 +49,10 @@ public partial class MFNL : FastNoiseLite
         return (int)(value / (1.0f / nTiers));
     }
 
-    public int GetValueTierAt(int x, int y)
-    {
-        return GetValueTier(GetNormalizedNoise2D(x, y));
-    }
+    public int GetValueTierAt(int x, int y) => GetValueTier(GetNormalizedNoise2D(x, y)); 
     
-    public float GetAbsoluteNoiseValueTierAt(int x, int y, int nTiers = 0)
-    {
-        return GetValueTier(Mathf.Abs(GetNoise2D(x, y)), nTiers);
-    }
+    public float GetAbsoluteNoiseValueTierAt(int x, int y, int nTiers = 0) => 
+        GetValueTier(Mathf.Abs(GetNoise2D(x, y)), nTiers);
 
 
     //  NOISE PARAMS
@@ -73,7 +68,8 @@ public partial class MFNL : FastNoiseLite
     //  NOISE JSON
     public void SaveToJson(string filename="")
     {
-        var noiseDict = _noiseProperties.ToDictionary(vts => vts, vts => Get(CamelCaseToSnakeCase(vts)).ToString());
+        var noiseDict = _noiseProperties.ToDictionary(vts => vts, vts => 
+            Get(CamelCaseToSnakeCase(vts)).ToString());
         var jsonString = JsonSerializer.Serialize(noiseDict);
 
         if (filename == ""){filename = _name;}
@@ -90,10 +86,7 @@ public partial class MFNL : FastNoiseLite
     }
 
     // AUX FUNCTIONS
-    public string GetParamValueAsString(string param)
-    {
-        return Get(param).ToString();
-    }
+    public string GetParamValueAsString(string param) => Get(param).ToString();
     
     private static string CamelCaseToSnakeCase(string str) 
         => Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();

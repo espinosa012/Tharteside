@@ -69,7 +69,7 @@ public partial class TMap : TileMap
 					palette24Id, new Vector2I(tier, 0));
 	}
 	
-	private Vector2I GetTilePositionByWorldPosition(Vector2I mapPos, int squarePosX, int squarePosY) => 
+	private static Vector2I GetTilePositionByWorldPosition(Vector2I mapPos, int squarePosX, int squarePosY) => 
 		mapPos + new Vector2I(squarePosX, squarePosY);
 	
 	public void ReloadTileMap()

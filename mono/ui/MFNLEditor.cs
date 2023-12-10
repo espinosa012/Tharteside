@@ -2,6 +2,8 @@ using System;
 using Godot;
 using Tartheside.mono.world;
 using Tartheside.mono.tilemap;
+using Tartheside.mono.utilities.logger;
+using Tartheside.mono.utilities.random;
 
 namespace Tartheside.mono.ui;
 
@@ -92,8 +94,7 @@ public partial class MFNLEditor : Control
 	}
 
 
-	
-	public void SetNoiseObject(utilities.random.MFNL noise)
+	public void SetNoiseObject(MFNL noise)
 	{
 		_noise = noise;
 		UpdateUI();
@@ -108,7 +109,7 @@ public partial class MFNLEditor : Control
 	private void SetParameterInput(string param, Variant value)
 	{
 		MarginContainer container;
-		string relativeInputNodePath = string.Format("MarginContainer/VBoxContainer/{0}/HBox/{0}Input", param);
+		var relativeInputNodePath = string.Format("MarginContainer/VBoxContainer/{0}/HBox/{0}Input", param);
 		
 		if (param.StartsWith("DomainWarpFractal"))	container = _domainWarpFractal;
 		else if (param.StartsWith("DomainWarp"))	container = _domainWarp;
@@ -116,11 +117,17 @@ public partial class MFNLEditor : Control
 		else if (param.StartsWith("Cellular"))	container = _cellular;
 		else container = _general;
 		
+		// TODO: se podría mejorar
 		try {	
 			if (param.Contains("Type") || param.Contains("CellularDistanceFunction"))	
 				container.GetNode<OptionButton>(relativeInputNodePath).Selected = (int)value;		// TODO: indicar valor
 			else if (param.Contains("Enabled"))
-				container.GetNode<CheckButton>(relativeInputNodePath).ButtonPressed = (bool)value;
+			{
+				if (param.Contains("DomainWarp"))
+					container.GetNode<CheckBox>(relativeInputNodePath).ButtonPressed = (bool) value;
+				else					
+					container.GetNode<CheckButton>(relativeInputNodePath).ButtonPressed = (bool) value;
+			}
 			else
 				if (param.Contains("Octaves") || param.Contains("Seed")) // int
 					container.GetNode<SpinBox>(relativeInputNodePath).Value = (int) value;
@@ -128,16 +135,14 @@ public partial class MFNLEditor : Control
 					container.GetNode<SpinBox>(relativeInputNodePath).Value = (float) value;
 		} catch (Exception e) {
 			GD.Print("Error setting param input: " + param);
+			GD.Print(e);
 		}
 	}
-	
-	//	TODO: tenemos que incluir los parámetros de renderización en la interfaz para poder indicar valores del mundo
-	//	como el tamaño, squareSize, offset, etc.
 	
 	// tilemap
 	private void TileMapWindowSetUp()
 	{
-		Window tileMapWindow = new Window();
+		var tileMapWindow = new Window();
 		_tileMap = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
 
 		tileMapWindow.Size = new Vector2I(720, 720);
@@ -154,14 +159,19 @@ public partial class MFNLEditor : Control
 		_tileMap.RenderChunks("RiverNoise", 1);
 	}
 
-	public void SetWorld()
+	public void SetWorld() => _tileMap.SetWorld(new World());
+
+	public void SetWorld(World world) => _tileMap.SetWorld(world);
+
+	
+	
+	// SIGNALS
+	public void _OnGenerateButtonPressed()
 	{
-		_tileMap.SetWorld(new World());
-		/*_tileMap.SetWorldSize(new Vector2I(256, 256));
-		_tileMap.SetChunkSize(new Vector2I(16, 16));
-		_tileMap.SetSquareSize(new Vector2I(1, 1));
-		_tileMap.SetTileMapChunks(new Vector2I(16, 16));*/
+		SetNoiseObject(new MFNL());
+		
 	}
+	
 	
 }
 
