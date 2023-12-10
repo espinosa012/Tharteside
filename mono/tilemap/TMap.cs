@@ -16,14 +16,19 @@ public partial class TMap : TileMap
 	
 	public void SetWorld(World world) => _world = world;
 	
-	public void TileMapSetup(Vector2I chunkSize, Vector2I squareSize, Vector2I initChunks)
+	public void Setup(bool initializeChunks = true)
 	{
 		_worldSize = new Vector2I((int)_world.GetWorldParameter("WorldSizeX"),
 			(int)_world.GetWorldParameter("WorldSizeY"));
-		_chunkSize = chunkSize;
-		_squareSize = squareSize;
-		_chunks = initChunks;
-		InitializeChunks();
+		_chunkSize = new Vector2I((int)_world.GetWorldParameter("ChunkSizeX"),
+			(int)_world.GetWorldParameter("ChunkSizeY"));
+		_squareSize = new Vector2I((int)_world.GetWorldParameter("SquareSizeX"),
+			(int)_world.GetWorldParameter("SquareSizeY"));
+		_chunks = new Vector2I((int)_world.GetWorldParameter("InitChunksX"),
+			(int)_world.GetWorldParameter("InitChunksY"));
+
+		if (initializeChunks)
+			InitializeChunks();
 	}
 	
 	private void InitializeChunks()

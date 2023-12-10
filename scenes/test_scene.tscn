@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://ch7bfcqc2vxli" path="res://scenes/SimpleCLI.tscn" id="2_6exry"]
 
 [node name="TWorldManager" type="Node2D"]
-scale = Vector2(1.0056, 0.993048)
+scale = Vector2(0.408577, -0.815058)
 script = ExtResource("1_bymoe")
 _chunkSize = Vector2i(256, 256)
 _squareSize = Vector2i(1, 1)

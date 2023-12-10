@@ -23,8 +23,17 @@ public class World
 	{
 		_worldParameters = new Dictionary<string, Variant>();
 		LoadParametersFromJson();
+		//TODO: usar las X e Y que están en el json y cambiar las llamadas al parámetro "WorldSize"
 		UpdateWorldParameter("WorldSize", new Vector2I((int) GetWorldParameter("WorldSizeX"), 
-			(int) GetWorldParameter("WorldSizeY")));	//TODO: usar las X e Y que están en el json y cambiar las llamadas al parámetro "WorldSize"
+			(int) GetWorldParameter("WorldSizeY")));	
+		UpdateWorldParameter("ChunkSize", new Vector2I((int) GetWorldParameter("ChunkSizeX"), 
+			(int) GetWorldParameter("ChunkSizeY")));
+		UpdateWorldParameter("SquareSize", new Vector2I((int) GetWorldParameter("SquareSizeX"), 
+			(int) GetWorldParameter("SquareSizeY")));
+		UpdateWorldParameter("InitChunks", new Vector2I((int) GetWorldParameter("InitChunksX"), 
+			(int) GetWorldParameter("InitChunksY")));
+		UpdateWorldParameter("Offset", new Vector2I((int) GetWorldParameter("OffsetX"), 
+			(int) GetWorldParameter("OffsetY")));
 	}
 	
 	private void InitNoises()
@@ -59,7 +68,7 @@ public class World
 	
 
 	//  WORLD GENERATORS
-	private void AddWorldGenerator(string generatorName, BaseGenerator generator) => 
+	public void AddWorldGenerator(string generatorName, BaseGenerator generator) => 
 		_worldGenerators[generatorName] = generator;
 	
 	public BaseGenerator GetWorldGenerator(string generator) => 
@@ -198,7 +207,7 @@ public class World
 	public Dictionary<string, Variant> GetWorldParameters() => _worldParameters;
 	
 	//  WORLD NOISE
-	private void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
+	public void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
 
 	public MFNL GetWorldNoise(string name) => _worldNoises.TryGetValue(name, out var noise) ? noise : null;
 

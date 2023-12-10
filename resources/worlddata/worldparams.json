@@ -2,6 +2,15 @@
 	"WorldSizeX":"1024",
 	"WorldSizeY":"1024",
 	
+	"ChunkSizeX":"256",
+	"ChunkSizeY":"256",
+	
+	"SquareSizeX":"1",
+	"SquareSizeY":"1",
+
+	"InitChunksX":"4",
+	"InitChunksY":"4",	
+	
 	"OffsetX":"86500",
 	"OffsetY":"630",
 	

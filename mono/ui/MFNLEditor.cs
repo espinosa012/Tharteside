@@ -4,6 +4,7 @@ using Tartheside.mono.world;
 using Tartheside.mono.tilemap;
 using Tartheside.mono.utilities.logger;
 using Tartheside.mono.utilities.random;
+using Tartheside.mono.world.generators;
 
 namespace Tartheside.mono.ui;
 
@@ -30,7 +31,6 @@ public partial class MFNLEditor : Control
 		_sourceSelector = GetNode<OptionButton>("%SourceSelector");
 		
 		TileMapWindowSetUp();
-		
 		UiSetUp();
 	}
 
@@ -155,8 +155,8 @@ public partial class MFNLEditor : Control
 		
 		tileMapWindow.AddChild(_tileMap);		
 		AddChild(tileMapWindow);
+		_tileMap.Setup(false);
 		
-		_tileMap.RenderChunks("RiverNoise", 1);
 	}
 
 	public void SetWorld() => _tileMap.SetWorld(new World());
@@ -166,10 +166,19 @@ public partial class MFNLEditor : Control
 	
 	
 	// SIGNALS
-	public void _OnGenerateButtonPressed()
+	private void _OnGenerateButtonPressed()
 	{
-		SetNoiseObject(new MFNL());
-		
+		var generator = new NoiseGenerator(
+			(Vector2I) _tileMap.GetWorld().GetWorldParameter("WorldSize"),
+			(Vector2I) _tileMap.GetWorld().GetWorldParameter("ChunkSize"),
+			(Vector2I) _tileMap.GetWorld().GetWorldParameter("Offset"),
+			(int) _tileMap.GetWorld().GetWorldParameter("NTiers")
+		);
+		generator.SetParameterNoise(new MFNL());
+		generator.FillValueMatrix((int) _tileMap.GetWorld().GetWorldParameter("OffsetX"), 
+			(int) _tileMap.GetWorld().GetWorldParameter("OffsetY"));
+		_tileMap.GetWorld().AddWorldGenerator("NoiseGenerator", generator);
+		_tileMap.RenderChunks("NoiseGenerator", 0);
 	}
 	
 	

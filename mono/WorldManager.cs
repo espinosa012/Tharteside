@@ -8,7 +8,6 @@ namespace Tartheside.mono;
 
 public partial class WorldManager : Node2D
 {	
-	//[Export] public string HeightMap;	// testing
 	[Export] private Vector2I _chunkSize;
 	[Export] private Vector2I _squareSize;
 	[Export] private Vector2I _initChunks;	
@@ -49,7 +48,7 @@ public partial class WorldManager : Node2D
 	{
 		InstantiateTileMap();
 		_tileMap.SetWorld(_world);
-		_tileMap.TileMapSetup(_chunkSize, _squareSize, _initChunks);
+		_tileMap.Setup();
 		// pasamos al tilemap los parámetros que no afectan a los valores generados, a excepción del tamaño, que lo
 		// guardamos en el json como parámetro del mundo también (¿seguro que debería ser así?)
 	}
@@ -57,14 +56,11 @@ public partial class WorldManager : Node2D
 	private void InitializeWorld()
 	{
 		_world = new World();
-		_world.UpdateWorldParameter("ChunkSize", _chunkSize);	
-		//TODO: lo dejamos aquí para cogerlo del editor. no afecta a los valores generados
 		
 		_world.InitElevation();
 		_world.InitRiver();
 		_world.InitLatitude();
 		_world.InitTemperature();
-		//_world.InitHumidity();
 	}
 
 
