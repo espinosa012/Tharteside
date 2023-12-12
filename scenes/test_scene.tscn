@@ -1,13 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://tswy1h6sun4r"]
 
-[ext_resource type="Script" path="res://mono/WorldManager.cs" id="1_bymoe"]
+[ext_resource type="Script" path="res://mono/world/manager/WorldManager.cs" id="1_bymoe"]
 [ext_resource type="PackedScene" uid="uid://ch7bfcqc2vxli" path="res://scenes/SimpleCLI.tscn" id="2_6exry"]
 
 [node name="TWorldManager" type="Node2D"]
-scale = Vector2(0.408577, -0.815058)
+scale = Vector2(0.582256, 0.946067)
 script = ExtResource("1_bymoe")
-_chunkSize = Vector2i(256, 256)
-_squareSize = Vector2i(1, 1)
-_initChunks = Vector2i(4, 4)
 
 [node name="cmd" parent="." instance=ExtResource("2_6exry")]

@@ -17,4 +17,7 @@ public partial class NoiseGenerator : BaseGenerator
     public override float GenerateValueAt(int x, int y) => _noise.GetNormalizedNoise2D(x, y);
     
     public void SetParameterNoise(MFNL noise) => _noise = noise;
+    
+    public MFNL GetParameterNoise() => _noise;
+    
 }

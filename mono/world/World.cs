@@ -23,7 +23,6 @@ public class World
 	{
 		_worldParameters = new Dictionary<string, Variant>();
 		LoadParametersFromJson();
-		//TODO: usar las X e Y que están en el json y cambiar las llamadas al parámetro "WorldSize"
 		UpdateWorldParameter("WorldSize", new Vector2I((int) GetWorldParameter("WorldSizeX"), 
 			(int) GetWorldParameter("WorldSizeY")));	
 		UpdateWorldParameter("ChunkSize", new Vector2I((int) GetWorldParameter("ChunkSizeX"), 
@@ -134,11 +133,10 @@ public class World
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		riverGenerator.SetParameterRiverPathfindingElevationPenalty(
 			(float)GetWorldParameter("RiverPathfindingElevationPenalty"));
+		riverGenerator.PathfindingAStarSetup();	// needs Elevation to be set
 		
-		// TODO: hacer en el propio river???
-		riverGenerator.PathfindingAStarSetup();
-		riverGenerator.SetParameterContinentalness(GetWorldNoise("Continentalness"));
-		riverGenerator.GenerateRiver(new Vector2I(86584, 796), new Vector2I(86549, 753));
+		// test
+		//riverGenerator.GenerateRiver(new Vector2I(86584, 796), new Vector2I(86549, 753));
 		AddWorldGenerator("River", riverGenerator);
 	}
 
@@ -207,7 +205,7 @@ public class World
 	public Dictionary<string, Variant> GetWorldParameters() => _worldParameters;
 	
 	//  WORLD NOISE
-	public void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
+	private void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
 
 	public MFNL GetWorldNoise(string name) => _worldNoises.TryGetValue(name, out var noise) ? noise : null;
 

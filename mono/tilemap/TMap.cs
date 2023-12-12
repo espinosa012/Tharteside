@@ -1,4 +1,5 @@
 using Godot;
+using Tartheside.mono.events;
 using Tartheside.mono.world;
 
 namespace Tartheside.mono.tilemap;
@@ -38,7 +39,6 @@ public partial class TMap : TileMap
 		//RenderChunks("River", 1);
 		//RenderChunks("Latitude", 0);
 		//RenderChunks("Temperature", 0);
-		
 	}
 
 	public void RenderChunks(string source, int layer)
@@ -63,7 +63,6 @@ public partial class TMap : TileMap
 
 	private void RenderSquare(Vector2I worldPos, int layer, string source)
 	{
-		// TODO: tomar la fuente de las tiles asignándole un nombre en editor (gradiente, rocas, árboles, río, biome, etc.)
 		// podríamos separar en scripts los métodos para renderizar cada una de las sources (o métodos estáticos)
 		var palette24Id = 10;
 		var tier = _world.GetWorldGenerator(source).GetValueTierAt(worldPos.X, worldPos.Y);
@@ -78,9 +77,13 @@ public partial class TMap : TileMap
 		mapPos + new Vector2I(squarePosX, squarePosY);
 	
 	public void ReloadTileMap()
-	{
+	{	// TODO: falla cuando se ejecuta fuera del flujo principal (desde el editor, por ejemplo). Una posible solución
+		// sería pasar como parámetro una lista con los generadores.
 		Clear();
 		InitializeChunks();
+		
+		// TODO: cuando cambiamos alguna propiedad del generador, es necesario volver a formar la matriz
+		
 	}
 	
 	

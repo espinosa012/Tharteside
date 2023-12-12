@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://do360xxj4060" path="res://resources/MiniWorldSprites/green16.png" id="12_i8iov"]
 [ext_resource type="Script" path="res://mono/tilemap/TMap.cs" id="13_dmimv"]
 [ext_resource type="Script" path="res://gdscript/TileMapCamera2D.gd" id="14_vxcuv"]
-[ext_resource type="Script" path="res://mono/TileMapEventManager.cs" id="15_coiq5"]
+[ext_resource type="Script" path="res://mono/events/TileMapEventManager.cs" id="15_coiq5"]
 [ext_resource type="Script" path="res://mono/human/HumanCharacter.cs" id="16_cjy8w"]
 [ext_resource type="Texture2D" uid="uid://drsqum8whl68i" path="res://resources/MiniWorldSprites/Characters/Champions/Zhinja.png" id="17_scgdn"]
 

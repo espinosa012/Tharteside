@@ -1,17 +1,11 @@
 using Godot;
-using Tartheside.mono.utilities.command_line;
-using Tartheside.mono.world;
 using Tartheside.mono.tilemap;
+using Tartheside.mono.utilities.command_line;
 
-namespace Tartheside.mono;
-
+namespace Tartheside.mono.world.manager;
 
 public partial class WorldManager : Node2D
 {	
-	[Export] private Vector2I _chunkSize;
-	[Export] private Vector2I _squareSize;
-	[Export] private Vector2I _initChunks;	
-
 	private World _world;
 	private TMap _tileMap;
 	private TCommandLine _commandLine;
@@ -19,25 +13,18 @@ public partial class WorldManager : Node2D
 	public override void _Ready()
 	{
 		InitializeWorld();
-		InitializeTileMap();	
-		//InitializeCommandLine();
-	}
-
-	private void InitializeCommandLine()
-	{
-		_commandLine = (TCommandLine) GetNode<LineEdit>("cmd");
-		//_commandLine.Init(_world, _tileMap);
+		InitializeTileMap();
 	}
 	
-	private TMap GetWorldTileMapFromTscn() =>
+	private static TMap GetWorldTileMapFromSceneFile() =>
 		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
 	
 	private void InstantiateTileMap(string name = "Tilemap")
 	{
-		Window tileMapWindow = new Window();
+		var tileMapWindow = new Window();
 		tileMapWindow.Size = new Vector2I(1480, 1480);
 		tileMapWindow.Position = new Vector2I(64, 84);
-		_tileMap = GetWorldTileMapFromTscn();
+		_tileMap = GetWorldTileMapFromSceneFile();
 		_tileMap.Name = name;
 		_tileMap.Position = new Vector2I(0, 0);
 		tileMapWindow.AddChild(_tileMap);	// crear nodo de control	
@@ -49,8 +36,6 @@ public partial class WorldManager : Node2D
 		InstantiateTileMap();
 		_tileMap.SetWorld(_world);
 		_tileMap.Setup();
-		// pasamos al tilemap los parámetros que no afectan a los valores generados, a excepción del tamaño, que lo
-		// guardamos en el json como parámetro del mundo también (¿seguro que debería ser así?)
 	}
 	
 	private void InitializeWorld()
@@ -62,6 +47,5 @@ public partial class WorldManager : Node2D
 		_world.InitLatitude();
 		_world.InitTemperature();
 	}
-
 
 }

@@ -22,8 +22,7 @@ public partial class MFNL : FastNoiseLite
         
         "FractalType",
         "FractalGain", "FractalLacunarity", "FractalOctaves",
-        "FractalPingPongStrength", "FractalType", "FractalWeightedStrength", 
-        "FractalWeightedStrength", 
+        "FractalPingPongStrength", "FractalWeightedStrength", 
         
         "Frequency", "NoiseType", "Seed"
     };

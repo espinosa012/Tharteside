@@ -1,21 +1,21 @@
 using Godot;
+using Tartheside.mono.tilemap;
 using Tartheside.mono.utilities.logger;
-using TMap = Tartheside.mono.tilemap.TMap;
 
-namespace Tartheside.mono;
+namespace Tartheside.mono.events;
 
 public partial class TileMapEventManager : Node
 {
     private TMap _tileMap;
-    public Label PositionLabel;
-    public HumanCharacter TestHumanCharacter;
+    private Label PositionLabel;
+    private HumanCharacter TestHumanCharacter;
     
     public override void _Ready()
     {
         _tileMap = GetParent<TMap>();
         /*TestHumanCharacter = (HumanCharacter) GetNode<CharacterBody2D>("../TestCharacter");
-        PositionLabel = new Label();
-        AddChild(PositionLabel);*/
+    PositionLabel = new Label();
+    AddChild(PositionLabel);*/
     }
 
     public void HandleRightClick()

@@ -28,7 +28,6 @@ public partial class BaseGenerator : GodotObject
 		SetParameterNTiers(nTiers);
 	}
 	
-	
 	public void FillValueMatrix(int offsetX, int offsetY)
 	{
 		// TODO: necesitamos poder indicar qué region de la matriz queremos generar, por eficiencia.
@@ -36,6 +35,8 @@ public partial class BaseGenerator : GodotObject
 		for (var j = offsetY; j < _worldSize.Y + offsetY; j++)
 			_valueMatrix[i - offsetX, j - offsetY] = GenerateValueAt(i, j);
 	}
+
+	public void ClearValueMatrix() => _valueMatrix.Clear();	
 	
 	
 	protected void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;

@@ -1,6 +1,5 @@
 using Godot;
 using Godot.Collections;
-using Tartheside.mono.utilities.random;
 using Tartheside.mono.world.entities;
 
 namespace Tartheside.mono.world.generators;
@@ -11,7 +10,6 @@ public partial class River : BaseGenerator
 {
     private Elevation _elevation;
     private float _riverPathfindingElevationPenalty;
-    private MFNL _continentalness;
     
     private RiverTAStar _pathfindingAStar;
     private Array<RiverEntity> _rivers;
@@ -50,7 +48,6 @@ public partial class River : BaseGenerator
     
     // getters & setters
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
-    public void SetParameterContinentalness(MFNL continentalness) => _continentalness = continentalness;
     public void SetParameterRiverPathfindingElevationPenalty(float riverPathfindingElevationPenalty) =>
         _riverPathfindingElevationPenalty = riverPathfindingElevationPenalty;
     
