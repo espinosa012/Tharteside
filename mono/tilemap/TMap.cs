@@ -35,6 +35,7 @@ public partial class TMap : TileMap
 	private void InitializeChunks()
 	{
 		//TODO: ¿quizás la generación por sources deberíamos hacerla a nivel de square y no de chunk?
+		// TODO: es necesario que el tilemap tenga tantas capas como generadores queramos representar (a la vez)
 		RenderChunks("Elevation", 0);
 		//RenderChunks("River", 1);
 		//RenderChunks("Latitude", 0);
@@ -82,7 +83,7 @@ public partial class TMap : TileMap
 		Clear();
 		InitializeChunks();
 		
-		// TODO: cuando cambiamos alguna propiedad del generador, es necesario volver a formar la matriz
+		// TODO: cuando cambiamos alguna propiedad del generador, es necesario volver a formar la matriz 
 		
 	}
 	

@@ -179,25 +179,6 @@ text = "Randomize"
 [node name="HSeparator" type="HSeparator" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="NoiseType" type="MarginContainer" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/margin_top = 5
-
-[node name="Label" type="Label" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/NoiseType"]
-layout_mode = 2
-size_flags_horizontal = 0
-text = "NoiseType:
-"
-
-[node name="HBox" type="HBoxContainer" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/NoiseType"]
-layout_mode = 2
-size_flags_horizontal = 8
-
-[node name="NoiseTypeInput" type="OptionButton" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/NoiseType/HBox"]
-custom_minimum_size = Vector2(125, 0)
-layout_mode = 2
-fit_to_longest_item = false
-
 [node name="Seed" type="MarginContainer" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -219,6 +200,30 @@ rounded = true
 allow_greater = true
 allow_lesser = true
 alignment = 2
+
+[node name="RandomizeSeedButton" type="Button" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/Seed/HBox"]
+layout_mode = 2
+text = "Randomize
+"
+
+[node name="NoiseType" type="MarginContainer" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 5
+
+[node name="Label" type="Label" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/NoiseType"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "NoiseType:
+"
+
+[node name="HBox" type="HBoxContainer" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/NoiseType"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="NoiseTypeInput" type="OptionButton" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/NoiseType/HBox"]
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+fit_to_longest_item = false
 
 [node name="Frequency" type="MarginContainer" parent="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -802,6 +807,7 @@ allow_lesser = true
 alignment = 2
 
 [node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
 initial_position = 2
 size = Vector2i(500, 400)
 filters = PackedStringArray("*.tres, *.res")

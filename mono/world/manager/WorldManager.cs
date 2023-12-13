@@ -19,6 +19,13 @@ public partial class WorldManager : Node2D
 	private static TMap GetWorldTileMapFromSceneFile() =>
 		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
 	
+	private void InitializeTileMap()
+	{
+		InstantiateTileMap();
+		_tileMap.SetWorld(_world);
+		_tileMap.Setup();
+	}
+	
 	private void InstantiateTileMap(string name = "Tilemap")
 	{
 		var tileMapWindow = new Window();
@@ -27,16 +34,10 @@ public partial class WorldManager : Node2D
 		_tileMap = GetWorldTileMapFromSceneFile();
 		_tileMap.Name = name;
 		_tileMap.Position = new Vector2I(0, 0);
-		tileMapWindow.AddChild(_tileMap);	// crear nodo de control	
+		tileMapWindow.AddChild(_tileMap);	
 		AddChild(tileMapWindow);
 	}
 	
-	private void InitializeTileMap()
-	{
-		InstantiateTileMap();
-		_tileMap.SetWorld(_world);
-		_tileMap.Setup();
-	}
 	
 	private void InitializeWorld()
 	{

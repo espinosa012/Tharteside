@@ -23,15 +23,22 @@ public partial class MFNLEditor : Control
 	
 	
 	// TODO: offsetX y offsetY como miembros de clase.
-	
-	
 	// TODO: no actualizar el ruido al cambiar los inputs, sino al hacer click en Update. Leer valores de los inputs
 	
 	
 	public override void _Ready()
 	{
 		_noise = new MFNL();	// TODO: no guardar noise, sino NoiseGenerator
-		
+				
+		TileMapWindowSetUp();
+		UiSetUp();
+
+		_OnGenerateButtonPressed(_noise);
+		SignalsSetup();
+	}
+
+	private void UiSetUp()
+	{
 		_domainWarp = GetNode<MarginContainer>("%DomainWarp");
 		_domainWarpFractal = GetNode<MarginContainer>("%DomainWarpFractal");
 		_fractal = GetNode<MarginContainer>("%Fractal");
@@ -39,15 +46,6 @@ public partial class MFNLEditor : Control
 		_cellular = GetNode<MarginContainer>("%Cellular");
 		_sourceSelector = GetNode<OptionButton>("%SourceSelector");
 		
-		TileMapWindowSetUp();
-		UiSetUp();
-		
-		_OnGenerateButtonPressed(_noise);
-		SignalsSetup();
-	}
-
-	private void UiSetUp()
-	{
 		OptionButton domainWarpType =
 			GetNode<OptionButton>(
 				"Margin/GlobalContainer/Right/DomainWarp/MarginContainer/VBoxContainer/DomainWarpType/HBox/DomainWarpTypeInput");
@@ -161,7 +159,6 @@ public partial class MFNLEditor : Control
 		tileMapWindow.AddChild(_tileMap);		
 		AddChild(tileMapWindow);
 		_tileMap.Setup(false);
-		
 	}
 
 	private void SetWorld() => SetWorld(new World());
@@ -208,6 +205,8 @@ public partial class MFNLEditor : Control
 		UpdateUi();
 	}
 
+	
+	
 	private void SignalsSetup()
 	{
 		// general
@@ -223,7 +222,8 @@ public partial class MFNLEditor : Control
 		((SpinBox)GetParameterInput("CellularJitter")).ValueChanged += _OnCellularJitterChanged;
 
 		// domain warp
-		// TODO: falta domain warp enabled (bool)
+		((CheckBox)GetParameterInput("DomainWarpEnabled")).Toggled 
+			+= _OnDomainWarpEnabledChanged;
 		((OptionButton)GetParameterInput("DomainWarpType")).ItemSelected 
 			+= _OnDomainWarpTypeChanged;
 		((SpinBox)GetParameterInput("DomainWarpAmplitude")).ValueChanged 
@@ -254,55 +254,47 @@ public partial class MFNLEditor : Control
 			+= _OnFractalPingPongStrengthChanged;
 		((SpinBox)GetParameterInput("FractalWeightedStrength")).ValueChanged 
 			+= _OnFractalWeightedStrengthChanged;
-       
 	}
 
 	// general
 	private void _OnNoiseTypeChanged(long idx) => GD.Print("_OnNoiseTypeChanged");
-	private void _OnSeedChanged(double idx) => UpdateNoise("Seed", 
-		((SpinBox)GetParameterInput("Seed")).Value);
-	private void _OnFrequencyChanged(double idx) => UpdateNoise("Frequency", 
-		((SpinBox)GetParameterInput("Frequency")).Value);
+	private void _OnSeedChanged(double seed) => UpdateNoise("Seed", seed);
+	private void _OnFrequencyChanged(double freq) => UpdateNoise("Frequency", freq);
 	
 	// cellular
 	private void _OnCellularDistanceFunctionChanged(long idx) => GD.Print("_OnCellularDistanceFunctionChanged");
 	private void _OnCellularReturnTypeChanged(long idx) => GD.Print("_OnCellularReturnTypeChanged");
-	private void _OnCellularJitterChanged(double idx) => UpdateNoise("CellularJitter", 
-		((SpinBox)GetParameterInput("CellularJitter")).Value);
+	private void _OnCellularJitterChanged(double cellJitter) => UpdateNoise("CellularJitter", cellJitter);
 
 	// domain warp
+	private void _OnDomainWarpEnabledChanged(bool state) => UpdateNoise("DomainWarpEnabled", state);
 	private void _OnDomainWarpTypeChanged(long idx) => GD.Print("_OnDomainWarpTypeChanged");
-	private void _OnDomainWarpAmplitudeChanged(double idx) => UpdateNoise("DomainWarpAmplitude", 
-		((SpinBox)GetParameterInput("DomainWarpAmplitude")).Value);
-	private void _OnDomainWarpFrequencyChanged(double idx) => UpdateNoise("DomainWarpFrequency", 
-		((SpinBox)GetParameterInput("DomainWarpFrequency")).Value);
+	private void _OnDomainWarpAmplitudeChanged(double domainWarpAmplitude) => 
+		UpdateNoise("DomainWarpAmplitude", domainWarpAmplitude);
+	private void _OnDomainWarpFrequencyChanged(double domainWarpFrequency) =>
+		UpdateNoise("DomainWarpFrequency", domainWarpFrequency); 
 
 	// domain warp fractal
 	private void _OnDomainWarpFractalTypeChanged(long idx) => GD.Print("_OnDomainWarpFractalTypeChanged");
-	private void _OnDomainWarpFractalGainChanged(double idx) => UpdateNoise("FractalGain", 
-		((SpinBox)GetParameterInput("FractalGain")).Value);
-	private void _OnDomainWarpFractalLacunarityChanged(double idx) => UpdateNoise("DomainWarpFractalLacunarity", 
-		((SpinBox)GetParameterInput("DomainWarpFractalLacunarity")).Value);
-	private void _OnDomainWarpFractalOctavesChanged(double idx) => UpdateNoise("DomainWarpFractalOctaves", 
-		((SpinBox)GetParameterInput("DomainWarpFractalOctaves")).Value);
-
+	private void _OnDomainWarpFractalGainChanged(double domainWarpFractalGain) => 
+		UpdateNoise("FractalGain", domainWarpFractalGain);
+	private void _OnDomainWarpFractalLacunarityChanged(double domainWarpFractalLacunarity) =>
+		UpdateNoise("DomainWarpFractalLacunarity", domainWarpFractalLacunarity);
+	private void _OnDomainWarpFractalOctavesChanged(double domainWarpFractalOctaves) =>
+		UpdateNoise("DomainWarpFractalOctaves", domainWarpFractalOctaves); 
 	
 	// fractal
 	private void _OnFractalTypeChanged(long idx) => GD.Print("_OnFractalTypeChanged");
-	private void _OnFractalGainChanged(double idx) => UpdateNoise("FractalGain", 
-		((SpinBox)GetParameterInput("FractalGain")).Value);
-	private void _OnFractalLacunarityChanged(double idx) => UpdateNoise("FractalLacunarity", 
-		((SpinBox)GetParameterInput("FractalLacunarity")).Value);
+	private void _OnFractalGainChanged(double fractalGain) => UpdateNoise("FractalGain", fractalGain);
+	private void _OnFractalLacunarityChanged(double fractalLacunarity) =>
+		UpdateNoise("FractalLacunarity", fractalLacunarity); 
 	private void _OnFractalOctavesChanged(double idx) => UpdateNoise("FractalOctaves", 
 		((SpinBox)GetParameterInput("FractalOctaves")).Value);
-	private void _OnFractalPingPongStrengthChanged(double idx) => UpdateNoise("FractalPingPongStrength", 
-		((SpinBox)GetParameterInput("FractalPingPongStrength")).Value);
-	private void _OnFractalWeightedStrengthChanged(double idx) => UpdateNoise("FractalWeightedStrength", 
-		((SpinBox)GetParameterInput("FractalWeightedStrength")).Value);
+	private void _OnFractalPingPongStrengthChanged(double fractalPingPongStrength) =>
+		UpdateNoise("FractalPingPongStrength", fractalPingPongStrength);
+	private void _OnFractalWeightedStrengthChanged(double fractalWeightedStrength) =>
+		UpdateNoise("FractalWeightedStrength", fractalWeightedStrength); 
 	
-	
-	// TODO: necesitamos un método al que le pasemos alguno de los containers principales (_general, _fractal, etc) y 
-	// el nombre del parámetro y devuelva el linedit (o lo que sea) correspondiente
 	private Node GetParameterInput(string param)
 	{
 		Node toReturn = null;
