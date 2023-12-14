@@ -56,13 +56,9 @@ public partial class MFNL : FastNoiseLite
 
     //  NOISE PARAMS
     public void UpdateNoiseProperty(string param, Variant value) => Set(CamelCaseToSnakeCase(param), value);
-
     public Variant GetNoiseProperty(string param) => Get(CamelCaseToSnakeCase(param));
-
-    public void RandomizeSeed() => SetSeed(_rng.RandiRange(0, 999999999));   // luego hau que recargar
-
+    public void RandomizeSeed() => SetSeed(_rng.RandiRange(0, 999999999));   
     public void SetSeed(int seed) => Seed = seed;
-
 
     //  NOISE JSON
     public void SaveToJson(string filename="")
@@ -86,12 +82,9 @@ public partial class MFNL : FastNoiseLite
 
     // AUX FUNCTIONS
     public string GetParamValueAsString(string param) => Get(param).ToString();
-    
     private static string CamelCaseToSnakeCase(string str) 
         => Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();
-
     public MFNL FromFastNoiseLite(FastNoiseLite toClone) => (MFNL) MemberwiseClone();
-
     public string[] GetNoiseProperties() => _noiseProperties;
 
 }

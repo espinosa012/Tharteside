@@ -134,11 +134,6 @@ size_flags_horizontal = 8
 theme_override_constants/separation = 5
 alignment = 2
 
-[node name="AllReroll" type="Button" parent="Margin/GlobalContainer/Left/AllSections/Margin/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 8
-text = "Randomize"
-
 [node name="General" type="MarginContainer" parent="Margin/GlobalContainer/Left"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -815,3 +810,4 @@ filters = PackedStringArray("*.tres, *.res")
 [connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/GenerateButton" to="." method="_OnGenerateButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/UpdateButton" to="." method="_OnUpdateButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/ResetButton" to="." method="_OnResetButtonPressed"]
+[connection signal="pressed" from="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/Seed/HBox/RandomizeSeedButton" to="." method="_OnRandomizeSeedButtonPressed"]

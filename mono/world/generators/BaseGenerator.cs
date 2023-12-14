@@ -36,7 +36,13 @@ public partial class BaseGenerator : GodotObject
 			_valueMatrix[i - offsetX, j - offsetY] = GenerateValueAt(i, j);
 	}
 
-	public void ClearValueMatrix() => _valueMatrix.Clear();	
+	public void ReloadValueMatrix(int offsetX, int offsetY)
+	{
+		ClearValueMatrix();
+		FillValueMatrix(offsetX, offsetY);
+	}
+	
+	private void ClearValueMatrix() => _valueMatrix.Clear();	
 	
 	
 	protected void SetValueAt(int x, int y, float value) => _valueMatrix[x-_offset.X, y - _offset.Y] = value;
