@@ -18,15 +18,15 @@ public partial class Latitude : BaseGenerator
         : base(worldSize, chunkSize, offset, nTiers)
     {}
     
-    public override float GenerateValueAt(int _x, int y) => GetNormalizedDistanceToEquator(y - _offset.Y);
+    public override float GenerateValueAt(int _x, int y) => GetNormalizedDistanceToEquator(y - Offset.Y);
     
-    public int LatitudeDegreesToY(float degrees) => (int) Math.Round(_worldSize.Y * (90f - degrees) / 180f);
+    public int LatitudeDegreesToY(float degrees) => (int) Math.Round(WorldSize.Y * (90f - degrees) / 180f);
 
     // TODO: asegurare de que los grados están en el rango -90,90
-    private float YToLatitudeDegrees(int y) => 90f - 180f * y / _worldSize.Y;
+    private float YToLatitudeDegrees(int y) => 90f - 180f * y / WorldSize.Y;
     
     public float GetNormalizedDistanceToEquator(int y) => Math.Min(0.999999f, Math.Abs(y - 
-        LatitudeDegreesToY(_equatorLine)) / (_worldSize.Y / 2.0f));
+        LatitudeDegreesToY(_equatorLine)) / (WorldSize.Y / 2.0f));
     
     
     // BIOME DETERMINATION

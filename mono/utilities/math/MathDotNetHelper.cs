@@ -4,6 +4,7 @@ namespace Tartheside.mono.utilities.math;
 
 public static class MathDotNetHelper
 {
+    // Convolution
     public static Matrix<float> GetSobelMatrix(Matrix<float> input)
     {
         var kernel_sobelX = Matrix<float>.Build.DenseOfArray(new float[,] {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}});
@@ -11,8 +12,7 @@ public static class MathDotNetHelper
 
         return Convolve(input, kernel_sobelX) + Convolve(input, kernel_sobelY);
     }
-    
-    public static Matrix<float> Convolve(Matrix<float> input, Matrix<float> kernel)
+    private static Matrix<float> Convolve(Matrix<float> input, Matrix<float> kernel)
     {
         var m = input.RowCount;
         var n = input.ColumnCount;
@@ -38,4 +38,5 @@ public static class MathDotNetHelper
 
         return result;
     }
+    
 }

@@ -25,8 +25,8 @@ public partial class River : BaseGenerator
         PathfindingAStarSetup();
     }
 
-    public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(_offset, 
-        _offset + _worldSize, _elevation, _riverPathfindingElevationPenalty);
+    public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(Offset, 
+        Offset + WorldSize, _elevation, _riverPathfindingElevationPenalty);
     
     //TODO crear funcion para calcular el caudal en cierta posición x,y
  

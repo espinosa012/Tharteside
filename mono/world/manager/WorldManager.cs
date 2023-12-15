@@ -13,9 +13,19 @@ public partial class WorldManager : Node2D
 	public override void _Ready()
 	{
 		WorldSetup();
+		TileMapWindowSetup();
 		TileMapSetup();
+
+		CommandLineSetup();
 	}
 
+	// Command line (test)
+	private void CommandLineSetup()
+	{
+		_commandLine = GetNode<TCommandLine>("cmd");
+		_commandLine.Setup();
+	}
+	
 	// World
 	private void WorldSetup()
 	{
@@ -30,7 +40,6 @@ public partial class WorldManager : Node2D
 	// Tilemap
 	private void TileMapSetup()
 	{
-		TileMapWindowSetup();
 		_tileMap.SetWorld(_world);
 		_tileMap.Setup();
 		_tileMap.InitializeChunks();

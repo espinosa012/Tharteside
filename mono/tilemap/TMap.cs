@@ -74,16 +74,7 @@ public partial class TMap : TileMap
 	private static Vector2I GetTilePositionByWorldPosition(Vector2I mapPos, int squarePosX, int squarePosY) => 
 		mapPos + new Vector2I(squarePosX, squarePosY);
 	
-	public void ReloadTileMap()
-	{	// TODO: falla cuando se ejecuta fuera del flujo principal (desde el editor, por ejemplo). Una posible solución
-		// sería pasar como parámetro una lista con los generadores.
-		Clear();
-		InitializeChunks();
-		
-		// TODO: cuando cambiamos alguna propiedad del generador, es necesario volver a formar la matriz 
-		
-	}
-	
+
 	
 	// TODO: Eventos. Llevar a clase externa 
 	public override void _Input(InputEvent @event)
