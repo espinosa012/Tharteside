@@ -18,12 +18,14 @@ public partial class MFNLEditor : Control
 	private MarginContainer _cellular;
 	private OptionButton _sourceSelector;
 
+	private Button _loadNoiseButton;
+	private Button _saveNoiseButton;
+	private LineEdit _noiseFilenameLineEdit;
+	private FileDialog _fileDialog;
+	
 	private World _world;
 	private NoiseGenerator _noiseGenerator;
 	private TMap _tileMap;
-	
-	// TODO: offsetX y offsetY como miembros de clase.
-	// TODO: no actualizar el ruido al cambiar los inputs, sino al hacer click en Update. Leer valores de los inputs
 	
 	public override void _Ready()
 	{
@@ -34,10 +36,12 @@ public partial class MFNLEditor : Control
 		TileMapWindowSetUp();
 		_tileMap.RenderChunks("NoiseGenerator", 0);
 		UiSetUp();
-		UpdateUi();
+		UpdateUiToNoise();
 	}
 
-	// tilemap
+	
+	
+	// SETUP
 	private void TileMapSetup()
 	{
 		_tileMap = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
@@ -58,11 +62,6 @@ public partial class MFNLEditor : Control
 		_noiseGenerator.FillValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
 			(int) _world.GetWorldParameter("OffsetY"));
 	}
-
-	private void WorldSetup()
-	{
-		_world.AddWorldGenerator("NoiseGenerator", _noiseGenerator);
-	}
 	
 	private void TileMapWindowSetUp()
 	{
@@ -73,10 +72,15 @@ public partial class MFNLEditor : Control
 		tileMapWindow.AddChild(_tileMap);		
 		AddChild(tileMapWindow);
 	}
-
 	
 	private void UiSetUp()
 	{
+		_loadNoiseButton = GetNode<Button>("%LoadNoiseButton");
+		_saveNoiseButton = GetNode<Button>("%SaveNoiseButton");
+		_noiseFilenameLineEdit = GetNode<LineEdit>("%NoiseFilenameLineEdit");
+		_fileDialog = GetNode<FileDialog>("%FileDialog");
+		FileDialogSetup();
+		
 		_domainWarp = GetNode<MarginContainer>("%DomainWarp");
 		_domainWarpFractal = GetNode<MarginContainer>("%DomainWarpFractal");
 		_fractal = GetNode<MarginContainer>("%Fractal");
@@ -141,44 +145,23 @@ public partial class MFNLEditor : Control
 		/*foreach (var generator in _tileMap.GetWorld().GetWorldGenerators().Keys)
 			_sourceSelector.AddItem(generator);	// no hay generadores, se inicializan en el manager*/
 	}
+
+	private void FileDialogSetup()
+	{
+		_fileDialog.FileMode = FileDialog.FileModeEnum.OpenFile;
+		_fileDialog.ClearFilters();
+		_fileDialog.AddFilter("*.json", "JSON files");
+		_fileDialog.CurrentDir = "res://resources/noise";
+	}
 	
-	private void UpdateUi()
+	
+	
+	// UPDATE
+	private void UpdateUiToNoise()
 	{
 		var noise = _noiseGenerator.GetParameterNoiseObject();
 		foreach (var prop in noise.GetNoiseProperties())
 			SetParameterInput(prop, noise.GetNoiseProperty(prop));
-	}
-
-	private void SetParameterInput(string param, Variant value)
-	{
-		MarginContainer container;
-		var relativeInputNodePath = string.Format("MarginContainer/VBoxContainer/{0}/HBox/{0}Input", param);
-		
-		if (param.StartsWith("DomainWarpFractal"))	container = _domainWarpFractal;
-		else if (param.StartsWith("DomainWarp"))	container = _domainWarp;
-		else if (param.StartsWith("Fractal"))	container = _fractal;
-		else if (param.StartsWith("Cellular"))	container = _cellular;
-		else container = _general;
-		
-		// TODO: se podría mejorar
-		try {	
-			if (param.Contains("Type") || param.Contains("CellularDistanceFunction"))	
-				container.GetNode<OptionButton>(relativeInputNodePath).Selected = (int)value;		// TODO: indicar valor
-			else if (param.Contains("Enabled"))
-			{
-				if (param.Contains("DomainWarp"))
-					container.GetNode<CheckBox>(relativeInputNodePath).ButtonPressed = (bool) value;
-				else					
-					container.GetNode<CheckButton>(relativeInputNodePath).ButtonPressed = (bool) value;
-			}
-			else
-				if (param.Contains("Octaves") || param.Contains("Seed")) // int
-					container.GetNode<SpinBox>(relativeInputNodePath).Value = (int) value;
-				else
-					container.GetNode<SpinBox>(relativeInputNodePath).Value = (float) value;
-		} catch (Exception e) {
-			GD.Print("Error setting param input: " + param);
-		}
 	}
 	
 	private void UpdateNoiseProperty(string prop, Variant value)
@@ -198,12 +181,15 @@ public partial class MFNLEditor : Control
 			_noiseGenerator.GetParameterNoiseObject().UpdateNoiseProperty(noiseProp, GetParameterInputValue(noiseProp));
 	}
 	
+	
+	
+	
 	// SIGNALS
 	private void _OnGenerateButtonPressed()
 	{	
 		_tileMap.GetWorld().AddWorldGenerator("NoiseGenerator", _noiseGenerator);
 		_tileMap.RenderChunks("NoiseGenerator", 0);
-		UpdateUi();
+		UpdateUiToNoise();
 	}
 
 	private void _OnUpdateButtonPressed()
@@ -227,8 +213,64 @@ public partial class MFNLEditor : Control
 		((SpinBox)GetParameterInput("Seed")).Value = _noiseGenerator.GetParameterNoiseObject().Seed;
 		
 	}
+
+	private void _OnLoadNoiseButtonPressed()
+	{
+		_fileDialog.Popup();
+	}
+	
+	private void _OnSaveNoiseButtonPressed()
+	{
+		var filename = _noiseFilenameLineEdit.Text.StripEdges();
+		GD.Print("Save");
+	}
+
+	private void _OnFileDialogFileSelected(string filename)
+	{
+		_noiseGenerator.GetParameterNoiseObject().LoadFromJson(filename); 
+		_noiseGenerator.ReloadValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
+			(int) _world.GetWorldParameter("OffsetY"));
+		UpdateUiToNoise();
+		_tileMap.Clear();
+		_tileMap.RenderChunks("NoiseGenerator", 0);
+	} 
 	
 	
+	
+	
+	
+	private void SetParameterInput(string param, Variant value)
+	{
+		MarginContainer container;
+		var relativeInputNodePath = string.Format("MarginContainer/VBoxContainer/{0}/HBox/{0}Input", param);
+		
+		if (param.StartsWith("DomainWarpFractal"))	container = _domainWarpFractal;
+		else if (param.StartsWith("DomainWarp"))	container = _domainWarp;
+		else if (param.StartsWith("Fractal"))	container = _fractal;
+		else if (param.StartsWith("Cellular"))	container = _cellular;
+		else container = _general;
+		
+		// TODO: se podría mejorar
+		try {	
+			if (param.Contains("Type") || param.Contains("CellularDistanceFunction"))	
+				container.GetNode<OptionButton>(relativeInputNodePath).Selected = (int)value;		// TODO: indicar valor
+			else if (param.Contains("Enabled"))
+			{
+				if (param.Contains("DomainWarp"))
+					container.GetNode<CheckBox>(relativeInputNodePath).ButtonPressed = (bool) value;
+				else					
+					container.GetNode<CheckButton>(relativeInputNodePath).ButtonPressed = (bool) value;
+			}
+			else
+			if (param.Contains("Octaves") || param.Contains("Seed")) // int
+				container.GetNode<SpinBox>(relativeInputNodePath).Value = (int) value;
+			else
+				container.GetNode<SpinBox>(relativeInputNodePath).Value = (float) value;
+		} catch (Exception e) {
+			GD.Print("Error setting param input: " + param);
+		}
+	}
+
 	private Node GetParameterInput(string param)
 	{
 		Node toReturn = null;
@@ -255,6 +297,7 @@ public partial class MFNLEditor : Control
 			toReturn = ((CheckBox)node).ButtonPressed;
 		return toReturn;
 	}
+	
 	
 }
 

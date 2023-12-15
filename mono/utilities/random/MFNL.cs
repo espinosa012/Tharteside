@@ -75,7 +75,8 @@ public partial class MFNL : FastNoiseLite
     public void LoadFromJson(string filename)
     {
         if (!Regex.IsMatch(filename, @"\.json$", RegexOptions.IgnoreCase)){filename += ".json";}    // si no viene la extensión, la indicamos
-        var file = Godot.FileAccess.Open("res://resources/noise/" + filename, Godot.FileAccess.ModeFlags.Read);
+        var filepath = "res://resources/noise/" + filename.Replace("res://resources/noise/", "");
+        var file = Godot.FileAccess.Open(filepath, Godot.FileAccess.ModeFlags.Read);
         var noiseDict = JsonSerializer.Deserialize<Dictionary<string, string>>(file.GetAsText());
         foreach (var kvp in noiseDict) Set(CamelCaseToSnakeCase(kvp.Key), kvp.Value);
     }

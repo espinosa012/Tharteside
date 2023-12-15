@@ -100,7 +100,8 @@ size_flags_horizontal = 8
 theme_override_constants/separation = 5
 alignment = 2
 
-[node name="LoadResource" type="Button" parent="Margin/GlobalContainer/Left/File/Margin/HBoxContainer"]
+[node name="LoadNoiseButton" type="Button" parent="Margin/GlobalContainer/Left/File/Margin/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Load"
@@ -108,10 +109,12 @@ text = "Load"
 [node name="VSeparator" type="VSeparator" parent="Margin/GlobalContainer/Left/File/Margin/HBoxContainer"]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="Margin/GlobalContainer/Left/File/Margin/HBoxContainer"]
+[node name="NoiseFilenameLineEdit" type="LineEdit" parent="Margin/GlobalContainer/Left/File/Margin/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SaveResource" type="Button" parent="Margin/GlobalContainer/Left/File/Margin/HBoxContainer"]
+[node name="SaveNoiseButton" type="Button" parent="Margin/GlobalContainer/Left/File/Margin/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Save"
@@ -790,4 +793,7 @@ filters = PackedStringArray("*.tres, *.res")
 
 [connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/GenerateButton" to="." method="_OnGenerateButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/UpdateButton" to="." method="_OnUpdateButtonPressed"]
+[connection signal="pressed" from="Margin/GlobalContainer/Left/File/Margin/HBoxContainer/LoadNoiseButton" to="." method="_OnLoadNoiseButtonPressed"]
+[connection signal="pressed" from="Margin/GlobalContainer/Left/File/Margin/HBoxContainer/SaveNoiseButton" to="." method="_OnSaveNoiseButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/Seed/HBox/RandomizeSeedButton" to="." method="_OnRandomizeSeedButtonPressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_OnFileDialogFileSelected"]
