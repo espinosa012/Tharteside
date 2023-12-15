@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Godot;
 using Tartheside.mono.world;
 using Tartheside.mono.tilemap;
+using Tartheside.mono.world.manager;
 
 
 namespace Tartheside.mono.utilities.command_line;
@@ -19,6 +20,13 @@ public partial class TCommandLine : LineEdit
 		TextSubmitted += _ProcessCommand;
 	}
 
+	private void Setup()
+	{
+		var manager = GetParent<WorldManager>();
+		_world = manager.GetWorld();
+		_tileMap = manager.GetTilemap();
+	}
+	
 	public void Init(World w, TMap tm)
 	{
 		_world = w;

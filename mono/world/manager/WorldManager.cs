@@ -12,22 +12,31 @@ public partial class WorldManager : Node2D
 	
 	public override void _Ready()
 	{
-		InitializeWorld();
-		InitializeTileMap();
+		WorldSetup();
+		TileMapSetup();
 	}
-	
-	private static TMap GetWorldTileMapFromSceneFile() =>
-		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
-	
-	private void InitializeTileMap()
+
+	// World
+	private void WorldSetup()
 	{
-		InstantiateTileMap();
+		_world = new World();
+		
+		_world.InitElevation();
+		_world.InitRiver();
+		_world.InitLatitude();
+		_world.InitTemperature();
+	}
+
+	// Tilemap
+	private void TileMapSetup()
+	{
+		TileMapWindowSetup();
 		_tileMap.SetWorld(_world);
 		_tileMap.Setup();
 		_tileMap.InitializeChunks();
 	}
-	
-	private void InstantiateTileMap(string name = "Tilemap")
+
+	private void TileMapWindowSetup(string name = "Tilemap")
 	{
 		var tileMapWindow = new Window();
 		tileMapWindow.Size = new Vector2I(1480, 1480);
@@ -39,15 +48,12 @@ public partial class WorldManager : Node2D
 		AddChild(tileMapWindow);
 	}
 	
+	private static TMap GetWorldTileMapFromSceneFile() =>
+		GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
 	
-	private void InitializeWorld()
-	{
-		_world = new World();
-		
-		_world.InitElevation();
-		_world.InitRiver();
-		_world.InitLatitude();
-		_world.InitTemperature();
-	}
+	
+	// Getters
+	public World GetWorld() => _world;
+	public TMap GetTilemap() => _tileMap;
 
 }
