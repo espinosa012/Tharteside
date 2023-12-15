@@ -39,7 +39,7 @@ public partial class WorldManager : Node2D
 	private void TileMapWindowSetup(string name = "Tilemap")
 	{
 		var tileMapWindow = new Window();
-		tileMapWindow.Size = new Vector2I(1480, 1480);
+		tileMapWindow.Size = new Vector2I(1800, 864);
 		tileMapWindow.Position = new Vector2I(64, 84);
 		_tileMap = GetWorldTileMapFromSceneFile();
 		_tileMap.Name = name;
