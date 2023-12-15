@@ -85,7 +85,6 @@ public partial class MFNL : FastNoiseLite
     public string GetParamValueAsString(string param) => Get(param).ToString();
     private static string CamelCaseToSnakeCase(string str) 
         => Regex.Replace(str, @"([A-Z])", "_$1").TrimStart('_').ToLower();
-    public MFNL FromFastNoiseLite(FastNoiseLite toClone) => (MFNL) MemberwiseClone();
-    public string[] GetNoiseProperties() => _noiseProperties;
+    public IEnumerable<string> GetNoiseProperties() => _noiseProperties;
 
 }

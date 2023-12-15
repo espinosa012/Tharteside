@@ -60,11 +60,6 @@ size_flags_horizontal = 8
 theme_override_constants/separation = 5
 alignment = 2
 
-[node name="GenerateButton" type="Button" parent="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 8
-text = "Generate"
-
 [node name="UpdateButton" type="Button" parent="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
@@ -791,8 +786,8 @@ initial_position = 2
 size = Vector2i(500, 400)
 filters = PackedStringArray("*.tres, *.res")
 
-[connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/GenerateButton" to="." method="_OnGenerateButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/UpdateButton" to="." method="_OnUpdateButtonPressed"]
+[connection signal="pressed" from="Margin/GlobalContainer/Left/Title/Margin/HBoxContainer/ResetButton" to="." method="_OnResetButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/File/Margin/HBoxContainer/LoadNoiseButton" to="." method="_OnLoadNoiseButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/File/Margin/HBoxContainer/SaveNoiseButton" to="." method="_OnSaveNoiseButtonPressed"]
 [connection signal="pressed" from="Margin/GlobalContainer/Left/General/MarginContainer/VBoxContainer/Seed/HBox/RandomizeSeedButton" to="." method="_OnRandomizeSeedButtonPressed"]

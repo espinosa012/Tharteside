@@ -58,7 +58,9 @@ public partial class MFNLEditor : Control
 			(Vector2I) _world.GetWorldParameter("Offset"),
 			(int) _world.GetWorldParameter("NTiers")
 		);
-		_noiseGenerator.SetParameterNoiseObject(new MFNL());
+		var noise = new MFNL();
+		noise.RandomizeSeed();
+		_noiseGenerator.SetParameterNoiseObject(noise);
 		_noiseGenerator.FillValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
 			(int) _world.GetWorldParameter("OffsetY"));
 	}
@@ -185,9 +187,12 @@ public partial class MFNLEditor : Control
 	
 	
 	// SIGNALS
-	private void _OnGenerateButtonPressed()
+	private void _OnResetButtonPressed()
 	{	
-		_tileMap.GetWorld().AddWorldGenerator("NoiseGenerator", _noiseGenerator);
+		_noiseGenerator.SetParameterNoiseObject(new MFNL());
+		_noiseGenerator.ReloadValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
+			(int) _world.GetWorldParameter("OffsetY"));
+		_tileMap.Clear();
 		_tileMap.RenderChunks("NoiseGenerator", 0);
 		UpdateUiToNoise();
 	}
@@ -222,7 +227,9 @@ public partial class MFNLEditor : Control
 	private void _OnSaveNoiseButtonPressed()
 	{
 		var filename = _noiseFilenameLineEdit.Text.StripEdges();
-		GD.Print("Save");
+		if (filename == "")
+			filename = (string)GetParameterInputValue("Seed");
+		_noiseGenerator.GetParameterNoiseObject().SaveToJson(filename);
 	}
 
 	private void _OnFileDialogFileSelected(string filename)

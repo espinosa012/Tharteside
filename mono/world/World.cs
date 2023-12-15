@@ -204,6 +204,7 @@ public class World
 
 	public Dictionary<string, Variant> GetWorldParameters() => _worldParameters;
 	
+
 	//  WORLD NOISE
 	private void AddWorldNoise(string name, MFNL noise) => _worldNoises.Add(name, noise);
 
