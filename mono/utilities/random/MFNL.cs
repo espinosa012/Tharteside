@@ -55,8 +55,8 @@ public partial class MFNL : FastNoiseLite
 
 
     //  NOISE PARAMS
-    public void UpdateNoiseProperty(string param, Variant value) => Set(CamelCaseToSnakeCase(param), value);
-    public Variant GetNoiseProperty(string param) => Get(CamelCaseToSnakeCase(param));
+    public void UpdateNoiseProperty(string prop, Variant value) => Set(CamelCaseToSnakeCase(prop), value);
+    public Variant GetNoiseProperty(string prop) => Get(CamelCaseToSnakeCase(prop));
     public void RandomizeSeed() => SetSeed(_rng.RandiRange(0, 999999999));   
     public void SetSeed(int seed) => Seed = seed;
 

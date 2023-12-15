@@ -5,7 +5,7 @@ namespace Tartheside.mono.world.generators;
 
 public partial class NoiseGenerator : BaseGenerator
 {
-    private MFNL _noise;
+    private MFNL _noiseObj;
 
     public NoiseGenerator(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
         : base(worldSize, chunkSize, offset, nTiers)
@@ -14,10 +14,10 @@ public partial class NoiseGenerator : BaseGenerator
     // TODO: podríamos de alguna manera indicar qué método de MFNL queremos usar para generar valores
     // (siempre normalizados)
     
-    public override float GenerateValueAt(int x, int y) => _noise.GetNormalizedNoise2D(x, y);
+    public override float GenerateValueAt(int x, int y) => _noiseObj.GetNormalizedNoise2D(x, y);
     
-    public void SetParameterNoise(MFNL noise) => _noise = noise;
+    public void SetParameterNoiseObject(MFNL noise) => _noiseObj = noise;
     
-    public MFNL GetParameterNoise() => _noise;
+    public MFNL GetParameterNoiseObject() => _noiseObj;
     
 }

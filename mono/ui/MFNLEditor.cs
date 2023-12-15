@@ -17,28 +17,64 @@ public partial class MFNLEditor : Control
 	private MarginContainer _general; 
 	private MarginContainer _cellular;
 	private OptionButton _sourceSelector;
-	
-	
+
+	private World _world;
 	private NoiseGenerator _noiseGenerator;
-	private MFNL _noise;
 	private TMap _tileMap;
-	
 	
 	// TODO: offsetX y offsetY como miembros de clase.
 	// TODO: no actualizar el ruido al cambiar los inputs, sino al hacer click en Update. Leer valores de los inputs
 	
-	
 	public override void _Ready()
 	{
-		//_noiseGenerator = new NoiseGenerator();
-		_noise = new MFNL();	// TODO: no guardar noise, sino NoiseGenerator
-				
+		_world = new World();
+		NoiseGeneratorSetup();
+		_world.AddWorldGenerator("NoiseGenerator", _noiseGenerator);
+		TileMapSetup();
 		TileMapWindowSetUp();
+		_tileMap.RenderChunks("NoiseGenerator", 0);
 		UiSetUp();
-
-		_OnGenerateButtonPressed();
+		UpdateUi();
 	}
 
+	// tilemap
+	private void TileMapSetup()
+	{
+		_tileMap = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
+		_tileMap.Name = "NoiseEditorTileMap";
+		_tileMap.SetWorld(_world);
+		_tileMap.Setup();
+	}
+
+	private void NoiseGeneratorSetup()
+	{
+		_noiseGenerator = new NoiseGenerator(
+			(Vector2I) _world.GetWorldParameter("WorldSize"),
+			(Vector2I) _world.GetWorldParameter("ChunkSize"),
+			(Vector2I) _world.GetWorldParameter("Offset"),
+			(int) _world.GetWorldParameter("NTiers")
+		);
+		_noiseGenerator.SetParameterNoiseObject(new MFNL());
+		_noiseGenerator.FillValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
+			(int) _world.GetWorldParameter("OffsetY"));
+	}
+
+	private void WorldSetup()
+	{
+		_world.AddWorldGenerator("NoiseGenerator", _noiseGenerator);
+	}
+	
+	private void TileMapWindowSetUp()
+	{
+		var tileMapWindow = new Window();
+		tileMapWindow.Size = new Vector2I(970, 870);
+		tileMapWindow.Position = new Vector2I(890, 64);
+		
+		tileMapWindow.AddChild(_tileMap);		
+		AddChild(tileMapWindow);
+	}
+
+	
 	private void UiSetUp()
 	{
 		_domainWarp = GetNode<MarginContainer>("%DomainWarp");
@@ -101,14 +137,16 @@ public partial class MFNLEditor : Control
 
 		foreach (var noise in _tileMap.GetWorld().GetWorldNoises().Keys)
 			_sourceSelector.AddItem(noise);
-		foreach (var generator in _tileMap.GetWorld().GetWorldGenerators().Keys)
-			_sourceSelector.AddItem(generator);	// no hay generadores, se inicializan en el manager
+		// TODO
+		/*foreach (var generator in _tileMap.GetWorld().GetWorldGenerators().Keys)
+			_sourceSelector.AddItem(generator);	// no hay generadores, se inicializan en el manager*/
 	}
 	
 	private void UpdateUi()
 	{
-		foreach (var prop in _noise.GetNoiseProperties())
-			SetParameterInput(prop, _noise.GetNoiseProperty(prop));
+		var noise = _noiseGenerator.GetParameterNoiseObject();
+		foreach (var prop in noise.GetNoiseProperties())
+			SetParameterInput(prop, noise.GetNoiseProperty(prop));
 	}
 
 	private void SetParameterInput(string param, Variant value)
@@ -143,106 +181,27 @@ public partial class MFNLEditor : Control
 		}
 	}
 	
-	
-	// tilemap
-	private void TileMapWindowSetUp()
-	{
-		var tileMapWindow = new Window();
-		_tileMap = GD.Load<PackedScene>("res://scenes/WorldTileMap.tscn").Instantiate<TMap>();
-
-		tileMapWindow.Size = new Vector2I(970, 870);
-		tileMapWindow.Position = new Vector2I(890, 64);
-		
-		_tileMap.Name = "NoiseEditorTileMap";
-		_tileMap.Position = new Vector2I(8, 8);
-
-		SetWorld(new World());
-		
-		tileMapWindow.AddChild(_tileMap);		
-		AddChild(tileMapWindow);
-		_tileMap.Setup(false);
-	}
-
-	private void SetWorld(World world) => _tileMap.SetWorld(world);
-
 	private void UpdateNoiseProperty(string prop, Variant value)
 	{
-		var offsetX = ((Vector2I)_tileMap.GetWorld().GetWorldParameter("Offset")).X;
-		var offsetY = ((Vector2I)_tileMap.GetWorld().GetWorldParameter("Offset")).Y;
+		var offsetX = ((Vector2I)_world.GetWorldParameter("Offset")).X;
+		var offsetY = ((Vector2I)_world.GetWorldParameter("Offset")).Y;
 		
-		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).GetParameterNoise()
+		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).GetParameterNoiseObject()
 			.UpdateNoiseProperty(prop, value);
 		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).ReloadValueMatrix(offsetX, offsetY);
 	}
 
 	private void UpdateNoiseFromUi()
 	{
-		var seedInput = _general.GetNode<SpinBox>("./MarginContainer/VBoxContainer/Seed/HBox/SeedInput");  // TODO: que seed sea LineEdit
-		var noiseTypeInput = _general.GetNode<OptionButton>("./MarginContainer/VBoxContainer/NoiseType/HBox/NoiseTypeInput");  
-		var frequencyInput = _general.GetNode<SpinBox>("./MarginContainer/VBoxContainer/Frequency/HBox/FrequencyInput");		// TODO: que frequency sea LineEdit
-		
-		var cellularDistanceFunctionInput = 
-			_cellular.GetNode<OptionButton>("./MarginContainer/VBoxContainer/CellularDistanceFunction/HBox/CellularDistanceFunctionInput");
-		var cellularReturnTypeInput = 
-			_cellular.GetNode<OptionButton>("./MarginContainer/VBoxContainer/CellularReturnType/HBox/CellularReturnTypeInput");
-		var cellularJitterInput = 
-			_cellular.GetNode<SpinBox>("./MarginContainer/VBoxContainer/CellularJitter/HBox/CellularJitterInput");  
-
-		var domainWarpEnabledInput = 
-			_domainWarp.GetNode<CheckBox>("./MarginContainer/VBoxContainer/DomainWarpEnabled/HBox/DomainWarpEnabledInput");  
-		var domainWarpTypeInput = 
-			_domainWarp.GetNode<OptionButton>("./MarginContainer/VBoxContainer/DomainWarpType/HBox/DomainWarpTypeInput");
-		var domainWarpAmplitudeInput = 
-			_domainWarp.GetNode<SpinBox>("./MarginContainer/VBoxContainer/DomainWarpAmplitude/HBox/DomainWarpAmplitudeInput");
-		var domainWarpFrequencyInput = 
-			_domainWarp.GetNode<SpinBox>("./MarginContainer/VBoxContainer/DomainWarpFrequency/HBox/DomainWarpFrequencyInput");
-
-		var domainWarpFractalTypeInput = 
-			_domainWarpFractal.GetNode<OptionButton>
-				("./MarginContainer/VBoxContainer/DomainWarpFractalType/HBox/DomainWarpFractalTypeInput");
-		var domainWarpFractalGainInput = 
-			_domainWarpFractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/DomainWarpFractalGain/HBox/DomainWarpFractalGainInput");
-		var domainWarpFractalLacunarityInput = 
-			_domainWarpFractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/DomainWarpFractalLacunarity/HBox/DomainWarpFractalLacunarityInput");
-		var domainWarpFractalOctavesInput = 
-			_domainWarpFractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/DomainWarpFractalOctaves/HBox/DomainWarpFractalOctavesInput");
-		
-		var fractalTypeInput = 
-			_fractal.GetNode<OptionButton>
-				("./MarginContainer/VBoxContainer/FractalType/HBox/FractalTypeInput");
-		var fractalGainInput = 
-			_fractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/FractalGain/HBox/FractalGainInput");
-		var fractalLacunarityInput = 
-			_fractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/FractalLacunarity/HBox/FractalLacunarityInput");
-		var fractalOctavesInput = 
-			_fractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/FractalOctaves/HBox/FractalOctavesInput");
-		var fractalPingPongStrengthInput = 
-			_fractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/FractalPingPongStrength/HBox/FractalPingPongStrengthInput");
-		var fractalWeightedStrengthInput = 
-			_fractal.GetNode<SpinBox>
-				("./MarginContainer/VBoxContainer/FractalWeightedStrength/HBox/FractalWeightedStrengthInput");
+		// TODO: optimizar, limpiar.
+		foreach (var noiseProp in _noiseGenerator.GetParameterNoiseObject().GetNoiseProperties())
+			_noiseGenerator.GetParameterNoiseObject().UpdateNoiseProperty(noiseProp, GetParameterInputValue(noiseProp));
 	}
 	
 	// SIGNALS
 	private void _OnGenerateButtonPressed()
 	{	
-		var generator = new NoiseGenerator(
-			(Vector2I) _tileMap.GetWorld().GetWorldParameter("WorldSize"),
-			(Vector2I) _tileMap.GetWorld().GetWorldParameter("ChunkSize"),
-			(Vector2I) _tileMap.GetWorld().GetWorldParameter("Offset"),
-			(int) _tileMap.GetWorld().GetWorldParameter("NTiers")
-		);
-		generator.SetParameterNoise(_noise);
-		generator.FillValueMatrix((int) _tileMap.GetWorld().GetWorldParameter("OffsetX"), 
-			(int) _tileMap.GetWorld().GetWorldParameter("OffsetY"));
-		_tileMap.GetWorld().AddWorldGenerator("NoiseGenerator", generator);
+		_tileMap.GetWorld().AddWorldGenerator("NoiseGenerator", _noiseGenerator);
 		_tileMap.RenderChunks("NoiseGenerator", 0);
 		UpdateUi();
 	}
@@ -250,26 +209,22 @@ public partial class MFNLEditor : Control
 	private void _OnUpdateButtonPressed()
 	{
 		UpdateNoiseFromUi();
+		_noiseGenerator.ReloadValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
+			(int) _world.GetWorldParameter("OffsetY"));
 		_tileMap.Clear();
 		_tileMap.RenderChunks("NoiseGenerator", 0);
-	}
-	
-	private void _OnResetButtonPressed()
-	{
-		_noise = new MFNL();
-		UpdateUi();
 	}
 
 	private void _OnRandomizeSeedButtonPressed()
 	{
 		var offsetX = ((Vector2I)_tileMap.GetWorld().GetWorldParameter("Offset")).X;
 		var offsetY = ((Vector2I)_tileMap.GetWorld().GetWorldParameter("Offset")).Y;
-		_noise.RandomizeSeed();
+		_noiseGenerator.GetParameterNoiseObject().RandomizeSeed();
 		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).ReloadValueMatrix(offsetX, offsetY);
 		
 		_tileMap.Clear();
 		_tileMap.RenderChunks("NoiseGenerator", 0);
-		((SpinBox)GetParameterInput("Seed")).Value = _noise.Seed;
+		((SpinBox)GetParameterInput("Seed")).Value = _noiseGenerator.GetParameterNoiseObject().Seed;
 		
 	}
 	
@@ -290,9 +245,17 @@ public partial class MFNLEditor : Control
 
 	private Variant GetParameterInputValue(string param)
 	{
-		// TODO: devuelve el valor que tiene el input correspondiente al parámetro que le pasamos
-		return 0.0f;
+		var node = GetParameterInput(param);
+		Variant toReturn = default;
+		if (node.IsClass("SpinBox"))
+			toReturn = ((SpinBox)node).Value;
+		else if (node.IsClass("OptionButton"))
+			toReturn = ((OptionButton)node).Selected;
+		else if (node.IsClass("CheckBox"))
+			toReturn = ((CheckBox)node).ButtonPressed;
+		return toReturn;
 	}
+	
 }
 
 

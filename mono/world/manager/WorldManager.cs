@@ -24,6 +24,7 @@ public partial class WorldManager : Node2D
 		InstantiateTileMap();
 		_tileMap.SetWorld(_world);
 		_tileMap.Setup();
+		_tileMap.InitializeChunks();
 	}
 	
 	private void InstantiateTileMap(string name = "Tilemap")

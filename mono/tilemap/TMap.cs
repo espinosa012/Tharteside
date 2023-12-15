@@ -17,7 +17,7 @@ public partial class TMap : TileMap
 	
 	public void SetWorld(World world) => _world = world;
 	
-	public void Setup(bool initializeChunks = true)
+	public void Setup()	// TODO: podríamos pasarle el mundo como argumento y llamar desde aquí a SetWorld()
 	{
 		_worldSize = new Vector2I((int)_world.GetWorldParameter("WorldSizeX"),
 			(int)_world.GetWorldParameter("WorldSizeY"));
@@ -27,12 +27,9 @@ public partial class TMap : TileMap
 			(int)_world.GetWorldParameter("SquareSizeY"));
 		_chunks = new Vector2I((int)_world.GetWorldParameter("InitChunksX"),
 			(int)_world.GetWorldParameter("InitChunksY"));
-
-		if (initializeChunks)
-			InitializeChunks();
 	}
 	
-	private void InitializeChunks()
+	public void InitializeChunks()
 	{
 		//TODO: ¿quizás la generación por sources deberíamos hacerla a nivel de square y no de chunk?
 		// TODO: es necesario que el tilemap tenga tantas capas como generadores queramos representar (a la vez)
