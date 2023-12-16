@@ -16,7 +16,6 @@ public partial class River : BaseGenerator
 
     private const float TrueValue = 0.999f;
     
-    // TODO: hacer limpieza, QUITAR LO QUE NO SE VAYA A USAR y eliminar funciones, etc
 
     public River(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
         : base(worldSize, chunkSize, offset, nTiers)
@@ -28,8 +27,6 @@ public partial class River : BaseGenerator
     public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(Offset, 
         Offset + WorldSize, _elevation, _riverPathfindingElevationPenalty);
     
-    //TODO crear funcion para calcular el caudal en cierta posición x,y
- 
     public void GenerateRiver(Vector2I birthPos, Vector2I mouthPos)
     {
         // TODO: mejorar el algoritmo de generación (puntos intermedios, etc)
@@ -44,8 +41,21 @@ public partial class River : BaseGenerator
         _rivers.Add(riverEntity);
     }
 
-    // TODO public void Randomize() => ;
+
+    public bool IsValidRiverBirth(int x, int y)
+    {
+        
+        
+        return false;
+    }
     
+    
+    
+    //TODO crear funcion para calcular el caudal en cierta posición x,y
+    
+    
+
+
     // getters & setters
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
     public void SetParameterRiverPathfindingElevationPenalty(float riverPathfindingElevationPenalty) =>

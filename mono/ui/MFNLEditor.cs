@@ -61,8 +61,7 @@ public partial class MFNLEditor : Control
 		var noise = new MFNL();
 		noise.RandomizeSeed();
 		_noiseGenerator.SetParameterNoiseObject(noise);
-		_noiseGenerator.FillValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
-			(int) _world.GetWorldParameter("OffsetY"));
+		_noiseGenerator.FillValueMatrix();
 	}
 	
 	private void TileMapWindowSetUp()
@@ -168,12 +167,9 @@ public partial class MFNLEditor : Control
 	
 	private void UpdateNoiseProperty(string prop, Variant value)
 	{
-		var offsetX = ((Vector2I)_world.GetWorldParameter("Offset")).X;
-		var offsetY = ((Vector2I)_world.GetWorldParameter("Offset")).Y;
-		
 		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).GetParameterNoiseObject()
 			.UpdateNoiseProperty(prop, value);
-		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).ReloadValueMatrix(offsetX, offsetY);
+		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).ReloadValueMatrix();
 	}
 
 	private void UpdateNoiseFromUi()
@@ -190,8 +186,7 @@ public partial class MFNLEditor : Control
 	private void _OnResetButtonPressed()
 	{	
 		_noiseGenerator.SetParameterNoiseObject(new MFNL());
-		_noiseGenerator.ReloadValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
-			(int) _world.GetWorldParameter("OffsetY"));
+		_noiseGenerator.ReloadValueMatrix();
 		_tileMap.Clear();
 		_tileMap.RenderChunks("NoiseGenerator", 0);
 		UpdateUiToNoise();
@@ -200,18 +195,15 @@ public partial class MFNLEditor : Control
 	private void _OnUpdateButtonPressed()
 	{
 		UpdateNoiseFromUi();
-		_noiseGenerator.ReloadValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
-			(int) _world.GetWorldParameter("OffsetY"));
+		_noiseGenerator.ReloadValueMatrix();
 		_tileMap.Clear();
 		_tileMap.RenderChunks("NoiseGenerator", 0);
 	}
 
 	private void _OnRandomizeSeedButtonPressed()
 	{
-		var offsetX = ((Vector2I)_tileMap.GetWorld().GetWorldParameter("Offset")).X;
-		var offsetY = ((Vector2I)_tileMap.GetWorld().GetWorldParameter("Offset")).Y;
 		_noiseGenerator.GetParameterNoiseObject().RandomizeSeed();
-		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).ReloadValueMatrix(offsetX, offsetY);
+		((NoiseGenerator)_tileMap.GetWorld().GetWorldGenerator("NoiseGenerator")).ReloadValueMatrix();
 		
 		_tileMap.Clear();
 		_tileMap.RenderChunks("NoiseGenerator", 0);
@@ -235,8 +227,7 @@ public partial class MFNLEditor : Control
 	private void _OnFileDialogFileSelected(string filename)
 	{
 		_noiseGenerator.GetParameterNoiseObject().LoadFromJson(filename); 
-		_noiseGenerator.ReloadValueMatrix((int) _world.GetWorldParameter("OffsetX"), 
-			(int) _world.GetWorldParameter("OffsetY"));
+		_noiseGenerator.ReloadValueMatrix();
 		UpdateUiToNoise();
 		_tileMap.Clear();
 		_tileMap.RenderChunks("NoiseGenerator", 0);

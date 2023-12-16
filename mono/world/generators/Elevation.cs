@@ -54,7 +54,6 @@ public partial class Elevation : BaseGenerator
 	                                        _outToSeaFactor; // devuelve si está lo suficientemente mar adentro según
 															 // el factor OutToSeaFactor
 	
-	
 	// setters
 	public void SetParameterBaseElevationNoise(MFNL value) => _baseElevationNoise = value;
 	public void SetParameterContinentalnessNoise(MFNL value) => _continentalnessNoise = value;
@@ -66,5 +65,14 @@ public partial class Elevation : BaseGenerator
 	public void SetParameterIslandScaleValue(float value) => _islandScaleValue = value;
 	public void SetParameterIslandThresholdLevel(float value) => _islandThresholdLevel = value;
 	public void SetParameterOutToSeaFactor(float value) => _outToSeaFactor = value;
+
+
+	public override void Randomize()
+	{
+		_baseElevationNoise.RandomizeSeed();
+		_continentalnessNoise.RandomizeSeed();
+		_peaksAndValleysNoise.RandomizeSeed();
+		_volcanicIslandsNoise.RandomizeSeed();
+	}
 	
 }

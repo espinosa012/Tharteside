@@ -116,8 +116,7 @@ public class World
 		elevationGenerator.SetParameterIslandThresholdLevel((float) _worldParameters["IslandThresholdLevel"]);
 		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
 		
-		elevationGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
-			(int) GetWorldParameter("OffsetY"));
+		elevationGenerator.FillValueMatrix();
 		
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
@@ -156,8 +155,7 @@ public class World
 		latitudeGenerator.SetParameterArcticCircleLine((int) GetWorldParameter("ArcticCircleLine"));
 		latitudeGenerator.SetParameterAntarcticCircleLine((int) GetWorldParameter("AntarcticCircleLine"));
 
-		latitudeGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
-			(int) GetWorldParameter("OffsetY"));
+		latitudeGenerator.FillValueMatrix();
 		AddWorldGenerator("Latitude", latitudeGenerator);
 	}
 
@@ -171,8 +169,7 @@ public class World
 		temperatureGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
 		temperatureGenerator.SetParameterLatitude((Latitude) GetWorldGenerator("Latitude"));
 		
-		temperatureGenerator.FillValueMatrix((int) GetWorldParameter("OffsetX"), 
-			(int) GetWorldParameter("OffsetY"));
+		temperatureGenerator.FillValueMatrix();
 		
 		AddWorldGenerator("Temperature", temperatureGenerator);
 	}
@@ -185,9 +182,9 @@ public class World
 			UpdateWorldParameter(param, value);
 		else
 			_worldParameters[param] = value;
-	} 
+	}
 
-	public void UpdateWorldParameter(string param, Variant value) 
+	private void UpdateWorldParameter(string param, Variant value) 
 	{
 		if (_worldParameters.ContainsKey(param))
 		{

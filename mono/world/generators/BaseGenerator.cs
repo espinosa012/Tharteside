@@ -30,31 +30,32 @@ public partial class BaseGenerator : GodotObject
 	
 	
 	// Value matrix
-	public void FillValueMatrix(int offsetX, int offsetY)
+	public void FillValueMatrix()
 	{
 		// TODO: necesitamos poder indicar qué region de la matriz queremos generar, por eficiencia.
-		for (var i = offsetX; i < WorldSize.X + offsetX; i++)
-		for (var j = offsetY; j < WorldSize.Y + offsetY; j++)
-			valueMatrix[i - offsetX, j - offsetY] = GenerateValueAt(i, j);
+		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
+		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
+			valueMatrix[i - Offset.X, j - Offset.Y] = GenerateValueAt(i, j);
 	}
 
-	public void ReloadValueMatrix(int offsetX, int offsetY)
+	public void ReloadValueMatrix()
 	{
 		valueMatrix.Clear();
-		FillValueMatrix(offsetX, offsetY);
+		FillValueMatrix();
 	}
 	
-	public void ThresholdValueMatrix(int offsetX, int offsetY, float min, float max = 1.0f)
+	public void ThresholdValueMatrix(float min)
 	{
-		for (var i = offsetX; i < WorldSize.X + offsetX; i++)
-		for (var j = offsetY; j < WorldSize.Y + offsetY; j++)
-			valueMatrix[i - offsetX, j - offsetY] = (valueMatrix[i - offsetX, j - offsetY] < min) ? 0.0f : valueMatrix[i - offsetX, j - offsetY];
+		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
+		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
+			valueMatrix[i - Offset.X, j - Offset.Y] = (valueMatrix[i - Offset.X, j - Offset.Y] < min) ? 
+				0.0f : valueMatrix[i - Offset.X, j - Offset.Y];
 	}
 	
 	
 	// Values
 	protected void SetValueAt(int x, int y, float value) => valueMatrix[x-Offset.X, y - Offset.Y] = value;	//TODO: cuidado con el offset (¿no es mejor pasárselo como a FillValueMatrix()?
-	private float GetValueAt(int x, int y) => valueMatrix[x, y];
+	public float GetValueAt(int x, int y) => valueMatrix[x, y];
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
 	
 	
@@ -67,10 +68,14 @@ public partial class BaseGenerator : GodotObject
 	// TODO: NEIGHBOUR EVALUATION 
 	
 	
+	
 	// TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
 	public void SetParameterWorldSize(Vector2I value) => WorldSize = value;
 	public void SetParameterNTiers(int value) => NTiers = value;
 	public void SetParameterChunkSize(Vector2I value) => ChunkSize = value;
 	public void SetParameterOffset(Vector2I offset) => Offset = offset;
 
+	
+	
+	public virtual void Randomize() {}
 }

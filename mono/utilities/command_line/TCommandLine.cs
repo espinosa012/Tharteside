@@ -13,7 +13,7 @@ namespace Tartheside.mono.utilities.command_line;
 public partial class TCommandLine : LineEdit
 {
 
-	private World _world;
+	private World _world;	// TODO: podría no ser necesario si tomamos la referencia al mundo del tilemap
 	private TMap _tileMap;
 	
 	public override void _Ready()
@@ -70,13 +70,36 @@ public partial class TCommandLine : LineEdit
 		_tileMap.RenderChunks(generatorName, layer);
 	}
 
-	private void UmbralizeGenerator(string[] args)
+	private void ReloadGenerator(string[] args)
 	{
 		var generatorName = args[0].StripEdges();
 		var layer = int.Parse(args[1].StripEdges());
-		
+
+		_tileMap.ClearLayer(layer);
+		_world.GetWorldGenerator(generatorName).ReloadValueMatrix();
+		_tileMap.RenderChunks(generatorName, layer);
+	}
+	
+	private void ThresholdGenerator(string[] args)
+	{
+		// TODO: mejorar: hacer más flexible, comprobar que existe, capa por defecto, podemos indicar máximo, etc.
+		var generatorName = args[0].StripEdges();
+		var thresholdValue = float.Parse(args[1].Replace(".", ",").StripEdges());
+		var layer = int.Parse(args[2].StripEdges());
+		_tileMap.ClearLayer(layer);
+		_world.GetWorldGenerator(generatorName).ThresholdValueMatrix(thresholdValue);
+		_tileMap.RenderChunks(generatorName, layer);
 		
 	}
+
+	private void RandomizeElevation(string[] _args)
+	{
+		_world.GetWorldGenerator("Elevation").Randomize();
+		_world.GetWorldGenerator("Elevation").ReloadValueMatrix();
+		_tileMap.Clear();
+		_tileMap.RenderChunks("Elevation", 0);
+	}
+	
 	
 	private void Exit(string[] _args) => GetTree().Quit();
 	
