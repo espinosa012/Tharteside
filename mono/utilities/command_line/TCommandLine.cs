@@ -1,10 +1,10 @@
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Godot;
 using Tartheside.mono.world;
 using Tartheside.mono.tilemap;
-using Tartheside.mono.utilities.logger;
+using Tartheside.mono.utilities.random;
+using Tartheside.mono.world.generators;
 using Tartheside.mono.world.manager;
 
 
@@ -46,31 +46,35 @@ public partial class TCommandLine : LineEdit
 	
 	private static Tuple<string, string[]> GetCommandAndArgs(string text)
 	{
-		string[] args;
-		string pattern = @"^(?<cmd>\w+)(\s+(?<args>.*))?$";
-		Match match = Regex.Match(text, pattern);
+		const string pattern = @"^(?<cmd>\w+)(\s+(?<args>.*))?$";
+		var match = Regex.Match(text, pattern);
 		if (!match.Success)
 			return null;
-		args = match.Groups["args"].Value.Split();
+		var args = match.Groups["args"].Value.Split();
 		if (args[0] == "")
 			args = null;
 		return new Tuple<string, string[]>(match.Groups["cmd"].Value.Trim(), args);	
 	}
     
 	
+	/*	COMMANDS	*/
 	
-	
-	// Commands
-	private void RenderGenerator(string[] args)
+	// Generator
+	private void Render(string[] args)
 	{
 		// TODO: mejorar: hacer más flexible, comprobar que existe, etc.
 		var generatorName = args[0].StripEdges();
-		var layer = int.Parse(args[1].StripEdges());
-		_tileMap.ClearLayer(layer);
-		_tileMap.RenderChunks(generatorName, layer);
+		if (_world.GetWorldGenerators().ContainsKey(generatorName))
+		{
+			var layer = int.Parse(args[1].StripEdges());
+			_tileMap.ClearLayer(layer);
+			_tileMap.RenderChunks(generatorName, layer);			
+		}
+		else
+			RenderNoise(args);
 	}
 
-	private void ReloadGenerator(string[] args)
+	private void Reload(string[] args)
 	{
 		var generatorName = args[0].StripEdges();
 		var layer = int.Parse(args[1].StripEdges());
@@ -80,18 +84,30 @@ public partial class TCommandLine : LineEdit
 		_tileMap.RenderChunks(generatorName, layer);
 	}
 	
-	private void ThresholdGenerator(string[] args)
+	private void Threshold(string[] args)
 	{
 		// TODO: mejorar: hacer más flexible, comprobar que existe, capa por defecto, podemos indicar máximo, etc.
 		var generatorName = args[0].StripEdges();
-		var thresholdValue = float.Parse(args[1].Replace(".", ",").StripEdges());
+		var thresholdTierValue = int.Parse(args[1].StripEdges());
 		var layer = int.Parse(args[2].StripEdges());
 		_tileMap.ClearLayer(layer);
-		_world.GetWorldGenerator(generatorName).ThresholdValueMatrix(thresholdValue);
+		_world.GetWorldGenerator(generatorName).ThresholdValueMatrixByTier(thresholdTierValue);
 		_tileMap.RenderChunks(generatorName, layer);
-		
+	}
+	
+	private void InverseThreshold(string[] args)
+	{
+		// TODO: mejorar: hacer más flexible, comprobar que existe, capa por defecto, podemos indicar máximo, etc.
+		var generatorName = args[0].StripEdges();
+		var thresholdTierValue = int.Parse(args[1].StripEdges());
+		var layer = int.Parse(args[2].StripEdges());
+		_tileMap.ClearLayer(layer);
+		_world.GetWorldGenerator(generatorName).InverseThresholdingByTier(thresholdTierValue);
+		_tileMap.RenderChunks(generatorName, layer);
 	}
 
+	
+	// Elevation
 	private void RandomizeElevation(string[] _args)
 	{
 		_world.GetWorldGenerator("Elevation").Randomize();
@@ -100,8 +116,35 @@ public partial class TCommandLine : LineEdit
 		_tileMap.RenderChunks("Elevation", 0);
 	}
 	
+	// River
+	
+	
+	
+	// Noise
+	private void RenderNoise(string[] args)
+	{
+		var noiseName = args[0];
+		var noiseGenerator = new NoiseGenerator((Vector2I) _world.GetWorldParameter("WorldSize"), 
+			(Vector2I) _world.GetWorldParameter("ChunkSize"), 
+			(Vector2I) _world.GetWorldParameter("Offset"), 
+			(int) _world.GetWorldParameter("NTiers"));
+		var noise = new MFNL();
+		noise.LoadFromJson(noiseName);
+		noiseGenerator.SetParameterNoiseObject(noise);
+		noiseGenerator.FillValueMatrix();
+		_world.AddWorldGenerator(noiseName, noiseGenerator);
+		_tileMap.Clear();
+		_tileMap.RenderChunks(noiseName, 0);
+	}
+	
+	
+	// Tilemap
+	private void ClearLayer(string[] args) => _tileMap.ClearLayer(int.Parse(args[2].StripEdges()));
+	
+	
+	
+	
 	
 	private void Exit(string[] _args) => GetTree().Quit();
-	
 	
 }

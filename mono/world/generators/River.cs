@@ -44,8 +44,6 @@ public partial class River : BaseGenerator
 
     public bool IsValidRiverBirth(int x, int y)
     {
-        
-        
         return false;
     }
     

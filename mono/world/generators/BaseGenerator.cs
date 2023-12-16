@@ -11,7 +11,7 @@ public partial class BaseGenerator : GodotObject
 	protected Vector2I Offset;
 	protected int NTiers;
 	protected Matrix<float> valueMatrix;	// TODO: poner readonly??? qué es eso??
-
+	
 	private const float InitValue = -1.0f;
 
 	protected BaseGenerator(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers)
@@ -43,19 +43,36 @@ public partial class BaseGenerator : GodotObject
 		valueMatrix.Clear();
 		FillValueMatrix();
 	}
+
 	
-	public void ThresholdValueMatrix(float min)
+	// Thresholding
+	public void ThresholdValueMatrixByValue(float minValue)
 	{
 		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
 		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
-			valueMatrix[i - Offset.X, j - Offset.Y] = (valueMatrix[i - Offset.X, j - Offset.Y] < min) ? 
+			valueMatrix[i - Offset.X, j - Offset.Y] = (valueMatrix[i - Offset.X, j - Offset.Y] < minValue) ? 
+				0.0f : valueMatrix[i - Offset.X, j - Offset.Y];
+	}	// TODO: ¿hace falta o es suficiente con el de tier?
+
+	public void ThresholdValueMatrixByTier(int minTier)
+	{
+		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
+		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
+			valueMatrix[i - Offset.X, j - Offset.Y] = (GetValueTier(valueMatrix[i - Offset.X, j - Offset.Y]) <= minTier) ? 
 				0.0f : valueMatrix[i - Offset.X, j - Offset.Y];
 	}
-	
+
+	public void InverseThresholdingByTier(int maxTier)
+	{
+		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
+		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
+			valueMatrix[i - Offset.X, j - Offset.Y] = (GetValueTier(valueMatrix[i - Offset.X, j - Offset.Y]) > maxTier) ? 
+				-1.0f : valueMatrix[i - Offset.X, j - Offset.Y];
+	}
 	
 	// Values
 	protected void SetValueAt(int x, int y, float value) => valueMatrix[x-Offset.X, y - Offset.Y] = value;	//TODO: cuidado con el offset (¿no es mejor pasárselo como a FillValueMatrix()?
-	public float GetValueAt(int x, int y) => valueMatrix[x, y];
+	private float GetValueAt(int x, int y) => valueMatrix[x, y];
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
 	
 	
@@ -68,6 +85,8 @@ public partial class BaseGenerator : GodotObject
 	// TODO: NEIGHBOUR EVALUATION 
 	
 	
+	// TODO: Averaging
+	
 	
 	// TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
 	public void SetParameterWorldSize(Vector2I value) => WorldSize = value;
@@ -78,4 +97,5 @@ public partial class BaseGenerator : GodotObject
 	
 	
 	public virtual void Randomize() {}
+	
 }

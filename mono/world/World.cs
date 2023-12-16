@@ -211,7 +211,7 @@ public class World
 	
 	private void RandomizeWorld()
 	{
-		foreach (MFNL noise in _worldNoises.Values) noise.RandomizeSeed();  
+		foreach (var generator in _worldGenerators.Values) generator.Randomize();  
 	}
 	
 }
