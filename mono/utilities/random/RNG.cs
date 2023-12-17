@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class RNG : GodotObject
+public partial class RNG
 {
     private RandomNumberGenerator _rng;
     

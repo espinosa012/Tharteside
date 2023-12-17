@@ -135,7 +135,8 @@ public class World
 		riverGenerator.PathfindingAStarSetup();	// needs Elevation to be set
 		
 		// test
-		riverGenerator.GenerateRiver(new Vector2I(86584, 796), new Vector2I(86549, 753));
+		//riverGenerator.GenerateRiverByBirthAndMouth(new Vector2I(86584, 796), new Vector2I(86549, 753));
+		riverGenerator.GenerateRiver(new Vector2I(86584, 796));
 		AddWorldGenerator("River", riverGenerator);
 	}
 

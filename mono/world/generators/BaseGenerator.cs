@@ -7,10 +7,10 @@ namespace Tartheside.mono.world.generators;
 public partial class BaseGenerator : GodotObject
 {
 	protected Vector2I WorldSize;
-	protected Vector2I ChunkSize;    
+	private Vector2I ChunkSize;    
 	protected Vector2I Offset;
-	protected int NTiers;
-	protected Matrix<float> valueMatrix;	// TODO: poner readonly??? qué es eso??
+	private int NTiers;
+	private Matrix<float> valueMatrix;	
 	
 	private const float InitValue = -1.0f;
 
@@ -71,7 +71,7 @@ public partial class BaseGenerator : GodotObject
 	}
 	
 	// Values
-	protected void SetValueAt(int x, int y, float value) => valueMatrix[x-Offset.X, y - Offset.Y] = value;	//TODO: cuidado con el offset (¿no es mejor pasárselo como a FillValueMatrix()?
+	protected void SetValueAt(int x, int y, float value) => valueMatrix[x-Offset.X, y - Offset.Y] = value;
 	private float GetValueAt(int x, int y) => valueMatrix[x, y];
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
 	
@@ -88,7 +88,6 @@ public partial class BaseGenerator : GodotObject
 	// TODO: Averaging
 	
 	
-	// TODO: crear métodos genéricos para obtener parámetros de cualquier generador (get y set)
 	public void SetParameterWorldSize(Vector2I value) => WorldSize = value;
 	public void SetParameterNTiers(int value) => NTiers = value;
 	public void SetParameterChunkSize(Vector2I value) => ChunkSize = value;

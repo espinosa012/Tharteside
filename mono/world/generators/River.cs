@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Godot.Collections;
 using Tartheside.mono.world.entities;
@@ -27,7 +28,30 @@ public partial class River : BaseGenerator
     public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(Offset, 
         Offset + WorldSize, _elevation, _riverPathfindingElevationPenalty);
     
-    public void GenerateRiver(Vector2I birthPos, Vector2I mouthPos)
+    
+    // Generating rivers
+
+    public void GenerateRiver(Vector2I birthPos)
+    {
+        const int r = 75;
+        var riverEntity = new RiverEntity();
+        riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
+
+        var rng = new MathNet.Numerics.Random.SystemRandomSource();     // TODO: Llevar a helper
+        var randomAlpha = rng.NextDouble() * MathNet.Numerics.Constants.Pi;
+        var nextPoint = new Vector2I(birthPos.X + (int) Math.Round(r * MathNet.Numerics.Trig.Cos(randomAlpha)), 
+            birthPos.Y + (int) Math.Round(r * MathNet.Numerics.Trig.Cos(randomAlpha)));
+
+        riverEntity.SetMouthPosition(nextPoint.X, nextPoint.Y);
+        foreach (var point in _pathfindingAStar.GetPath(new Vector2I(birthPos.X, birthPos.Y), nextPoint))
+        {
+            riverEntity.AddPoint(point);
+            SetValueAt(point.X, point.Y, TrueValue);
+        }
+        _rivers.Add(riverEntity);
+    }
+    
+    public void GenerateRiverByBirthAndMouth(Vector2I birthPos, Vector2I mouthPos)
     {
         // TODO: mejorar el algoritmo de generación (puntos intermedios, etc)
         var riverEntity = new RiverEntity();

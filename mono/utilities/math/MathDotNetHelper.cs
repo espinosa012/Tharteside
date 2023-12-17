@@ -39,4 +39,7 @@ public static class MathDotNetHelper
         return result;
     }
     
+    
+    // Random
+    
 }
