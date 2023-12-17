@@ -16,7 +16,7 @@ public partial class BaseGenerator : GodotObject
 
 	protected BaseGenerator(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers)
 	{
-		valueMatrix = DenseMatrix.Build.Dense(worldSize.X, worldSize.Y, InitValue);
+		GetClearMatrix(worldSize);
 		Setup(worldSize, chunkSize, offset, nTiers);
 	}
 
@@ -28,8 +28,10 @@ public partial class BaseGenerator : GodotObject
 		SetParameterNTiers(nTiers);
 	}
 	
-	
 	// Value matrix
+	protected void GetClearMatrix(Vector2I matrixSize) => valueMatrix = DenseMatrix.Build.Dense(matrixSize.X, 
+		matrixSize.Y, InitValue);
+	
 	public void FillValueMatrix()
 	{
 		// TODO: necesitamos poder indicar qué region de la matriz queremos generar, por eficiencia.
@@ -96,5 +98,6 @@ public partial class BaseGenerator : GodotObject
 	
 	
 	public virtual void Randomize() {}
+	
 	
 }

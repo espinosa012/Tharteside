@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Godot.Collections;
+using Tartheside.mono.world.biomes;
 using Tartheside.mono.world.entities;
 
 namespace Tartheside.mono.world.generators;
@@ -33,39 +34,48 @@ public partial class River : BaseGenerator
 
     public void GenerateRiver(Vector2I birthPos)
     {
-        const int r = 75;
         var riverEntity = new RiverEntity();
         riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
 
-        var rng = new MathNet.Numerics.Random.SystemRandomSource();     // TODO: Llevar a helper
-        var randomAlpha = rng.NextDouble() * MathNet.Numerics.Constants.Pi;
-        var nextPoint = new Vector2I(birthPos.X + (int) Math.Round(r * MathNet.Numerics.Trig.Cos(randomAlpha)), 
-            birthPos.Y + (int) Math.Round(r * MathNet.Numerics.Trig.Cos(randomAlpha)));
-
-        riverEntity.SetMouthPosition(nextPoint.X, nextPoint.Y);
-        foreach (var point in _pathfindingAStar.GetPath(new Vector2I(birthPos.X, birthPos.Y), nextPoint))
+        // TODO: randomizar mediante el enfoque de pequeñas variaciones tanto "r" como "alpha"
+        // TODO: en A*, comprobar que los puntos del río están dentro de los límites.
+        // TODO: considerar constraints de elevaciones
+        // TODO: limpiar 
+        var r = 8;
+        var randomAlpha = (float) (new MathNet.Numerics.Random.SystemRandomSource()).NextDouble() 
+                          * 2 * MathNet.Numerics.Constants.Pi;
+        
+        var currentPoint = birthPos;
+        while (!Biome.IsSea(_elevation, currentPoint.X - Offset.X, currentPoint.Y - Offset.Y)) // TODO: cuidado offset 
         {
-            riverEntity.AddPoint(point);
-            SetValueAt(point.X, point.Y, TrueValue);
+            var nextPoint = currentPoint + new Vector2I((int)Math.Round(r * MathNet.Numerics.Trig.Cos(randomAlpha)),
+                (int)Math.Round(r * MathNet.Numerics.Trig.Sin(randomAlpha)));
+            foreach (var point in _pathfindingAStar.GetPath(currentPoint, nextPoint))
+            {
+                if (Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) break;
+                riverEntity.AddPoint(point);
+                SetValueAt(point.X, point.Y, TrueValue);
+            }
+            currentPoint = nextPoint;
         }
         _rivers.Add(riverEntity);
+    }
+
+    private int RandomizeR(int r)
+    {
+        // TODO: "pequeña" variación aleatoria.
+        return r;
     }
     
-    public void GenerateRiverByBirthAndMouth(Vector2I birthPos, Vector2I mouthPos)
+    private float RandomizeAlpha(float alpha)
     {
-        // TODO: mejorar el algoritmo de generación (puntos intermedios, etc)
-        var riverEntity = new RiverEntity();
-        riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
-        riverEntity.SetMouthPosition(mouthPos.X, mouthPos.Y);
-        foreach (var point in _pathfindingAStar.GetPath(birthPos, mouthPos))
-        {
-            riverEntity.AddPoint(point);
-            SetValueAt(point.X, point.Y, TrueValue);
-        }
-        _rivers.Add(riverEntity);
+        // TODO: "pequeña" variación aleatoria.
+        return alpha;
     }
-
-
+        
+    
+    
+    
     public bool IsValidRiverBirth(int x, int y)
     {
         return false;
@@ -82,6 +92,16 @@ public partial class River : BaseGenerator
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
     public void SetParameterRiverPathfindingElevationPenalty(float riverPathfindingElevationPenalty) =>
         _riverPathfindingElevationPenalty = riverPathfindingElevationPenalty;
-    
+
+
+    public override void Randomize()
+    {
+        // TODO: conociendo la posición de nacimiento de todos los ríos de _rivers, los volvemos a generar, de forma
+        // que r y alpha serán distintos.
+        GetClearMatrix(WorldSize);
+        foreach (var river in _rivers)
+            GenerateRiver(river.GetBirthPosition());
+
+    }
 }
 

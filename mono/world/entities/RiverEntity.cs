@@ -3,7 +3,7 @@ using Godot.Collections;
 
 namespace Tartheside.mono.world.entities;
 
-public partial class RiverEntity : WorldEntity
+public partial class RiverEntity : BaseEntity
 {
     private string _name;
     
@@ -21,6 +21,7 @@ public partial class RiverEntity : WorldEntity
     
     
     // getters and setters
+    public Vector2I GetBirthPosition() => _birthPosition;
     public void SetBirthPosition(int x, int y) => _birthPosition = new Vector2I(x, y);
     public void SetMouthPosition(int x, int y) => _mouthPosition = new Vector2I(x, y);
 

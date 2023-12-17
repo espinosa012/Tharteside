@@ -34,14 +34,17 @@ public partial class TMap : TileMap
 		//TODO: ¿quizás la generación por sources deberíamos hacerla a nivel de square y no de chunk?
 		// TODO: es necesario que el tilemap tenga tantas capas como generadores queramos representar (a la vez)
 		RenderChunks("Elevation", 0);
-		//RenderChunks("River", 1);
+		RenderChunks("River", 1);
 		//RenderChunks("Latitude", 0);
 		//RenderChunks("Temperature", 0);
 	}
 
 	public void RenderChunks(string source, int layer)
 	{
-		ClearLayer(layer);
+		// TODO: tal y como está ahora (17/12/23) el parámetro WorldSize no tiene influencia en el tilemap, sólo en el 
+		// tamaño de la matriz. Sóol influye el tamaño de los chunks y el número de chunks. 
+		// TODO: quizá habría que limitar el número de chunks automáticamente en función del tamaño establecido del mundo
+		ClearLayer(layer);	
 		for (var i = 0; i < _chunks.X; i++)
 		for (var j = 0; j < _chunks.Y; j++)
 			RenderChunk(new Vector2I(i, j), source, layer);

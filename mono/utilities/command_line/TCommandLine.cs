@@ -117,8 +117,21 @@ public partial class TCommandLine : LineEdit
 	}
 	
 	// River
-	
-	
+	private void GenerateRiver(string[] args)
+	{
+		var x = int.Parse(args[0].StripEdges());
+		var y = int.Parse(args[1].StripEdges());
+		((River)_world.GetWorldGenerator("River")).GenerateRiver(new Vector2I(x, y));
+		_tileMap.ClearLayer(1);
+		_tileMap.RenderChunks("River", 1);
+	}
+
+	private void RandomizeRiver(string[] _args)
+	{
+		((River)_world.GetWorldGenerator("River")).Randomize();
+		_tileMap.ClearLayer(1);
+		_tileMap.RenderChunks("River", 1);
+	}
 	
 	// Noise
 	private void RenderNoise(string[] args)

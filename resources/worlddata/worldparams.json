@@ -8,8 +8,8 @@
 	"SquareSizeX":"1",
 	"SquareSizeY":"1",
 
-	"InitChunksX":"4",
-	"InitChunksY":"4",	
+	"InitChunksX":"2",
+	"InitChunksY":"2",	
 	
 	"OffsetX":"86500",
 	"OffsetY":"630",
@@ -31,7 +31,7 @@
 	"IslandThresholdLevel":"0.76",
 	"OutToSeaFactor":"0.7",
 	
-	"RiverPathfindingElevationPenalty":"1.75",
+	"RiverPathfindingElevationPenalty":"2.15",
 	"HumidityContinentalnessFactor":"0.715",
 	"HumidityRiverFactor":"0.285"
 }
