@@ -28,8 +28,7 @@ public partial class River : BaseGenerator
 
     public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(Offset, 
         Offset + WorldSize, _elevation, _riverPathfindingElevationPenalty);
-    
-    
+
     // Generating rivers
 
     public void GenerateRiver(Vector2I birthPos)
@@ -98,10 +97,12 @@ public partial class River : BaseGenerator
     {
         // TODO: conociendo la posición de nacimiento de todos los ríos de _rivers, los volvemos a generar, de forma
         // que r y alpha serán distintos.
+        var currentRivers = _rivers.Duplicate(); 
+        _rivers.Clear();
+        
         GetClearMatrix(WorldSize);
-        foreach (var river in _rivers)
+        foreach (var river in currentRivers)
             GenerateRiver(river.GetBirthPosition());
-
     }
 }
 
