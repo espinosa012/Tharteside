@@ -23,6 +23,7 @@ public partial class RiverEntity : BaseEntity
     // getters and setters
     public Vector2I GetBirthPosition() => _birthPosition;
     public void SetBirthPosition(int x, int y) => _birthPosition = new Vector2I(x, y);
+    public Vector2I GetMouthPosition() => _mouthPosition;
     public void SetMouthPosition(int x, int y) => _mouthPosition = new Vector2I(x, y);
 
     public Array<Vector2I> GetRiverPath() => _riverPath;

@@ -40,21 +40,17 @@ public partial class River : BaseGenerator
         // TODO: considerar constraints de elevaciones
         // TODO: limpiar 
         // TODO: trasladar funciones matemáticas
-        // TODO: randomizar mediante el enfoque de pequeñas variaciones tanto "r" como "alpha" en cada iteración del while (RandomizeInc o algo así)
-        var r = 8;
-        var randomAlpha = (float) (new MathNet.Numerics.Random.SystemRandomSource()).NextDouble() 
-                          * 2 * MathNet.Numerics.Constants.Pi;
+        // TODO: randomizar mediante el enfoque de pequeñas variaciones tanto "r" como "alpha"
+        // en cada iteración del while (RandomizeInc o algo así).
 
         var mouthReached = false;
         var currentPoint = birthPos;
-        var inc = new Vector2I((int)Math.Round(r * MathNet.Numerics.Trig.Cos(randomAlpha)), 
-            (int)Math.Round(r * MathNet.Numerics.Trig.Sin(randomAlpha)));
+        var inc = GetInc(GetRandomR(4, 15), GetRandomAlpha());
         
-        while (!Biome.IsSea(_elevation, (currentPoint + inc).X - Offset.X, (currentPoint + inc).Y - Offset.Y) 
-               && !mouthReached) 
-        {
+        const int maxIterations = 64; // TODO: que sea parámetro del generador
+
+        do {
             var nextPoint = currentPoint + inc;
-            
             foreach (var point in _pathfindingAStar.GetPath(currentPoint, nextPoint))
             {
                 if (Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y))
@@ -62,19 +58,35 @@ public partial class River : BaseGenerator
                     mouthReached = true;
                     break;
                 }
+
                 riverEntity.AddPoint(point);
                 SetValueAt(point.X, point.Y, TrueValue);
             }
-            currentPoint = nextPoint;
-        }
-        var riverMouth = riverEntity.GetRiverPath().Last();
-        riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);
 
+            currentPoint = nextPoint;
+        } while (!Biome.IsSea(_elevation, (currentPoint + inc).X - Offset.X, (currentPoint + inc).Y - Offset.Y)
+                 && !mouthReached);
+        var riverMouth = riverEntity.GetRiverPath().Last();
+        riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);   
         _rivers.Add(riverEntity);
     }
 
+
+    private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
+    {
+        riverEntity.AddPoint(point);
+        SetValueAt(point.X, point.Y, TrueValue);
+    }
     
     // TODO
+    private Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathNet.Numerics.Trig.Cos(alpha)),
+            (int)Math.Round(r * MathNet.Numerics.Trig.Sin(alpha)));
+
+    private int GetRandomR(int minValue, int maxValue) => 8;    // TODO: implementar. los mínimos y máximos deben ser parámetros del generador
+    
+    private float GetRandomAlpha() => (float) (new MathNet.Numerics.Random.SystemRandomSource()).NextDouble()   // TODO: llevar a clase rng 
+               * 2f * (float) MathNet.Numerics.Constants.Pi;
+    
     private Vector2I RandomizeInc(int r, float alpha) => new ((int)Math.Round(r * MathNet.Numerics.Trig.Cos(alpha)), 
             (int)Math.Round(r * MathNet.Numerics.Trig.Sin(alpha)));
     
