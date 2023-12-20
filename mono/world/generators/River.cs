@@ -48,24 +48,19 @@ public partial class River : BaseGenerator
         var inc = GetInc(GetRandomR(4, 15), GetRandomAlpha());
         
         const int maxIterations = 64; // TODO: que sea parámetro del generador
-
-        do {
+        
+        while (!mouthReached)
+        {
             var nextPoint = currentPoint + inc;
             foreach (var point in _pathfindingAStar.GetPath(currentPoint, nextPoint))
             {
-                if (Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y))
-                {
-                    mouthReached = true;
-                    break;
-                }
-
-                riverEntity.AddPoint(point);
-                SetValueAt(point.X, point.Y, TrueValue);
+                AddPointToRiverEntity(point, riverEntity);
+                if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
+                mouthReached = true;
+                break;
             }
-
             currentPoint = nextPoint;
-        } while (!Biome.IsSea(_elevation, (currentPoint + inc).X - Offset.X, (currentPoint + inc).Y - Offset.Y)
-                 && !mouthReached);
+        } 
         var riverMouth = riverEntity.GetRiverPath().Last();
         riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);   
         _rivers.Add(riverEntity);
