@@ -1,6 +1,8 @@
+using System;
+using System.Linq;
 using Godot;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Single;
+using Tartheside.mono.utilities.math;
 
 namespace Tartheside.mono.world.generators;
 
@@ -16,7 +18,7 @@ public partial class BaseGenerator : GodotObject
 
 	protected BaseGenerator(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers)
 	{
-		GetClearMatrix(worldSize);
+		SetClearMatrix(worldSize);
 		Setup(worldSize, chunkSize, offset, nTiers);
 	}
 
@@ -29,8 +31,8 @@ public partial class BaseGenerator : GodotObject
 	}
 	
 	// Value matrix
-	protected void GetClearMatrix(Vector2I matrixSize) => valueMatrix = DenseMatrix.Build.Dense(matrixSize.X, 
-		matrixSize.Y, InitValue);
+	protected void SetClearMatrix(Vector2I matrixSize) => 
+		valueMatrix = MathDotNetHelper.GetMatrix(matrixSize, InitValue);
 	
 	public void FillValueMatrix()
 	{
@@ -48,20 +50,12 @@ public partial class BaseGenerator : GodotObject
 
 	
 	// Thresholding
-	public void ThresholdValueMatrixByValue(float minValue)
-	{
-		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
-		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
-			valueMatrix[i - Offset.X, j - Offset.Y] = (valueMatrix[i - Offset.X, j - Offset.Y] < minValue) ? 
-				0.0f : valueMatrix[i - Offset.X, j - Offset.Y];
-	}	// TODO: ¿hace falta o es suficiente con el de tier?
-
 	public void ThresholdValueMatrixByTier(int minTier)
 	{
 		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
 		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
-			valueMatrix[i - Offset.X, j - Offset.Y] = (GetValueTier(valueMatrix[i - Offset.X, j - Offset.Y]) <= minTier) ? 
-				0.0f : valueMatrix[i - Offset.X, j - Offset.Y];
+			valueMatrix[i - Offset.X, j - Offset.Y] = (GetValueTier(valueMatrix[i - Offset.X, j - Offset.Y]) <= minTier) 
+				? 0.0f : valueMatrix[i - Offset.X, j - Offset.Y];
 	}
 
 	public void InverseThresholdingByTier(int maxTier)
@@ -74,7 +68,7 @@ public partial class BaseGenerator : GodotObject
 	
 	// Values
 	protected void SetValueAt(int x, int y, float value) => valueMatrix[x-Offset.X, y - Offset.Y] = value;
-	private float GetValueAt(int x, int y) => valueMatrix[x, y];
+	public float GetValueAt(int x, int y) => valueMatrix[x, y];
 	public virtual float GenerateValueAt(int x, int y) => 0.0f;
 	
 	
@@ -87,9 +81,18 @@ public partial class BaseGenerator : GodotObject
 	// TODO: NEIGHBOUR EVALUATION 
 	
 	
+	
 	// TODO: Averaging
+	public float GetSubMatrixAverage(Vector2I centroid, Vector2I size) // size debería ser impar
+	{	
+		var subMatrix = valueMatrix.SubMatrix(centroid.X - size.X / 2,
+			size.X, centroid.Y - size.Y / 2, size.Y);
+		return Enumerable.Sum(subMatrix.ColumnSums()) / (size.Y * size.X);
+	}
 	
 	
+	
+	// setters
 	public void SetParameterWorldSize(Vector2I value) => WorldSize = value;
 	public void SetParameterNTiers(int value) => NTiers = value;
 	public void SetParameterChunkSize(Vector2I value) => ChunkSize = value;

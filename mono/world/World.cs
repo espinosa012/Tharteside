@@ -117,6 +117,7 @@ public class World
 		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
 		
 		elevationGenerator.FillValueMatrix();
+		GD.Print(elevationGenerator.GetSubMatrixAverage(new Vector2I(78, 857-630), new Vector2I(5, 5)));
 		
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}

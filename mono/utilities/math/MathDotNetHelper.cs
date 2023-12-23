@@ -1,4 +1,6 @@
+using Godot;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace Tartheside.mono.utilities.math;
 
@@ -6,6 +8,11 @@ public static class MathDotNetHelper
 {
     // Constants
     public const float Pi = (float)MathNet.Numerics.Constants.Pi;  
+    
+    // Matrix
+    public static Matrix<float> GetMatrix(Vector2I size, float initValue) => 
+        DenseMatrix.Build.Dense(size.X, size.Y, initValue);
+    
     
     // Convolution
     public static Matrix<float> GetSobelMatrix(Matrix<float> input)

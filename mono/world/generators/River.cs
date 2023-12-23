@@ -135,7 +135,7 @@ public partial class River : BaseGenerator
         // que r y alpha serán distintos.
         var currentRivers = _rivers.Duplicate(); 
         _rivers.Clear();
-        GetClearMatrix(WorldSize);
+        SetClearMatrix(WorldSize);
         foreach (var river in currentRivers)
             GenerateRiver(river.GetBirthPosition());
     }
