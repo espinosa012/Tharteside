@@ -4,6 +4,9 @@ namespace Tartheside.mono.utilities.math;
 
 public static class MathDotNetHelper
 {
+    // Constants
+    public const float Pi = (float)MathNet.Numerics.Constants.Pi;  
+    
     // Convolution
     public static Matrix<float> GetSobelMatrix(Matrix<float> input)
     {
@@ -38,8 +41,23 @@ public static class MathDotNetHelper
 
         return result;
     }
+
+    
+    // Trigonometry
+    public static float Cos(float angleInRadians) => (float)MathNet.Numerics.Trig.Cos(angleInRadians);
+    public static float Sin(float angleInRadians) => (float)MathNet.Numerics.Trig.Sin(angleInRadians);
     
     
     // Random
+    public static float GetRandomFloatInRange(float min, float max) => 
+        min + (float)(new MathNet.Numerics.Random.SystemRandomSource()).NextDouble() * (max - min);
+
+    public static int GetRandomIntInRange(int min, int max) => 
+        (new MathNet.Numerics.Random.SystemRandomSource()).Next(min, max);
+    
+    
+    
+    
+    
     
 }

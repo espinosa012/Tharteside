@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 using Godot.Collections;
+using Tartheside.mono.utilities.math;
 using Tartheside.mono.world.biomes;
 using Tartheside.mono.world.entities;
 
@@ -45,11 +46,15 @@ public partial class River : BaseGenerator
 
         var mouthReached = false;
         var currentPoint = birthPos;
-        var alpha = GetRandomAlpha();
-        
+        var alpha = GetRandomAlpha();   //TODO: incializar alpha hacia donde la elevación sea menor
+
+        var iterations = 0;
         const int maxIterations = 64; // TODO: que sea parámetro del generador
+        
         while (!mouthReached)
         {
+            /*  TODO: En cada iteración, necesitamos determinar en qué dirección se encuentra la menor elevación.*/
+            
             alpha = RandomizeAlpha(alpha);
             var nextPoint = currentPoint + GetInc(GetRandomR(4, 15), alpha);
             foreach (var point in _pathfindingAStar.GetPath(currentPoint, nextPoint))
@@ -60,6 +65,7 @@ public partial class River : BaseGenerator
                 break;
             }
             currentPoint = nextPoint;
+            iterations++;
         } 
         var riverMouth = riverEntity.GetRiverPath().Last();
         riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);   
@@ -77,30 +83,21 @@ public partial class River : BaseGenerator
     private static Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathNet.Numerics.Trig.Cos(alpha)),
             (int)Math.Round(r * MathNet.Numerics.Trig.Sin(alpha)));
 
-    private int GetRandomR(int minValue, int maxValue) => 8;    // TODO: implementar. los mínimos y máximos deben ser parámetros del generador
+    private int GetRandomR(int minValue, int maxValue) => MathDotNetHelper.GetRandomIntInRange(minValue, maxValue);    // TODO: implementar. los mínimos y máximos deben ser parámetros del generador
     
-    private float GetRandomAlpha() => (float) (new MathNet.Numerics.Random.SystemRandomSource()).NextDouble()   // TODO: llevar a clase rng 
-               * 2f * (float) MathNet.Numerics.Constants.Pi;
+    private float GetRandomAlpha() => MathDotNetHelper.GetRandomFloatInRange(0, 2 * MathDotNetHelper.Pi);
     
-    private Vector2I RandomizeInc(int r, float alpha) => new ((int)Math.Round(r * MathNet.Numerics.Trig.Cos(alpha)), 
-            (int)Math.Round(r * MathNet.Numerics.Trig.Sin(alpha)));
+    private Vector2I RandomizeInc(int r, float alpha) => new ((int)Math.Round(r * MathDotNetHelper.Cos(alpha)), 
+            (int)Math.Round(r * MathDotNetHelper.Sin(alpha)));
     
     private int RandomizeR(int r)
     {
         // TODO: "pequeña" variación aleatoria.
-        return r;
+        return r + MathDotNetHelper.GetRandomIntInRange(0, 8);
     }
-    
-    private float RandomizeAlpha(float alpha)
-    {
-        // TODO: "pequeña" variación aleatoria.
-        var randomVariation = (float)(new MathNet.Numerics.Random.SystemRandomSource()).NextDouble() *
-            ((float)MathNet.Numerics.Constants.Pi / 3f) - ((float)MathNet.Numerics.Constants.Pi / 6f); 
-        return alpha + randomVariation;
-    }
-        
-    
-    
+
+    private float RandomizeAlpha(float alpha) =>    // TODO: el rango de variación de alpha podría ser un parámetro del generador
+        alpha + MathDotNetHelper.GetRandomFloatInRange(-MathDotNetHelper.Pi / 6f, MathDotNetHelper.Pi / 6f);
     
     public bool IsValidRiverBirth(int x, int y)
     {
@@ -142,5 +139,6 @@ public partial class River : BaseGenerator
         foreach (var river in currentRivers)
             GenerateRiver(river.GetBirthPosition());
     }
+    
 }
 
