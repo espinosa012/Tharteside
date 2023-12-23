@@ -45,13 +45,13 @@ public partial class River : BaseGenerator
 
         var mouthReached = false;
         var currentPoint = birthPos;
-        var inc = GetInc(GetRandomR(4, 15), GetRandomAlpha());
+        var alpha = GetRandomAlpha();
         
         const int maxIterations = 64; // TODO: que sea parámetro del generador
-        
         while (!mouthReached)
         {
-            var nextPoint = currentPoint + inc;
+            alpha = RandomizeAlpha(alpha);
+            var nextPoint = currentPoint + GetInc(GetRandomR(4, 15), alpha);
             foreach (var point in _pathfindingAStar.GetPath(currentPoint, nextPoint))
             {
                 AddPointToRiverEntity(point, riverEntity);
@@ -74,7 +74,7 @@ public partial class River : BaseGenerator
     }
     
     // TODO
-    private Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathNet.Numerics.Trig.Cos(alpha)),
+    private static Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathNet.Numerics.Trig.Cos(alpha)),
             (int)Math.Round(r * MathNet.Numerics.Trig.Sin(alpha)));
 
     private int GetRandomR(int minValue, int maxValue) => 8;    // TODO: implementar. los mínimos y máximos deben ser parámetros del generador
@@ -94,7 +94,9 @@ public partial class River : BaseGenerator
     private float RandomizeAlpha(float alpha)
     {
         // TODO: "pequeña" variación aleatoria.
-        return alpha;
+        var randomVariation = (float)(new MathNet.Numerics.Random.SystemRandomSource()).NextDouble() *
+            ((float)MathNet.Numerics.Constants.Pi / 3f) - ((float)MathNet.Numerics.Constants.Pi / 6f); 
+        return alpha + randomVariation;
     }
         
     
