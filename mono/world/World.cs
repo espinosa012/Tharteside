@@ -117,8 +117,6 @@ public class World
 		elevationGenerator.SetParameterOutToSeaFactor((float) _worldParameters["OutToSeaFactor"]);
 		
 		elevationGenerator.FillValueMatrix();
-		GD.Print(elevationGenerator.GetSubMatrixAverage(new Vector2I(78, 857-630), new Vector2I(5, 5)));
-		
 		AddWorldGenerator("Elevation", elevationGenerator);
 	}
 
@@ -138,8 +136,15 @@ public class World
 		// test
 		riverGenerator.GenerateRiver(new Vector2I(86584, 796));
 		riverGenerator.GenerateRiver(new Vector2I(86615, 724));
+		riverGenerator.GenerateRiver(new Vector2I(86579, 863));
+		riverGenerator.GenerateRiver(new Vector2I(86998, 902));
+		
+		
+		
 		riverGenerator.GenerateRiver(new Vector2I(86948, 882));
 		riverGenerator.GenerateRiver(new Vector2I(86981, 802));
+		
+		
 		//riverGenerator.GenerateRiver(new Vector2I(86955, 674)); // TODO: se va de los límites de A*
 			
 		AddWorldGenerator("River", riverGenerator);

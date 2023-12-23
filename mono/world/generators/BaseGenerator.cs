@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Godot;
 using MathNet.Numerics.LinearAlgebra;
@@ -90,15 +89,11 @@ public partial class BaseGenerator : GodotObject
 		return Enumerable.Sum(subMatrix.ColumnSums()) / (size.Y * size.X);
 	}
 	
-	
-	
 	// setters
 	public void SetParameterWorldSize(Vector2I value) => WorldSize = value;
 	public void SetParameterNTiers(int value) => NTiers = value;
 	public void SetParameterChunkSize(Vector2I value) => ChunkSize = value;
 	public void SetParameterOffset(Vector2I offset) => Offset = offset;
-
-	
 	
 	public virtual void Randomize() {}
 	

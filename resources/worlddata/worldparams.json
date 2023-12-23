@@ -31,5 +31,5 @@
 	"IslandThresholdLevel":"0.76",
 	"OutToSeaFactor":"0.7",
 	
-	"RiverPathfindingElevationPenalty":"5.25"
+	"RiverPathfindingElevationPenalty":"7.25"
 }

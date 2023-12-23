@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using Godot;
 using Godot.Collections;
+using MathNet.Numerics;
+using MathNet.Numerics.LinearAlgebra;
 using Tartheside.mono.utilities.math;
 using Tartheside.mono.world.biomes;
 using Tartheside.mono.world.entities;
@@ -39,39 +41,38 @@ public partial class River : BaseGenerator
 
         // TODO: en A*, comprobar que los puntos del río están dentro de los límites.
         // TODO: considerar constraints de elevaciones
-        // TODO: limpiar 
-        // TODO: trasladar funciones matemáticas
-        // TODO: randomizar mediante el enfoque de pequeñas variaciones tanto "r" como "alpha"
-        // en cada iteración del while (RandomizeInc o algo así).
 
         var mouthReached = false;
-        var currentPoint = birthPos;
-        var alpha = GetRandomAlpha();   //TODO: incializar alpha hacia donde la elevación sea menor
+        var currentPosition = birthPos;
 
+        var r = 0;
+        var alpha = GetRandomAlpha();   //TODO: inicializar alpha hacia donde la elevación sea menor
+        
         var iterations = 0;
-        const int maxIterations = 64; // TODO: que sea parámetro del generador
+        const int maxIterations = 64; // TODO: que sea parámetro del generador y considerar en el while
         
         while (!mouthReached)
         {
-            /*  TODO: En cada iteración, necesitamos determinar en qué dirección se encuentra la menor elevación.*/
-            
-            alpha = RandomizeAlpha(alpha);
-            var nextPoint = currentPoint + GetInc(GetRandomR(4, 15), alpha);
-            foreach (var point in _pathfindingAStar.GetPath(currentPoint, nextPoint))
+            r = GetRandomR(2, 6);
+            // TODO: buscar un alpha para el 'r' dado que resulte en una menor elevación que la actual.
+            alpha = GetDescendantAlpha(alpha, r, currentPosition);
+            //alpha = RandomizeAlpha(alpha);    // (enfoque anterior, sin considerar la elevación)      
+            var nextPoint = currentPosition + GetInc(r, alpha);
+
+            foreach (var point in _pathfindingAStar.GetPath(currentPosition, nextPoint))
             {
                 AddPointToRiverEntity(point, riverEntity);
                 if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
                 mouthReached = true;
                 break;
             }
-            currentPoint = nextPoint;
+            currentPosition = nextPoint;
             iterations++;
         } 
-        var riverMouth = riverEntity.GetRiverPath().Last();
+        var riverMouth = riverEntity.GetRiverPath().Last(); // TODO: pasarle Vector2I a SetMouthPosition 
         riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);   
         _rivers.Add(riverEntity);
     }
-
 
     private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
     {
@@ -80,24 +81,32 @@ public partial class River : BaseGenerator
     }
     
     // TODO
-    private static Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathNet.Numerics.Trig.Cos(alpha)),
-            (int)Math.Round(r * MathNet.Numerics.Trig.Sin(alpha)));
+    private static Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathDotNetHelper.Cos(alpha)),
+            (int)Math.Round(r * MathDotNetHelper.Sin(alpha)));
 
-    private int GetRandomR(int minValue, int maxValue) => MathDotNetHelper.GetRandomIntInRange(minValue, maxValue);    // TODO: implementar. los mínimos y máximos deben ser parámetros del generador
+    private float GetDescendantAlpha(float alpha, int r, Vector2I currentPosition)
+    {
+        const float minAlphaVariation = 0;  // TODO: que sean parámetros
+        const float maxAlphaVariation = MathDotNetHelper.Pi;
+        // TODO: experimentar con los rangos de variación.
+        
+        var minElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
+        foreach (float angle in Generate.LinearSpaced(24,  alpha-minAlphaVariation, alpha+maxAlphaVariation))
+        {
+            var nextPoint = currentPosition + GetInc(r, angle) - Offset;
+            var incElevation = _elevation.GetValueAt(nextPoint.X, nextPoint.Y);
+            if (incElevation < minElevation) return angle;                
+        }
+        return RandomizeAlpha(alpha);
+    }
     
+    private int GetRandomR(int minValue, int maxValue) => MathDotNetHelper.GetRandomIntInRange(minValue, maxValue); // TODO: minValue y maxValue deberían ser parámetros del generador si los usamos en la generación.
     private float GetRandomAlpha() => MathDotNetHelper.GetRandomFloatInRange(0, 2 * MathDotNetHelper.Pi);
     
-    private Vector2I RandomizeInc(int r, float alpha) => new ((int)Math.Round(r * MathDotNetHelper.Cos(alpha)), 
-            (int)Math.Round(r * MathDotNetHelper.Sin(alpha)));
-    
-    private int RandomizeR(int r)
-    {
-        // TODO: "pequeña" variación aleatoria.
-        return r + MathDotNetHelper.GetRandomIntInRange(0, 8);
-    }
-
+    private int RandomizeR(int r, int minChange, int maxChange) => 
+        r + MathDotNetHelper.GetRandomIntInRange(minChange, maxChange);
     private float RandomizeAlpha(float alpha) =>    // TODO: el rango de variación de alpha podría ser un parámetro del generador
-        alpha + MathDotNetHelper.GetRandomFloatInRange(-MathDotNetHelper.Pi / 6f, MathDotNetHelper.Pi / 6f);
+        alpha + MathDotNetHelper.GetRandomFloatInRange(-MathDotNetHelper.Pi / 4f, MathDotNetHelper.Pi / 4f);
     
     public bool IsValidRiverBirth(int x, int y)
     {
