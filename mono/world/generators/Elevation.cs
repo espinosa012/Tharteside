@@ -67,8 +67,9 @@ public partial class Elevation : BaseGenerator
 	public void SetParameterOutToSeaFactor(float value) => _outToSeaFactor = value;
 
 
-	public override void Randomize()
+	public override void Randomize(int seed)
 	{
+		// TODO: usar semilla 
 		_baseElevationNoise.RandomizeSeed();
 		_continentalnessNoise.RandomizeSeed();
 		_peaksAndValleysNoise.RandomizeSeed();

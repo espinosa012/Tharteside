@@ -7,6 +7,8 @@ namespace Tartheside.mono.world.generators;
 
 public partial class BaseGenerator : GodotObject
 {
+	protected int Seed;	// TODO: para persistencia. Usar en Randomize() 
+	
 	protected Vector2I WorldSize;
 	private Vector2I ChunkSize;    
 	protected Vector2I Offset;
@@ -95,7 +97,7 @@ public partial class BaseGenerator : GodotObject
 	public void SetParameterChunkSize(Vector2I value) => ChunkSize = value;
 	public void SetParameterOffset(Vector2I offset) => Offset = offset;
 	
-	public virtual void Randomize() {}
+	public virtual void Randomize(int seed) {}
 	
 	
 }

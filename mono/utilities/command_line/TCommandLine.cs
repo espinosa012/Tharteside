@@ -110,7 +110,7 @@ public partial class TCommandLine : LineEdit
 	// Elevation
 	private void RandomizeElevation(string[] _args)
 	{
-		_world.GetWorldGenerator("Elevation").Randomize();
+		_world.GetWorldGenerator("Elevation").Randomize(0);	// TODO: usar semilla
 		_world.GetWorldGenerator("Elevation").ReloadValueMatrix();
 		_tileMap.Clear();
 		_tileMap.RenderChunks("Elevation", 0);
@@ -128,7 +128,7 @@ public partial class TCommandLine : LineEdit
 
 	private void RandomizeRiver(string[] _args)
 	{
-		((River)_world.GetWorldGenerator("River")).Randomize();
+		((River)_world.GetWorldGenerator("River")).Randomize(0);
 		_tileMap.ClearLayer(1);
 		_tileMap.RenderChunks("River", 1);
 	}

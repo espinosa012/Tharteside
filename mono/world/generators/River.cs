@@ -14,9 +14,6 @@ namespace Tartheside.mono.world.generators;
 
 public partial class River : BaseGenerator
 {
-    private Elevation _elevation;
-    private float _riverPathfindingElevationPenalty;
-    
     private RiverTAStar _pathfindingAStar;
     private Array<RiverEntity> _rivers;
 
@@ -24,11 +21,16 @@ public partial class River : BaseGenerator
     
 
     // Generators parameters
-    private int _maxIterations = 256; // TODO: que sea parámetro del generador y considerar en el while
+    private Elevation _elevation;
+    private float _riverPathfindingElevationPenalty;
+    // TODO: inicializar en el manager y leer desde json
+    private int _maxIterations = 256; 
     private int _minRValue = 2;
     private int _maxRValue = 6; 
     private float _minRandomAlpha = 0f;
     private float _maxRandomAlpha = MathDotNetHelper.Pi;
+    private float _minAlphaVariation = -MathDotNetHelper.Pi / 4f;
+    private float _maxAlphaVariation = MathDotNetHelper.Pi / 4f;
     
     public River(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
         : base(worldSize, chunkSize, offset, nTiers)
@@ -94,7 +96,7 @@ public partial class River : BaseGenerator
 
     private float GetDescendantAlpha(float alpha, int r, Vector2I currentPosition)
     {
-        const float minAlphaVariation = 0;  // TODO: que sean parámetros
+        const float minAlphaVariation = 0; 
         const float maxAlphaVariation = MathDotNetHelper.Pi;
         var availableElevations = new List<float>();
         var availableAngles = new List<float>();
@@ -102,7 +104,7 @@ public partial class River : BaseGenerator
         // TODO: experimentar con los rangos de variación.
         var minElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
         foreach (float angle in Generate.LinearSpaced(24,  alpha-minAlphaVariation, alpha+maxAlphaVariation))
-        {// TODO: cuidado con ese 24.
+        {// TODO: cuidado con ese 24 a pelo.
             var nextPoint = currentPosition + GetInc(r, angle) - Offset;
             var incElevation = _elevation.GetValueAt(nextPoint.X, nextPoint.Y); 
             // TODO: fallará si nextPoint está fuera del rango de la matriz
@@ -111,33 +113,30 @@ public partial class River : BaseGenerator
             
             availableElevations.Add(incElevation);
             availableAngles.Add(angle);
-            //return angle; // no funciona mal si devolvemos el primer menor encontrado...
+            return angle; // no funciona mal si devolvemos el primer menor encontrado...
         }
-
-        if (availableAngles.Count != 0)
-        {
-            return availableAngles[0];
-            /*
-                 TODO: ahora mismo estamos devolviendo la primera ocurrencia de ángulo correspondiente a una elevación
-                 menor a la anterior. Esto podría parametrizarse y devolver, por ejemplo, el ángulo correspondiente a la
-                 menor de todas las elevaciones disponibles. (con un diccionario).
-            */
-        }
+        /*
+             TODO: ahora mismo estamos devolviendo la primera ocurrencia de ángulo correspondiente a una elevación
+             menor a la anterior. Esto podría parametrizarse y devolver, por ejemplo, el ángulo correspondiente a la
+             menor de todas las elevaciones disponibles. (con un diccionario).
+        */
         return alpha;
     }
 
-    private int GetRandomR(int minValue, int maxValue) => MathDotNetHelper.GetRandomIntInRange(minValue, maxValue); // TODO: minValue y maxValue deberían ser parámetros del generador si los usamos en la generación.
+    private static int GetRandomR(int minValue, int maxValue) => 
+        MathDotNetHelper.GetRandomIntInRange(minValue, maxValue);
 
     private float GetRandomAlpha() => MathDotNetHelper.GetRandomFloatInRange(_minRandomAlpha, _maxRandomAlpha);
     
-    private int RandomizeR(int r, int minChange, int maxChange) => 
+    private static int RandomizeR(int r, int minChange, int maxChange) => 
         r + MathDotNetHelper.GetRandomIntInRange(minChange, maxChange);
     private float RandomizeAlpha(float alpha) =>    // TODO: el rango de variación de alpha podría ser un parámetro del generador
-        alpha + MathDotNetHelper.GetRandomFloatInRange(-MathDotNetHelper.Pi / 4f, MathDotNetHelper.Pi / 4f);
+        alpha + MathDotNetHelper.GetRandomFloatInRange(_minAlphaVariation, _maxRandomAlpha);
 
     private bool ValidateRiver(RiverEntity riverToValidate)
     {
-        // TODO: comprobamos si es válido en función de las reglas que establezcamos.
+        // TODO: comprobamos si es válido en función de las reglas que establezcamos (longitud, etc) .
+        
         return true;
     }
     
@@ -145,6 +144,7 @@ public partial class River : BaseGenerator
     {
         return false;
     }
+    
     
     
     //TODO crear funcion para calcular el caudal en cierta posición x,y
@@ -171,8 +171,9 @@ public partial class River : BaseGenerator
         }
     }
 
-    public override void Randomize()
+    public override void Randomize(int seed)
     {
+        // TODO: usar semilla
         // TODO: conociendo la posición de nacimiento de todos los ríos de _rivers, los volvemos a generar, de forma
         // que r y alpha serán distintos.
         var currentRivers = _rivers.Duplicate(); 

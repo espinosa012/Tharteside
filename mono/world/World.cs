@@ -221,7 +221,7 @@ public class World
 	
 	private void RandomizeWorld()
 	{
-		foreach (var generator in _worldGenerators.Values) generator.Randomize();  
+		foreach (var generator in _worldGenerators.Values) generator.Randomize(0);  
 	}
 	
 }

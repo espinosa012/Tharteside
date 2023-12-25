@@ -23,7 +23,7 @@
 	"SouthSubtropicLine":"-32",
 	"ArcticCircleLine":"65",
 	"AntarcticCircleLine":"-65",
-
+	
 	"MinContinentalHeight":"0.023",
 	"ContinentalScaleValue":"1.22",
 	"SeaScaleValue":"1.17647",
@@ -31,5 +31,14 @@
 	"IslandThresholdLevel":"0.76",
 	"OutToSeaFactor":"0.7",
 	
-	"RiverPathfindingElevationPenalty":"7.25"
+	"RiverPathfindingElevationPenalty":"7.25",
+	"RiverMaxIterations": "256",
+	"RiverMinRValue": "2",
+	"RiverMaxRValue": "6",
+	"RiverMinRandomAlphaValue": "0",
+	"RiverMaxRandomAlphaValue": "3,1415927",
+	"RiverMinAlphaVariation":"-0,785398175",
+	"RiverMaxAlphaVariation":"0,785398175"
+	
+	
 }
