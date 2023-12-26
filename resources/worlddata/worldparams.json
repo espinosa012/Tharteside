@@ -1,6 +1,6 @@
 {
-	"WorldSizeX":"1024",
-	"WorldSizeY":"1024",
+	"WorldSizeX":"2048",
+	"WorldSizeY":"2048",
 	
 	"ChunkSizeX":"256",
 	"ChunkSizeY":"256",
@@ -8,8 +8,8 @@
 	"SquareSizeX":"1",
 	"SquareSizeY":"1",
 
-	"InitChunksX":"2",
-	"InitChunksY":"2",	
+	"InitChunksX":"4",
+	"InitChunksY":"4",	
 	
 	"OffsetX":"86500",
 	"OffsetY":"630",
@@ -38,7 +38,5 @@
 	"RiverMinRandomAlphaValue": "0",
 	"RiverMaxRandomAlphaValue": "3,1415927",
 	"RiverMinAlphaVariation":"-0,785398175",
-	"RiverMaxAlphaVariation":"0,785398175"
-	
-	
+	"RiverMaxAlphaVariation":"0,785398175"	
 }

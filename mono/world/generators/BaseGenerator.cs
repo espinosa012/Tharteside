@@ -98,6 +98,10 @@ public partial class BaseGenerator : GodotObject
 	public void SetParameterOffset(Vector2I offset) => Offset = offset;
 	
 	public virtual void Randomize(int seed) {}
-	
-	
+
+	public override Variant _Get(StringName property)
+	{
+		// TODO: para obtener cualquier propiedad de los generadores (ruidos u otros parámetros)
+		return _Get(property);
+	}
 }

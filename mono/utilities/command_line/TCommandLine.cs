@@ -149,7 +149,12 @@ public partial class TCommandLine : LineEdit
 		_tileMap.Clear();
 		_tileMap.RenderChunks(noiseName, 0);
 	}
-	
+
+	private void RenderInverseNoise(string[] args)
+	{
+		var noiseName = args[0];
+		// TODO: pensar cómo representar el ruido inverso (MFNL.GetNormalizedInverseNoise2D())
+	}
 	
 	// Tilemap
 	private void ClearLayer(string[] args) => _tileMap.ClearLayer(int.Parse(args[2].StripEdges()));

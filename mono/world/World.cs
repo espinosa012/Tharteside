@@ -129,6 +129,7 @@ public class World
 			(int) GetWorldParameter("NTiers"));
 		
 		riverGenerator.SetParameterElevation((Elevation) GetWorldGenerator("Elevation"));
+		riverGenerator.SetParameterContinentalnessNoise(GetWorldNoise("Continentalness"));
 		riverGenerator.SetParameterRiverPathfindingElevationPenalty(
 			(float) GetWorldParameter("RiverPathfindingElevationPenalty"));
 		riverGenerator.PathfindingAStarSetup();

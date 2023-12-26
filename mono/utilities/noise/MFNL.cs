@@ -28,7 +28,7 @@ public partial class MFNL : FastNoiseLite
     };
     
     // CONSTRUCTOR
-    public MFNL(string name="Noise", int nTiers = 24)
+    public MFNL(string name="Noise", int nTiers = 24) // TODO: eliminar valores defualt de argumentos
     {
         _name = name;
         _rng = new RandomNumberGenerator();  // inicializamos el rng
