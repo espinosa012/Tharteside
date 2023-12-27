@@ -29,6 +29,10 @@ public partial class TileMapEventManager : Node
         TLogger.Info("Clicked position: " + worldPosition + " - Elevation value: " + 
                      _tileMap.GetWorld().GetWorldGenerator("Elevation")
                          .GetValueAt(worldPosition.X - (int)_tileMap.GetWorld().GetWorldParameter("OffsetX"), 
+                             worldPosition.Y - (int)_tileMap.GetWorld().GetWorldParameter("OffsetY")) + 
+                     "\tTier: " + 
+                     _tileMap.GetWorld().GetWorldGenerator("Elevation")
+                         .GetValueTierAt(worldPosition.X - (int)_tileMap.GetWorld().GetWorldParameter("OffsetX"), 
                              worldPosition.Y - (int)_tileMap.GetWorld().GetWorldParameter("OffsetY")));
     }
     

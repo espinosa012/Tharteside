@@ -79,16 +79,16 @@ public partial class River : BaseGenerator
 
         if (ValidateRiver(riverEntity))
         {
+            // TODO: los ríos no deben contener más de una vez el mismo punto
             var riverMouth = riverEntity.GetRiverPath().Last(); // TODO: pasarle Vector2I a SetMouthPosition 
             riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);   
             _rivers.Add(riverEntity);            
         }
-        
-
     }
 
     private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
     {
+        if (riverEntity.ContainsPoint(point)) return;   
         riverEntity.AddPoint(point);
         SetValueAt(point.X, point.Y, TrueValue);
     }
