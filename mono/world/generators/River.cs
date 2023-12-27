@@ -48,7 +48,7 @@ public partial class River : BaseGenerator
     {
         var riverEntity = new RiverEntity();
         riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
-        riverEntity.AddPoint(birthPos);
+        AddPointToRiverEntity(birthPos, riverEntity);
         
         // TODO: en A*, comprobar que los puntos del río están dentro de los límites.
         // TODO: considerar constraints de elevaciones
@@ -85,6 +85,7 @@ public partial class River : BaseGenerator
     
     private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
     {
+        if (riverEntity.ContainsPoint(point)) return;
         riverEntity.AddPoint(point);
         riverEntity.IncrementLength();
         SetValueAt(point.X, point.Y, TrueValue);
@@ -151,12 +152,25 @@ public partial class River : BaseGenerator
         return !Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y) 
                && _elevation.GetValueTierAt(positionToValidate.X, positionToValidate.Y) >= minBirthElevationTier
                && _continentalnessNoise.GetValueTierAt(positionToValidate.X, positionToValidate.Y) <= maxBirthContinentalnessTier;
+                // TODO: comprobar cercanía a otros nacimientos con GetRiverBirthPositions
     }
     
     private bool IsValidMouth(Vector2I position)
     {
         var positionToValidate = position - Offset;
         return Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y);
+    }
+
+    private List<Vector2I> GetRiverBirthPositions()
+    {
+        var toReturn = new List<Vector2I>();
+        var index = 0;
+        for (; index < _rivers.Count; index++)
+        {
+            var river = _rivers[index];
+            toReturn.Add(river.GetBirthPosition());
+        }
+        return toReturn;
     }
     
     
