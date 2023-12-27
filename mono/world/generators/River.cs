@@ -5,6 +5,7 @@ using Godot;
 using Godot.Collections;
 using MathNet.Numerics;
 using Tartheside.mono.utilities.math;
+using Tartheside.mono.utilities.random;
 using Tartheside.mono.world.biomes;
 using Tartheside.mono.world.entities;
 
@@ -22,15 +23,16 @@ public partial class River : BaseGenerator
 
     // Generators parameters
     private Elevation _elevation;
+    private MFNL _continentalnessNoise;
     private float _riverPathfindingElevationPenalty;
     // TODO: inicializar en el manager y leer desde json
     private int _maxIterations = 256; 
     private int _minRValue = 2;
     private int _maxRValue = 6; 
     private float _minRandomAlpha = 0f;
-    private float _maxRandomAlpha = MathDotNetHelper.Pi;
-    private float _minAlphaVariation = -MathDotNetHelper.Pi / 4f;
-    private float _maxAlphaVariation = MathDotNetHelper.Pi / 4f;
+    private float _maxRandomAlpha = 2f * MathDotNetHelper.Pi;
+    private float _minAlphaVariation = 0f;
+    private float _maxAlphaVariation = 2f * MathDotNetHelper.Pi;  // TODO: en el rango +-MathDotNetHelper.Pi/4f se consiguen resultados interesantes
     
     public River(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
         : base(worldSize, chunkSize, offset, nTiers)
@@ -96,14 +98,12 @@ public partial class River : BaseGenerator
 
     private float GetDescendantAlpha(float alpha, int r, Vector2I currentPosition)
     {
-        const float minAlphaVariation = 0; 
-        const float maxAlphaVariation = MathDotNetHelper.Pi;
         var availableElevations = new List<float>();
         var availableAngles = new List<float>();
         
         // TODO: experimentar con los rangos de variación.
         var minElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
-        foreach (float angle in Generate.LinearSpaced(24,  alpha-minAlphaVariation, alpha+maxAlphaVariation))
+        foreach (float angle in Generate.LinearSpaced(24,  alpha+_minAlphaVariation, alpha+_maxAlphaVariation))
         {// TODO: cuidado con ese 24 a pelo.
             var nextPoint = currentPosition + GetInc(r, angle) - Offset;
             var incElevation = _elevation.GetValueAt(nextPoint.X, nextPoint.Y); 
@@ -131,18 +131,45 @@ public partial class River : BaseGenerator
     private static int RandomizeR(int r, int minChange, int maxChange) => 
         r + MathDotNetHelper.GetRandomIntInRange(minChange, maxChange);
     private float RandomizeAlpha(float alpha) =>    // TODO: el rango de variación de alpha podría ser un parámetro del generador
-        alpha + MathDotNetHelper.GetRandomFloatInRange(_minAlphaVariation, _maxRandomAlpha);
+        alpha + MathDotNetHelper.GetRandomFloatInRange(_minAlphaVariation, _maxAlphaVariation);
 
+    
+    // Validation
     private bool ValidateRiver(RiverEntity riverToValidate)
     {
         // TODO: comprobamos si es válido en función de las reglas que establezcamos (longitud, etc) .
-        
         return true;
     }
     
-    private bool IsValidRiverBirth(int x, int y)
+    private bool IsValidBirth(Vector2I position)
+    {   // untested
+        const int maxBirthContinentalnessTier = 2; 
+        const int minBirthElevationTier = 9;
+        // TODO: parámetros del generador
+        
+        var positionToValidate = position - Offset;
+        return !Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y) 
+               && _elevation.GetValueTierAt(positionToValidate.X, positionToValidate.Y) >= minBirthElevationTier
+               && _continentalnessNoise.GetValueTierAt(positionToValidate.X, positionToValidate.Y) <= maxBirthContinentalnessTier;
+        // TODO: comprobar cercanía a otros nacimientos con GetRiverBirthPositions
+    }
+    
+    private bool IsValidMouth(Vector2I position)
     {
-        return false;
+        var positionToValidate = position - Offset;
+        return Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y);
+    }
+    
+    private List<Vector2I> GetRiverBirthPositions()
+    {
+        var toReturn = new List<Vector2I>();
+        var index = 0;
+        for (; index < _rivers.Count; index++)
+        {
+            var river = _rivers[index];
+            toReturn.Add(river.GetBirthPosition());
+        }
+        return toReturn;
     }
     
     
@@ -154,6 +181,7 @@ public partial class River : BaseGenerator
 
     // getters & setters
     public void SetParameterElevation(Elevation elevation) => _elevation = elevation;
+    public void SetParameterContinentalnessNoise(MFNL noise) => _continentalnessNoise = noise;
     public void SetParameterRiverPathfindingElevationPenalty(float riverPathfindingElevationPenalty) =>
         _riverPathfindingElevationPenalty = riverPathfindingElevationPenalty;
 
