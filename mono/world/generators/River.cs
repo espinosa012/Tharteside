@@ -8,6 +8,7 @@ using Tartheside.mono.utilities.math;
 using Tartheside.mono.utilities.random;
 using Tartheside.mono.world.biomes;
 using Tartheside.mono.world.entities;
+using Array = Godot.Collections.Array;
 
 namespace Tartheside.mono.world.generators;
 
@@ -58,9 +59,9 @@ public partial class River : BaseGenerator
         var i_inc = 16;
         var j_inc = 16;// TODO: parametrizar. Divisor de WorldSize
 
-        for (int i = 0; i < WorldSize.X; i++)
+        for (var i = 0; i < WorldSize.X; i++)
         {
-            for (int j = 0; j < WorldSize.Y; j++)
+            for (var j = 0; j < WorldSize.Y; j++)
                 j += j_inc;    
             i += i_inc;
         }
@@ -73,59 +74,57 @@ public partial class River : BaseGenerator
         var riverEntity = new RiverEntity();
         riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
 
-        // TODO: en A*, comprobar que los puntos del río están dentro de los límites.
         // TODO: considerar constraints de elevaciones
 
         var mouthReached = false;
         var currentPosition = birthPos;
         var nextPoint = birthPos;
 
-        var alpha = GetRandomAlpha();   //TODO: inicializar alpha hacia donde la elevación sea menor
+        var alpha = GetRandomAlpha();   //TODO: inicializar alpha hacia donde la elevación sea menor ??
         var iterations = 0;
         
-        while (!mouthReached && _pathfindingAStar.ContainsPoint(nextPoint))   // TODO: tenemos que agregar como condición que el siguiente punto esté dentro del mundo.
+        while (!mouthReached && _pathfindingAStar.ContainsPoint(nextPoint))
         {
             var r = GetRandomR(_minRValue, _maxRValue);
             alpha = GetDescendantAlpha(alpha, r, currentPosition);
-            var inc = GetInc(r, alpha);
-            nextPoint = currentPosition + inc;
-            var nextPoint_safe = new Vector2I(Math.Min(nextPoint.X, WorldSize.X + Offset.X-1) , 
-                Math.Min(nextPoint.Y, WorldSize.Y + Offset.Y-1)); 
-            nextPoint_safe = new Vector2I(Math.Max(Offset.X, nextPoint_safe.X), 
-                Math.Max(Offset.Y, nextPoint_safe.Y));
-
-
-            try
-            {
-                var stepPath = _pathfindingAStar.GetPath(currentPosition, nextPoint_safe);
-                foreach (var point in stepPath)
-                {
-                    AddPointToRiverEntity(point, riverEntity);  // TODO: añadir los puntos a la matriz sólo si el río es validado
-                    if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
-                    mouthReached = true;
-                    break;
-                }
-            }
-            catch (Exception e)
-            {
-                GD.Print(e);
-                throw;
-            }
+            nextPoint = GetUpdatedNextPoint(currentPosition, r, alpha);
             
-
+            foreach (var point in GetStepPath(currentPosition, nextPoint))
+            {
+                AddPointToRiverEntity(point, riverEntity);  // TODO: añadir los puntos a la matriz sólo si el río es validado
+                if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
+                mouthReached = true;
+                break;
+            }
             currentPosition = nextPoint;
             iterations++;   // TODO: si pasamos del número máximo de iteraciones, el río no será válido 
         }
 
         if (ValidateRiver(riverEntity))
         {
-            // TODO: los ríos no deben contener más de una vez el mismo punto
+            // TODO: los ríos no deben contener más de N veces el mismo punto (parámetro de validación)
+            
             var riverMouth = riverEntity.GetRiverPath().Last(); // TODO: pasarle Vector2I a SetMouthPosition 
             riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);   
-            _rivers.Add(riverEntity);            
+            _rivers.Add(riverEntity);
+            // TODO: Añadir los puntos a la matriz aquí, sólo si el río se valida (no en AddPointToRiverEntity())
         }
     }
 
+    private Vector2I GetUpdatedNextPoint(Vector2I currentPosition, int r, float alpha) =>
+        currentPosition + GetInc(r, alpha);
+    
+    private Vector2I GetSafeNextPoint(Vector2I nextPoint)
+    {
+        var nextPoint_safe = new Vector2I(Math.Min(nextPoint.X, WorldSize.X + Offset.X-1), 
+            Math.Min(nextPoint.Y, WorldSize.Y + Offset.Y-1));        
+        return new Vector2I(Math.Max(Offset.X, nextPoint_safe.X), Math.Max(Offset.Y, nextPoint_safe.Y));
+    }
+
+    private Array<Vector2I> GetStepPath(Vector2I currentPosition, Vector2I nextPoint) => 
+        _pathfindingAStar.GetPath(currentPosition, GetSafeNextPoint(nextPoint));
+    
+    
     private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
     {
         //if (riverEntity.ContainsPoint(point)) return;     // TODO: podríamos usar el número de puntos repetidos para la validación   

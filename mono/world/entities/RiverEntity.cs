@@ -10,6 +10,8 @@ public partial class RiverEntity : BaseEntity
     private Vector2I _birthPosition;
     private Vector2I _mouthPosition;
 
+    private bool _isValid = true;
+    
     private Array<Vector2I> _riverPath = new Array<Vector2I>();
     
 
@@ -21,6 +23,8 @@ public partial class RiverEntity : BaseEntity
     
     
     // getters and setters
+    public bool IsValid() => _isValid;
+    public void SetValid(bool valid) => _isValid = valid;
     public Vector2I GetBirthPosition() => _birthPosition;
     public void SetBirthPosition(int x, int y) => _birthPosition = new Vector2I(x, y);
     public Vector2I GetMouthPosition() => _mouthPosition;
