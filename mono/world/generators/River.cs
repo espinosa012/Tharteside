@@ -20,11 +20,11 @@ public partial class River : BaseGenerator
 
     private const float TrueValue = 0.999f;
     
-
     // Generators parameters
     private Elevation _elevation;
     private MFNL _continentalnessNoise;
     private float _riverPathfindingElevationPenalty;
+    
     // TODO: inicializar en el manager y leer desde json
     private int _maxIterations = 256; 
     private int _minRValue = 2;
@@ -33,16 +33,49 @@ public partial class River : BaseGenerator
     private float _maxRandomAlpha = 2f * MathDotNetHelper.Pi;
     private float _minAlphaVariation = 0f;
     private float _maxAlphaVariation = 2f * MathDotNetHelper.Pi;  // TODO: en el rango +-MathDotNetHelper.Pi/4f se consiguen resultados interesantes
+
+    private RandomNumberGenerator _rng;
     
     public River(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
         : base(worldSize, chunkSize, offset, nTiers)
     {
         _rivers = new Array<RiverEntity>();
+        _rng = new RandomNumberGenerator();
         PathfindingAStarSetup();
     }
 
     public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(Offset, 
         Offset + WorldSize, _elevation, _riverPathfindingElevationPenalty);
+
+    public void SpawnRivers()
+    {
+        //GenerateRiver(new Vector2I(86584, 796));
+        //GenerateRiver(new Vector2I(86615, 724));
+        //GenerateRiver(new Vector2I(86579, 863));
+        //GenerateRiver(new Vector2I(86998, 902));
+        //GenerateRiver(new Vector2I(86565, 1016));
+        //GenerateRiver(new Vector2I(86955, 666));
+        //GenerateRiver(new Vector2I(86948, 882));
+        //GenerateRiver(new Vector2I(86955, 674)); // TODO: se va de los límites de A*
+        //GenerateRiver(new Vector2I(87003, 870)); // TODO: 
+        GenerateRiver(new Vector2I(86828, 846));    // es una isla, no debe fallarç
+        GenerateRiver(new Vector2I(86579, 854));    // se puede ir de los límites de A*
+        GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
+        GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
+        
+        
+        var i_inc = 16;
+        var j_inc = 16;// TODO: parametrizar. Divisor de WorldSize
+
+        for (int i = 0; i < WorldSize.X; i++)
+        {
+            for (int j = 0; j < WorldSize.Y; j++)
+                j += j_inc;    
+            i += i_inc;
+        }
+        
+        
+    }
 
     // Generating rivers
     public void GenerateRiver(Vector2I birthPos)
@@ -55,18 +88,21 @@ public partial class River : BaseGenerator
 
         var mouthReached = false;
         var currentPosition = birthPos;
-
+        var nextPoint = birthPos;
+        
         var r = 0;
         var alpha = GetRandomAlpha();   //TODO: inicializar alpha hacia donde la elevación sea menor
         var iterations = 0;
         
-        while (!mouthReached)
+        while (!mouthReached && _pathfindingAStar.ContainsPoint(nextPoint))   // TODO: tenemos que agregar como condición que el siguiente punto esté dentro del mundo.
         {
             r = GetRandomR(_minRValue, _maxRValue);   // TODO: máximo y mínimo deberían ser parámetros del generador.
             alpha = GetDescendantAlpha(alpha, r, currentPosition);
-            var nextPoint = currentPosition + GetInc(r, alpha);
+            nextPoint = currentPosition + GetInc(r, alpha); // TODO: si nos salimos de los límites del mundo, habría que reducir r para el mismo alpha
+            var nextPointToTest = new Vector2I(Math.Min(nextPoint.X, WorldSize.X + Offset.X - 1) , Math.Min(nextPoint.Y, WorldSize.Y + Offset.Y -1)); 
 
-            foreach (var point in _pathfindingAStar.GetPath(currentPosition, nextPoint))
+            //TODO: tenemos que controlar que nextPoint esté en los límites del mundo
+            foreach (var point in _pathfindingAStar.GetPath(currentPosition, nextPointToTest))
             {
                 AddPointToRiverEntity(point, riverEntity);  // TODO: añadir los puntos a la matriz sólo si el río es validado
                 if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
@@ -88,7 +124,7 @@ public partial class River : BaseGenerator
 
     private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
     {
-        if (riverEntity.ContainsPoint(point)) return;   
+        //if (riverEntity.ContainsPoint(point)) return;     // TODO: podríamos usar el número de puntos repetidos para la validación   
         riverEntity.AddPoint(point);
         SetValueAt(point.X, point.Y, TrueValue);
     }
@@ -101,18 +137,20 @@ public partial class River : BaseGenerator
         var availableElevations = new List<float>();
         var availableAngles = new List<float>();
         
-        // TODO: experimentar con los rangos de variación.
         var minElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
-        foreach (float angle in Generate.LinearSpaced(24,  alpha+_minAlphaVariation, alpha+_maxAlphaVariation))
-        {// TODO: cuidado con ese 24 a pelo.
+        foreach (float angle in Generate.LinearSpaced(24,  alpha+_minAlphaVariation, alpha+_maxAlphaVariation))// TODO: cuidado con ese 24 a pelo(parametrizar).
+        {
             var nextPoint = currentPosition + GetInc(r, angle) - Offset;
-            var incElevation = _elevation.GetValueAt(nextPoint.X, nextPoint.Y); 
-            // TODO: fallará si nextPoint está fuera del rango de la matriz
+            // Nos aseguramos de que nextPoint está dentro de los límites del mundo.
+            nextPoint = new Vector2I(Math.Min(nextPoint.X, WorldSize.X-1) , Math.Min(nextPoint.Y, WorldSize.Y-1)); 
             
+            // TODO si nextPoint no está dentro de la matriz, tomamos el punto más cercano a nextPoint que esté dentro de la matriz
+            var incElevation = _elevation.GetValueAt(nextPoint.X, nextPoint.Y);
+
             if (!(incElevation < minElevation)) continue;
             
-            availableElevations.Add(incElevation);
-            availableAngles.Add(angle);
+            //availableElevations.Add(incElevation);
+            //availableAngles.Add(angle);   // Esto no lo consideramos de momento, simplemente tomamos el primer ángulo que resulte en menor elevación
             return angle; // no funciona mal si devolvemos el primer menor encontrado...
         }
         /*
@@ -130,6 +168,7 @@ public partial class River : BaseGenerator
     
     private static int RandomizeR(int r, int minChange, int maxChange) => 
         r + MathDotNetHelper.GetRandomIntInRange(minChange, maxChange);
+    
     private float RandomizeAlpha(float alpha) =>    // TODO: el rango de variación de alpha podría ser un parámetro del generador
         alpha + MathDotNetHelper.GetRandomFloatInRange(_minAlphaVariation, _maxAlphaVariation);
 
@@ -137,20 +176,23 @@ public partial class River : BaseGenerator
     // Validation
     private bool ValidateRiver(RiverEntity riverToValidate)
     {
-        // TODO: comprobamos si es válido en función de las reglas que establezcamos (longitud, etc) .
+        // TODO: comprobamos si es válido en función de las reglas que establezcamos (longitud, PUNTOS REPETIDOS, etc)  .
         return true;
     }
     
     private bool IsValidBirth(Vector2I position)
     {   // untested
         const int maxBirthContinentalnessTier = 2; 
-        const int minBirthElevationTier = 9;
+        const int minBirthElevationTier = 6;
+        const int minDistanceToBirth = 64;
         // TODO: parámetros del generador
         
         var positionToValidate = position - Offset;
-        return !Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y) 
-               && _elevation.GetValueTierAt(positionToValidate.X, positionToValidate.Y) >= minBirthElevationTier
-               && _continentalnessNoise.GetValueTierAt(positionToValidate.X, positionToValidate.Y) <= maxBirthContinentalnessTier;
+        return !Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y)
+               && !Biome.IsVolcanicIsland(_elevation, positionToValidate.X, positionToValidate.Y)
+               && _elevation.GetValueTierAt(positionToValidate.X, positionToValidate.Y) >= minBirthElevationTier;
+               //&& _continentalnessNoise.GetValueTierAt(positionToValidate.X, positionToValidate.Y) <= maxBirthContinentalnessTier;
+        
         // TODO: comprobar cercanía a otros nacimientos con GetRiverBirthPositions
     }
     
@@ -160,17 +202,8 @@ public partial class River : BaseGenerator
         return Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y);
     }
     
-    private List<Vector2I> GetRiverBirthPositions()
-    {
-        var toReturn = new List<Vector2I>();
-        var index = 0;
-        for (; index < _rivers.Count; index++)
-        {
-            var river = _rivers[index];
-            toReturn.Add(river.GetBirthPosition());
-        }
-        return toReturn;
-    }
+    private IEnumerable<Vector2I> GetRiverBirthPositions() => _rivers.Select(river => river.GetBirthPosition());
+    
     
     
     

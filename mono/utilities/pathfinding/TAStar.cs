@@ -56,6 +56,7 @@ public partial class TAStar : AStarGrid2D
         }
         return path;
     }
-    
-    
+
+    public bool ContainsPoint(Vector2I point) => Region.HasPoint(point);
+
 }

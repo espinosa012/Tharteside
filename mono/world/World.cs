@@ -133,20 +133,7 @@ public class World
 		riverGenerator.SetParameterRiverPathfindingElevationPenalty(
 			(float) GetWorldParameter("RiverPathfindingElevationPenalty"));
 		riverGenerator.PathfindingAStarSetup();
-
-		// test
-		riverGenerator.GenerateRiver(new Vector2I(86584, 796));
-		riverGenerator.GenerateRiver(new Vector2I(86615, 724));
-		riverGenerator.GenerateRiver(new Vector2I(86579, 863));
-		riverGenerator.GenerateRiver(new Vector2I(86998, 902));
-		
-		riverGenerator.GenerateRiver(new Vector2I(86565, 1016));
-		riverGenerator.GenerateRiver(new Vector2I(86955, 666));
-		
-		riverGenerator.GenerateRiver(new Vector2I(86948, 882));
-		
-		//riverGenerator.GenerateRiver(new Vector2I(86955, 674)); // TODO: se va de los límites de A*
-			
+		riverGenerator.SpawnRivers();
 		AddWorldGenerator("River", riverGenerator);
 	}
 

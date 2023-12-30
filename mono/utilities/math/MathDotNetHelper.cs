@@ -59,9 +59,20 @@ public static class MathDotNetHelper
     public static float GetRandomFloatInRange(float min, float max) => 
         min + (float)(new MathNet.Numerics.Random.SystemRandomSource()).NextDouble() * (max - min);
 
-    public static int GetRandomIntInRange(int min, int max) => 
+    /*
+     public static int GetRandomIntInRange(int min, int max) => 
         (new MathNet.Numerics.Random.SystemRandomSource()).Next(min, max);
-    
+    */
+
+    public static int GetRandomIntInRange(int min, int max)
+    {
+        return (new RandomNumberGenerator()).RandiRange(min, max - 1);
+    }
+
+    public static Vector2I GetRandomVector2IInRange(int minX, int maxX, int minY, int maxY)
+    {
+        return new Vector2I(GetRandomIntInRange(minX, maxX), GetRandomIntInRange(minY, maxY));
+    }
     
     
     

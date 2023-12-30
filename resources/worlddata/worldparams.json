@@ -1,6 +1,6 @@
 {
-	"WorldSizeX":"2048",
-	"WorldSizeY":"2048",
+	"WorldSizeX":"512",
+	"WorldSizeY":"256",
 	
 	"ChunkSizeX":"256",
 	"ChunkSizeY":"256",
@@ -8,8 +8,8 @@
 	"SquareSizeX":"1",
 	"SquareSizeY":"1",
 
-	"InitChunksX":"4",
-	"InitChunksY":"4",	
+	"InitChunksX":"2",
+	"InitChunksY":"1",	
 	
 	"OffsetX":"86500",
 	"OffsetY":"630",
