@@ -66,7 +66,7 @@ public static class MathDotNetHelper
 
     public static int GetRandomIntInRange(int min, int max)
     {
-        return (new RandomNumberGenerator()).RandiRange(min, max - 1);
+        return (new RandomNumberGenerator()).RandiRange(min, max);
     }
 
     public static Vector2I GetRandomVector2IInRange(int minX, int maxX, int minY, int maxY)

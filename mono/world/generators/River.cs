@@ -49,20 +49,11 @@ public partial class River : BaseGenerator
 
     public void SpawnRivers()
     {
-        //GenerateRiver(new Vector2I(86584, 796));
-        //GenerateRiver(new Vector2I(86615, 724));
-        //GenerateRiver(new Vector2I(86579, 863));
-        //GenerateRiver(new Vector2I(86998, 902));
-        //GenerateRiver(new Vector2I(86565, 1016));
-        //GenerateRiver(new Vector2I(86955, 666));
-        //GenerateRiver(new Vector2I(86948, 882));
-        //GenerateRiver(new Vector2I(86955, 674)); // TODO: se va de los límites de A*
-        //GenerateRiver(new Vector2I(87003, 870)); // TODO: 
-        GenerateRiver(new Vector2I(86828, 846));    // es una isla, no debe fallarç
+        GenerateRiver(new Vector2I(86828, 846));    // es una isla, no debe fallar
         GenerateRiver(new Vector2I(86579, 854));    // se puede ir de los límites de A*
         GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
         GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
-        
+        GenerateRiver(new Vector2I(86977, 847));    
         
         var i_inc = 16;
         var j_inc = 16;// TODO: parametrizar. Divisor de WorldSize
@@ -73,10 +64,9 @@ public partial class River : BaseGenerator
                 j += j_inc;    
             i += i_inc;
         }
-        
-        
     }
 
+    
     // Generating rivers
     public void GenerateRiver(Vector2I birthPos)
     {
@@ -89,26 +79,40 @@ public partial class River : BaseGenerator
         var mouthReached = false;
         var currentPosition = birthPos;
         var nextPoint = birthPos;
-        
-        var r = 0;
+
         var alpha = GetRandomAlpha();   //TODO: inicializar alpha hacia donde la elevación sea menor
         var iterations = 0;
         
         while (!mouthReached && _pathfindingAStar.ContainsPoint(nextPoint))   // TODO: tenemos que agregar como condición que el siguiente punto esté dentro del mundo.
         {
-            r = GetRandomR(_minRValue, _maxRValue);   // TODO: máximo y mínimo deberían ser parámetros del generador.
+            var r = GetRandomR(_minRValue, _maxRValue);
             alpha = GetDescendantAlpha(alpha, r, currentPosition);
-            nextPoint = currentPosition + GetInc(r, alpha); // TODO: si nos salimos de los límites del mundo, habría que reducir r para el mismo alpha
-            var nextPointToTest = new Vector2I(Math.Min(nextPoint.X, WorldSize.X + Offset.X - 1) , Math.Min(nextPoint.Y, WorldSize.Y + Offset.Y -1)); 
+            var inc = GetInc(r, alpha);
+            nextPoint = currentPosition + inc;
+            var nextPoint_safe = new Vector2I(Math.Min(nextPoint.X, WorldSize.X + Offset.X-1) , 
+                Math.Min(nextPoint.Y, WorldSize.Y + Offset.Y-1)); 
+            nextPoint_safe = new Vector2I(Math.Max(Offset.X, nextPoint_safe.X), 
+                Math.Max(Offset.Y, nextPoint_safe.Y));
 
-            //TODO: tenemos que controlar que nextPoint esté en los límites del mundo
-            foreach (var point in _pathfindingAStar.GetPath(currentPosition, nextPointToTest))
+
+            try
             {
-                AddPointToRiverEntity(point, riverEntity);  // TODO: añadir los puntos a la matriz sólo si el río es validado
-                if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
-                mouthReached = true;
-                break;
+                var stepPath = _pathfindingAStar.GetPath(currentPosition, nextPoint_safe);
+                foreach (var point in stepPath)
+                {
+                    AddPointToRiverEntity(point, riverEntity);  // TODO: añadir los puntos a la matriz sólo si el río es validado
+                    if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
+                    mouthReached = true;
+                    break;
+                }
             }
+            catch (Exception e)
+            {
+                GD.Print(e);
+                throw;
+            }
+            
+
             currentPosition = nextPoint;
             iterations++;   // TODO: si pasamos del número máximo de iteraciones, el río no será válido 
         }
@@ -134,23 +138,33 @@ public partial class River : BaseGenerator
 
     private float GetDescendantAlpha(float alpha, int r, Vector2I currentPosition)
     {
-        var availableElevations = new List<float>();
-        var availableAngles = new List<float>();
-        
-        var minElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
+        var currentElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
         foreach (float angle in Generate.LinearSpaced(24,  alpha+_minAlphaVariation, alpha+_maxAlphaVariation))// TODO: cuidado con ese 24 a pelo(parametrizar).
         {
-            var nextPoint = currentPosition + GetInc(r, angle) - Offset;
+            var inc = GetInc(r, angle);
+            
+            var nextPoint = currentPosition + inc - Offset;
             // Nos aseguramos de que nextPoint está dentro de los límites del mundo.
-            nextPoint = new Vector2I(Math.Min(nextPoint.X, WorldSize.X-1) , Math.Min(nextPoint.Y, WorldSize.Y-1)); 
+            var nextPoint_safe = new Vector2I(Math.Min(nextPoint.X, WorldSize.X-1), 
+                Math.Min(nextPoint.Y, WorldSize.Y-1)); 
+            nextPoint_safe = new Vector2I(Math.Max(0, nextPoint_safe.X), Math.Max(0, nextPoint_safe.Y));
             
             // TODO si nextPoint no está dentro de la matriz, tomamos el punto más cercano a nextPoint que esté dentro de la matriz
-            var incElevation = _elevation.GetValueAt(nextPoint.X, nextPoint.Y);
+            try
+            {
+                var incElevation = _elevation.GetValueAt(nextPoint_safe.X, nextPoint_safe.Y);
+                if (!(incElevation < currentElevation)) continue;
+            }
+            catch (Exception e)
+            {
+                GD.Print(e);
+                GD.Print(nextPoint_safe);
+                GD.Print(currentPosition);
+                GD.Print(inc);
+            }
 
-            if (!(incElevation < minElevation)) continue;
             
-            //availableElevations.Add(incElevation);
-            //availableAngles.Add(angle);   // Esto no lo consideramos de momento, simplemente tomamos el primer ángulo que resulte en menor elevación
+     
             return angle; // no funciona mal si devolvemos el primer menor encontrado...
         }
         /*
