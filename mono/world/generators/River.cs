@@ -8,11 +8,9 @@ using Tartheside.mono.utilities.math;
 using Tartheside.mono.utilities.random;
 using Tartheside.mono.world.biomes;
 using Tartheside.mono.world.entities;
-using Array = Godot.Collections.Array;
+using Vector2I = Godot.Vector2I;
 
 namespace Tartheside.mono.world.generators;
-
-// TODO: quizás con la Entity no haría falta un generador como tal.
 
 public partial class River : BaseGenerator
 {
@@ -50,20 +48,28 @@ public partial class River : BaseGenerator
 
     public void SpawnRivers()
     {
-        GenerateRiver(new Vector2I(86828, 846));    // es una isla, no debe fallar
+        /*GenerateRiver(new Vector2I(86828, 846));    // es una isla, no debe fallar
         GenerateRiver(new Vector2I(86579, 854));    // se puede ir de los límites de A*
         GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
         GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
-        GenerateRiver(new Vector2I(86977, 847));    
+        GenerateRiver(new Vector2I(86977, 847));*/    
         
-        var i_inc = 16;
-        var j_inc = 16;// TODO: parametrizar. Divisor de WorldSize
+        const int iInc = 64;
+        const int jInc = 64; // TODO: parametrizar. Divisor de WorldSize
 
-        for (var i = 0; i < WorldSize.X; i++)
+        for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
         {
-            for (var j = 0; j < WorldSize.Y; j++)
-                j += j_inc;    
-            i += i_inc;
+            for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
+            {
+                var birthPos = new Vector2I(i, j);
+                if (IsValidBirth(birthPos))
+                {
+                    //GD.Print(i, " ", j);
+                    GenerateRiver(birthPos);
+                }
+                j += jInc;    
+            }
+            i += iInc;
         }
     }
 
@@ -83,7 +89,7 @@ public partial class River : BaseGenerator
         var alpha = GetRandomAlpha();   //TODO: inicializar alpha hacia donde la elevación sea menor ??
         var iterations = 0;
         
-        while (!mouthReached && _pathfindingAStar.ContainsPoint(nextPoint))
+        while (!mouthReached && _pathfindingAStar.ContainsPoint(nextPoint) && riverEntity.IsValid())
         {
             var r = GetRandomR(_minRValue, _maxRValue);
             alpha = GetDescendantAlpha(alpha, r, currentPosition);
@@ -92,7 +98,7 @@ public partial class River : BaseGenerator
             foreach (var point in GetStepPath(currentPosition, nextPoint))
             {
                 AddPointToRiverEntity(point, riverEntity);  // TODO: añadir los puntos a la matriz sólo si el río es validado
-                if (!Biome.IsSea(_elevation, point.X - Offset.X, point.Y - Offset.Y)) continue;
+                if (!IsValidMouth(point)) continue;
                 mouthReached = true;
                 break;
             }
@@ -107,11 +113,16 @@ public partial class River : BaseGenerator
             var riverMouth = riverEntity.GetRiverPath().Last(); // TODO: pasarle Vector2I a SetMouthPosition 
             riverEntity.SetMouthPosition(riverMouth.X, riverMouth.Y);   
             _rivers.Add(riverEntity);
+            
             // TODO: Añadir los puntos a la matriz aquí, sólo si el río se valida (no en AddPointToRiverEntity())
+            // untested
+            var path = riverEntity.GetRiverPath();
+            foreach (var point in path)
+                SetValueAt(point.X, point.Y, TrueValue);    // TODO: quitar de aquí. Añadir puntos a la matriz cuando estemos seguros de que el río es válido.
         }
     }
 
-    private Vector2I GetUpdatedNextPoint(Vector2I currentPosition, int r, float alpha) =>
+    private static Vector2I GetUpdatedNextPoint(Vector2I currentPosition, int r, float alpha) =>
         currentPosition + GetInc(r, alpha);
     
     private Vector2I GetSafeNextPoint(Vector2I nextPoint)
@@ -124,12 +135,11 @@ public partial class River : BaseGenerator
     private Array<Vector2I> GetStepPath(Vector2I currentPosition, Vector2I nextPoint) => 
         _pathfindingAStar.GetPath(currentPosition, GetSafeNextPoint(nextPoint));
     
-    
     private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
     {
-        //if (riverEntity.ContainsPoint(point)) return;     // TODO: podríamos usar el número de puntos repetidos para la validación   
+        //if (riverEntity.ContainsPoint(point)) return;     // TODO: podríamos usar el número de puntos repetidos para la validación
+        // TODO: por eficiencia, aquí deberíamos hacer las comprobaciones pertienentes y poner a false el ISVAlid de la entidad si procede.
         riverEntity.AddPoint(point);
-        SetValueAt(point.X, point.Y, TrueValue);
     }
     
     private static Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathDotNetHelper.Cos(alpha)),
@@ -149,21 +159,8 @@ public partial class River : BaseGenerator
             nextPoint_safe = new Vector2I(Math.Max(0, nextPoint_safe.X), Math.Max(0, nextPoint_safe.Y));
             
             // TODO si nextPoint no está dentro de la matriz, tomamos el punto más cercano a nextPoint que esté dentro de la matriz
-            try
-            {
-                var incElevation = _elevation.GetValueAt(nextPoint_safe.X, nextPoint_safe.Y);
-                if (!(incElevation < currentElevation)) continue;
-            }
-            catch (Exception e)
-            {
-                GD.Print(e);
-                GD.Print(nextPoint_safe);
-                GD.Print(currentPosition);
-                GD.Print(inc);
-            }
-
-            
-     
+            var incElevation = _elevation.GetValueAt(nextPoint_safe.X, nextPoint_safe.Y);
+            if (!(incElevation < currentElevation)) continue;
             return angle; // no funciona mal si devolvemos el primer menor encontrado...
         }
         /*
