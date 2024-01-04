@@ -48,12 +48,6 @@ public partial class River : BaseGenerator
 
     public void SpawnRivers()
     {
-        /*GenerateRiver(new Vector2I(86828, 846));    // es una isla, no debe fallar
-        GenerateRiver(new Vector2I(86579, 854));    // se puede ir de los límites de A*
-        GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
-        GenerateRiver(new Vector2I(86956, 648));    // se puede ir de los límites de A*
-        GenerateRiver(new Vector2I(86977, 847));*/    
-        
         const int iInc = 64;
         const int jInc = 64; // TODO: parametrizar. Divisor de WorldSize
 
@@ -65,7 +59,8 @@ public partial class River : BaseGenerator
                 if (IsValidBirth(birthPos))
                 {
                     //GD.Print(i, " ", j);
-                    GenerateRiver(birthPos);
+                    //GenerateRiver(birthPos);
+                    GenerateRiverDescendantAlgorithm(birthPos);
                 }
                 j += jInc;    
             }
@@ -73,6 +68,22 @@ public partial class River : BaseGenerator
         }
     }
 
+    
+    public void GenerateRiverDescendantAlgorithm(Vector2I birthPos)
+    {
+        var riverEntity = new RiverEntity();
+        riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
+
+        var mouthReached = false;
+
+        while (!mouthReached) 
+        {
+            // buscamos el punto adyacente al actual de menor elevación
+            mouthReached = true;
+        }
+    }
+    
+    
     
     // Generating rivers
     public void GenerateRiver(Vector2I birthPos)
@@ -138,7 +149,7 @@ public partial class River : BaseGenerator
     private void AddPointToRiverEntity(Vector2I point, RiverEntity riverEntity)
     {
         //if (riverEntity.ContainsPoint(point)) return;     // TODO: podríamos usar el número de puntos repetidos para la validación
-        // TODO: por eficiencia, aquí deberíamos hacer las comprobaciones pertienentes y poner a false el ISVAlid de la entidad si procede.
+        // TODO: por eficiencia, aquí deberíamos hacer las comprobaciones pertienentes y poner a false el IsValid de la entidad si procede.   
         riverEntity.AddPoint(point);
     }
     

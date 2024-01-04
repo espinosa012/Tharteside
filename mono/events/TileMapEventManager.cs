@@ -14,8 +14,8 @@ public partial class TileMapEventManager : Node
     {
         _tileMap = GetParent<TMap>();
         /*TestHumanCharacter = (HumanCharacter) GetNode<CharacterBody2D>("../TestCharacter");
-    PositionLabel = new Label();
-    AddChild(PositionLabel);*/
+        PositionLabel = new Label();
+        AddChild(PositionLabel);*/
     }
 
     public void HandleRightClick()
