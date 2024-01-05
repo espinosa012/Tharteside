@@ -54,6 +54,7 @@ public partial class River : BaseGenerator
         GenerateRiver(86555, 956);
         GenerateRiver(86590, 870);
         GenerateRiver(86891, 877);
+        GenerateRiver(87121, 905);
     }
 
     
@@ -172,30 +173,16 @@ public partial class River : BaseGenerator
                 Math.Min(nextPoint.Y, WorldSize.Y-1)); 
             nextPoint_safe = new Vector2I(Math.Max(0, nextPoint_safe.X), Math.Max(0, nextPoint_safe.Y));
             
-
             var incElevation = _elevation.GetValueAt(nextPoint_safe.X, nextPoint_safe.Y);
             if (!(incElevation < currentElevation)) continue;
             
-            
             availableAngles.Add(angle);
+            availableElevations.Add(incElevation);
         }
-        
-        // Devolvemos el ángulo correspondiente a la menor elevación de entre todos los ángulos disponibles
-        foreach (var angle in availableAngles)
-        {
-            // obtenemos las elevaciones correspondientes a cada uno de los ángulos disponibles
-            var inc = GetInc(r, angle);
-            var nextPoint = currentPosition + inc - Offset;
-            var nextPoint_safe = new Vector2I(Math.Min(nextPoint.X, WorldSize.X-1), 
-                Math.Min(nextPoint.Y, WorldSize.Y-1));
-            nextPoint_safe = new Vector2I(Math.Max(0, nextPoint_safe.X), Math.Max(0, nextPoint_safe.Y));
-            availableElevations.Add(_elevation.GetValueAt(nextPoint_safe.X, nextPoint_safe.Y));
-        }
-        // devolvemos el ángulo que tenga el mismo índice que la elevación menor de availableElevations
-        //availableAngles.IndexOf(availableAngles.Min())
-        if (availableElevations.Count > 0)
-            return availableAngles[availableElevations.IndexOf(availableElevations.Min())];
-        return alpha;   // Se queda pillado, probar generando un único río en la posición que queramos
+       
+        return availableElevations.Count > 0 ? 
+            availableAngles[availableElevations.IndexOf(availableElevations.Min())] 
+            : alpha; // Se queda pillado, probar generando un único río en la posición que queramos
     }
 
     private static int GetRandomR(int minValue, int maxValue) => 
