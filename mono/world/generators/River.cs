@@ -4,6 +4,7 @@ using System.Linq;
 using Godot;
 using Godot.Collections;
 using MathNet.Numerics;
+using Tartheside.mono.utilities.logger;
 using Tartheside.mono.utilities.math;
 using Tartheside.mono.utilities.random;
 using Tartheside.mono.world.biomes;
@@ -48,24 +49,11 @@ public partial class River : BaseGenerator
 
     public void SpawnRivers()
     {
-        const int iInc = 64;
-        const int jInc = 64; // TODO: parametrizar. Divisor de WorldSize
-
-        for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
-        {
-            for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
-            {
-                var birthPos = new Vector2I(i, j);
-                if (IsValidBirth(birthPos))
-                {
-                    //GD.Print(i, " ", j);
-                    //GenerateRiver(birthPos);
-                    GenerateRiverDescendantAlgorithm(birthPos);
-                }
-                j += jInc;    
-            }
-            i += iInc;
-        }
+        GenerateRiver(86577, 852);
+        GenerateRiver(86577, 852);
+        GenerateRiver(86555, 956);
+        GenerateRiver(86590, 870);
+        GenerateRiver(86891, 877);
     }
 
     
@@ -86,12 +74,17 @@ public partial class River : BaseGenerator
     
     
     // Generating rivers
+    public void GenerateRiver(int birthPosX, int birthPosY)
+    {
+        GenerateRiver(new Vector2I(birthPosX, birthPosY));
+    }
+    
     public void GenerateRiver(Vector2I birthPos)
     {
         var riverEntity = new RiverEntity();
         riverEntity.SetBirthPosition(birthPos.X, birthPos.Y);
 
-        // TODO: considerar constraints de elevaciones
+        // TODO: considerar constraints de elevación
 
         var mouthReached = false;
         var currentPosition = birthPos;
@@ -99,9 +92,16 @@ public partial class River : BaseGenerator
 
         var alpha = GetRandomAlpha();   //TODO: inicializar alpha hacia donde la elevación sea menor ??
         var iterations = 0;
-        
+
         while (!mouthReached && _pathfindingAStar.ContainsPoint(nextPoint) && riverEntity.IsValid())
         {
+            if (iterations >= _maxIterations)   //TODO: ¿llamar a ValidateRiver en cada iteración?
+            {
+                TLogger.Info("Could not generate river at " + riverEntity.GetBirthPosition());
+                riverEntity.SetValid(false);
+                break;
+            }
+            
             var r = GetRandomR(_minRValue, _maxRValue);
             alpha = GetDescendantAlpha(alpha, r, currentPosition);
             nextPoint = GetUpdatedNextPoint(currentPosition, r, alpha);
@@ -116,7 +116,7 @@ public partial class River : BaseGenerator
             currentPosition = nextPoint;
             iterations++;   // TODO: si pasamos del número máximo de iteraciones, el río no será válido 
         }
-
+        GD.Print(iterations);
         if (ValidateRiver(riverEntity))
         {
             // TODO: los ríos no deben contener más de N veces el mismo punto (parámetro de validación)
@@ -159,27 +159,43 @@ public partial class River : BaseGenerator
     private float GetDescendantAlpha(float alpha, int r, Vector2I currentPosition)
     {
         var currentElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
+        var availableAngles = new List<float>();
+        var availableElevations = new List<float>();
+        
         foreach (float angle in Generate.LinearSpaced(24,  alpha+_minAlphaVariation, alpha+_maxAlphaVariation))// TODO: cuidado con ese 24 a pelo(parametrizar).
         {
-            var inc = GetInc(r, angle);
+           
+            var nextPoint = currentPosition + GetInc(r, angle) - Offset;
             
-            var nextPoint = currentPosition + inc - Offset;
             // Nos aseguramos de que nextPoint está dentro de los límites del mundo.
             var nextPoint_safe = new Vector2I(Math.Min(nextPoint.X, WorldSize.X-1), 
                 Math.Min(nextPoint.Y, WorldSize.Y-1)); 
             nextPoint_safe = new Vector2I(Math.Max(0, nextPoint_safe.X), Math.Max(0, nextPoint_safe.Y));
             
-            // TODO si nextPoint no está dentro de la matriz, tomamos el punto más cercano a nextPoint que esté dentro de la matriz
+
             var incElevation = _elevation.GetValueAt(nextPoint_safe.X, nextPoint_safe.Y);
             if (!(incElevation < currentElevation)) continue;
-            return angle; // no funciona mal si devolvemos el primer menor encontrado...
+            
+            
+            availableAngles.Add(angle);
         }
-        /*
-             TODO: ahora mismo estamos devolviendo la primera ocurrencia de ángulo correspondiente a una elevación
-             menor a la anterior. Esto podría parametrizarse y devolver, por ejemplo, el ángulo correspondiente a la
-             menor de todas las elevaciones disponibles. (con un diccionario).
-        */
-        return alpha;
+        
+        // Devolvemos el ángulo correspondiente a la menor elevación de entre todos los ángulos disponibles
+        foreach (var angle in availableAngles)
+        {
+            // obtenemos las elevaciones correspondientes a cada uno de los ángulos disponibles
+            var inc = GetInc(r, angle);
+            var nextPoint = currentPosition + inc - Offset;
+            var nextPoint_safe = new Vector2I(Math.Min(nextPoint.X, WorldSize.X-1), 
+                Math.Min(nextPoint.Y, WorldSize.Y-1));
+            nextPoint_safe = new Vector2I(Math.Max(0, nextPoint_safe.X), Math.Max(0, nextPoint_safe.Y));
+            availableElevations.Add(_elevation.GetValueAt(nextPoint_safe.X, nextPoint_safe.Y));
+        }
+        // devolvemos el ángulo que tenga el mismo índice que la elevación menor de availableElevations
+        //availableAngles.IndexOf(availableAngles.Min())
+        if (availableElevations.Count > 0)
+            return availableAngles[availableElevations.IndexOf(availableElevations.Min())];
+        return alpha;   // Se queda pillado, probar generando un único río en la posición que queramos
     }
 
     private static int GetRandomR(int minValue, int maxValue) => 
@@ -198,7 +214,7 @@ public partial class River : BaseGenerator
     private bool ValidateRiver(RiverEntity riverToValidate)
     {
         // TODO: comprobamos si es válido en función de las reglas que establezcamos (longitud, PUNTOS REPETIDOS, etc)  .
-        return true;
+        return riverToValidate.IsValid();
     }
     
     private bool IsValidBirth(Vector2I position)
