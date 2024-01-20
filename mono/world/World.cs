@@ -133,7 +133,9 @@ public class World
 		riverGenerator.SetParameterRiverPathfindingElevationPenalty(
 			(float) GetWorldParameter("RiverPathfindingElevationPenalty"));
 		riverGenerator.PathfindingAStarSetup();
-		riverGenerator.SpawnRivers();
+		//riverGenerator.SpawnRivers();
+		riverGenerator.NewRiverAlgorith();
+		
 		AddWorldGenerator("River", riverGenerator);
 	}
 

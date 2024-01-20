@@ -1,4 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=F7FBA2F3_002DDE6F_002D446A_002D8F54_002DD2D4EA8EAF78_002Fd_003Amono_002Fd_003Aworld_002Fd_003Agenerators_002Ff_003ARiver_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\espinosa012\.nuget\packages\godotsharp\4.1.1\lib\net6.0\GodotSharp.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\espinosa012\.nuget\packages\mathnet.numerics\5.0.0\lib\net6.0\MathNet.Numerics.dll" /&gt;&#xD;
