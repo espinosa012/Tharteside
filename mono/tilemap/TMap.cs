@@ -82,7 +82,7 @@ public partial class TMap : TileMap
 	// TODO: Eventos. Llevar a clase externa 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event.IsPressed() && @event.AsText().Equals("Left Mouse Button"))	// optimizar
+		if ((@event.IsPressed() && @event.AsText().Equals("Left Mouse Button")))	// optimizar
 			GetNode<TileMapEventManager>("%TileMapEventManager").HandleRightClick();
 	}
 	

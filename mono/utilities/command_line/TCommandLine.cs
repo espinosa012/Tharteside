@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Godot;
 using Tartheside.mono.world;
 using Tartheside.mono.tilemap;
+using Tartheside.mono.utilities.math;
 using Tartheside.mono.utilities.random;
 using Tartheside.mono.world.generators;
 using Tartheside.mono.world.manager;
@@ -35,6 +36,9 @@ public partial class TCommandLine : LineEdit
 			Call(command.Item1, command.Item2);
 		else if (HasMethod(command.Item1.Capitalize()))
 			Call(command.Item1.Capitalize(), command.Item2);
+		else if (command.Item1.Trim().StartsWith("Is") 
+		         && ((Elevation)_world.GetWorldGenerator("Elevation")).HasMethod(command.Item1.Trim()))
+			Is(command.Item1.Trim());
 		Clear();
 	}
 
@@ -102,10 +106,44 @@ public partial class TCommandLine : LineEdit
 		var thresholdTierValue = int.Parse(args[1].StripEdges());
 		var layer = int.Parse(args[2].StripEdges());
 		_tileMap.ClearLayer(layer);
-		_world.GetWorldGenerator(generatorName).InverseThresholdingByTier(thresholdTierValue);
+		_world.GetWorldGenerator(generatorName).InverseThresholdByTier(thresholdTierValue);
 		_tileMap.RenderChunks(generatorName, layer);
 	}
 
+	private void RangeThresholdByTier(string[] args)
+	{
+		// TODO: mejorar: hacer más flexible, comprobar que existe, capa por defecto, podemos indicar máximo, etc.
+		var maskGenerator = new MaskGenerator((Vector2I) _world.GetWorldParameter("WorldSize"), 
+			(Vector2I) _world.GetWorldParameter("ChunkSize"), 
+			(Vector2I) _world.GetWorldParameter("Offset"), 
+			(int) _world.GetWorldParameter("NTiers"));
+		maskGenerator.SetValueMatrix(_world.GetWorldGenerator(args[0].StripEdges()).GetValueMatrix());
+		maskGenerator.RangeThresholdByTier(int.Parse(args[1].StripEdges()), int.Parse(args[2].StripEdges()));
+		_world.RemoveWorldGenerator("RangeThresholdGenerator");
+		_world.AddWorldGenerator("RangeThresholdGenerator", maskGenerator);
+		_tileMap.ClearLayer(0);
+		_tileMap.RenderChunks("RangeThresholdGenerator", 0);
+	}
+	
+	// Mask
+	private void Is(string method)
+	{
+		var maskGenerator = new MaskGenerator((Vector2I) _world.GetWorldParameter("WorldSize"), 
+			(Vector2I) _world.GetWorldParameter("ChunkSize"), 
+			(Vector2I) _world.GetWorldParameter("Offset"), 
+			(int) _world.GetWorldParameter("NTiers"));
+		maskGenerator.SetParentGenerator(_world.GetWorldGenerator("Elevation"));
+		maskGenerator.SetMaskMethod(method); 
+		
+		maskGenerator.FillValueMatrix();
+		
+		_world.AddWorldGenerator(method, maskGenerator);
+		
+		_tileMap.ClearLayer(0);
+		_world.GetWorldGenerator("Elevation").ThresholdValueMatrixByTier(0);
+		_tileMap.RenderChunks(method, 0);
+	}
+	
 	
 	// Elevation
 	private void RandomizeElevation(string[] _args)
@@ -149,7 +187,23 @@ public partial class TCommandLine : LineEdit
 		_tileMap.Clear();
 		_tileMap.RenderChunks(noiseName, 0);
 	}
-	
+
+	private void GetIslands(string[] _args)
+	{
+		//((Elevation)_world.GetWorldGenerator("Elevation")).GetConnectedRegions();
+	}
+
+	private void Sobel(string[] _args)
+	{
+		var sobelGenerator = new BaseGenerator((Vector2I) _world.GetWorldParameter("WorldSize"), 
+                                               			(Vector2I) _world.GetWorldParameter("ChunkSize"), 
+                                               			(Vector2I) _world.GetWorldParameter("Offset"), 
+                                               			(int) _world.GetWorldParameter("NTiers"));
+		sobelGenerator.SetValueMatrix(MathDotNetHelper.GetSobelMatrix(_world.GetWorldGenerator("Elevation").GetValueMatrix()));
+		_world.AddWorldGenerator("Sobel", sobelGenerator);
+		_tileMap.Clear();
+		_tileMap.RenderChunks("Sobel", 0);
+	}
 	
 	// Tilemap
 	private void ClearLayer(string[] args) => _tileMap.ClearLayer(int.Parse(args[2].StripEdges()));

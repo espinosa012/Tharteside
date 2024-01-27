@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Godot;
+using Tartheside.mono.utilities.math;
 using Tartheside.mono.utilities.random;
 
 // algoritmo marzo '23

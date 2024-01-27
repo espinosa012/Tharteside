@@ -69,6 +69,9 @@ public class World
 	//  WORLD GENERATORS
 	public void AddWorldGenerator(string generatorName, BaseGenerator generator) => 
 		_worldGenerators[generatorName] = generator;
+
+	public void RemoveWorldGenerator(string generatorName) =>
+		_worldGenerators.Remove(generatorName);
 	
 	public BaseGenerator GetWorldGenerator(string generator) => 
 		_worldGenerators.ContainsKey(generator) ? _worldGenerators[generator] : null;
@@ -133,8 +136,7 @@ public class World
 		riverGenerator.SetParameterRiverPathfindingElevationPenalty(
 			(float) GetWorldParameter("RiverPathfindingElevationPenalty"));
 		riverGenerator.PathfindingAStarSetup();
-		//riverGenerator.SpawnRivers();
-		riverGenerator.NewRiverAlgorith();
+		riverGenerator.SpawnRivers();
 		
 		AddWorldGenerator("River", riverGenerator);
 	}

@@ -34,6 +34,9 @@ public partial class River : BaseGenerator
     private float _minAlphaVariation = 0f;
     private float _maxAlphaVariation = 2f * MathDotNetHelper.Pi;  // TODO: en el rango +-MathDotNetHelper.Pi/4f se consiguen resultados interesantes
 
+    // TODO: refactorizar parámetros
+    
+    
     private RandomNumberGenerator _rng;
     
     public River(Vector2I worldSize, Vector2I chunkSize, Vector2I offset, int nTiers) 
@@ -46,15 +49,8 @@ public partial class River : BaseGenerator
 
     public void PathfindingAStarSetup() => _pathfindingAStar = new RiverTAStar(Offset, 
         Offset + WorldSize, _elevation, _riverPathfindingElevationPenalty);
-
-    private void AddPathToMatrix(RiverEntity riverEntity)
-    {
-        var path = riverEntity.GetRiverPath();
-        foreach (var point in path)
-            SetValueAt(point.X, point.Y, TrueValue); 
-    }
     
-    public void NewRiverAlgorith()
+    public void SpawnRivers()
     {
         Vector2I[] seeds = {
             new Vector2I(86577, 852),
@@ -72,12 +68,21 @@ public partial class River : BaseGenerator
             new Vector2I(86998, 901),
             new Vector2I(86957, 837),
             new Vector2I(86619, 1069),
+            
+            new Vector2I(87316, 1085),
+            new Vector2I(87313, 1075),
+            new Vector2I(87262, 1027),
+            new Vector2I(87287, 973), 
+            new Vector2I(87348, 1008),
+            new Vector2I(87365, 1017),
+            new Vector2I(87377, 1017),
+            new Vector2I(87465, 1101),
         };
 
         // Podemos obtener ríos de forma determinista si almacenamos en vectores los valores de iterations y r que queremos para cada chunk del río
         var maxChunks = 256;
-        foreach (var seed in seeds)
-            GenerateRiver(seed, maxChunks);
+        //foreach (var seed in seeds)
+        //    GenerateRiver(seed, maxChunks);
     }
 
     public void GenerateRiver(Vector2I birthPos, int maxChunks = 10)
@@ -97,7 +102,8 @@ public partial class River : BaseGenerator
         }
     }
     
-    // untested
+    public void GenerateRiver(int birthPosX, int birthPosY) => GenerateRiver(new Vector2I(birthPosX, birthPosY));
+
     private RiverEntity GetRiverChunk(int r, int iterations, Vector2I initPosition)
     {
         // TODO: r podría ser un vector de longitud iterations para obtener rios de forma determinista
@@ -131,12 +137,7 @@ public partial class River : BaseGenerator
         return riverArm;
     }
     
-    
-    
-    // Generating rivers
-    public void GenerateRiver(int birthPosX, int birthPosY) => GenerateRiver(new Vector2I(birthPosX, birthPosY));
-    
-    public void GenerateRiver_(Vector2I birthPos)
+    public void GenerateRiver_(Vector2I birthPos)   // Deprecated
     {
         var riverEntity = new RiverEntity();
         
@@ -170,7 +171,7 @@ public partial class River : BaseGenerator
             if (iterations >= _maxIterations) riverEntity.SetValid(false);
         }
         
-        if (ValidateRiver(riverEntity))
+        if (riverEntity.IsValid())
         {
             // TODO: los ríos no deben contener más de N veces el mismo punto (parámetro de validación)
             
@@ -185,6 +186,8 @@ public partial class River : BaseGenerator
                 SetValueAt(point.X, point.Y, TrueValue);    // TODO: quitar de aquí. Añadir puntos a la matriz cuando estemos seguros de que el río es válido.
         }
     }
+
+    
 
     private static Vector2I GetUpdatedNextPoint(Vector2I currentPosition, int r, float alpha) =>
         currentPosition + GetInc(r, alpha);
@@ -206,10 +209,16 @@ public partial class River : BaseGenerator
         riverEntity.AddPoint(point);
     }
     
+    private void AddPathToMatrix(RiverEntity riverEntity)
+    {
+        var path = riverEntity.GetRiverPath();
+        foreach (var point in path)
+            SetValueAt(point.X, point.Y, TrueValue); 
+    }
+    
     private static Vector2I GetInc(int r, float alpha) => new((int)Math.Round(r * MathDotNetHelper.Cos(alpha)),
             (int)Math.Round(r * MathDotNetHelper.Sin(alpha)));
 
-    // untested
     private float GetMostDescendantAlpha(int r, Vector2I currentPosition, float defaultAlpha = 0.0f)
     {
         var currentElevation = _elevation.GetValueAt(currentPosition.X - Offset.X, currentPosition.Y - Offset.Y);
@@ -296,13 +305,6 @@ public partial class River : BaseGenerator
         alpha + MathDotNetHelper.GetRandomFloatInRange(_minAlphaVariation, _maxAlphaVariation);
 
     
-    // Validation
-    private bool ValidateRiver(RiverEntity riverToValidate)
-    {
-        // TODO: comprobamos si es válido en función de las reglas que establezcamos (longitud, PUNTOS REPETIDOS, etc)  .
-        return riverToValidate.IsValid();
-    }
-    
     private bool IsValidBirth(Vector2I position)
     {   // untested
         const int maxBirthContinentalnessTier = 2; 
@@ -342,20 +344,8 @@ public partial class River : BaseGenerator
         _riverPathfindingElevationPenalty = riverPathfindingElevationPenalty;
 
 
-    
-    /* TODO:    necesitamos un método para volver a generar los mismos ríos (mismo nacimiento y desembocadura) pero con
-                nuevo valor de ElevationPenalty. Lo metemos aquí, en UpdateElevationPenalty. Quizás no la misma 
-                desembocadura. */
-    public void UpdateElevationPenalty(float newElevationPenalty)
-    {
-        SetParameterRiverPathfindingElevationPenalty(newElevationPenalty);
-        foreach (var river in _rivers)
-        {
-            
-        }
-    }
 
-    public override void Randomize(int seed)
+    public override void Randomize(int seed)    // TODO: ¿tiene sentido? quizás mejor aleatorizar los puntos de nacimiento.
     {
         // TODO: usar semilla
         // TODO: conociendo la posición de nacimiento de todos los ríos de _rivers, los volvemos a generar, de forma
