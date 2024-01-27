@@ -90,24 +90,34 @@ public partial class TCommandLine : LineEdit
 	
 	private void Threshold(string[] args)
 	{
-		// TODO: mejorar: hacer más flexible, comprobar que existe, capa por defecto, podemos indicar máximo, etc.
-		var generatorName = args[0].StripEdges();
+		var maskGenerator = new MaskGenerator((Vector2I) _world.GetWorldParameter("WorldSize"), 
+			(Vector2I) _world.GetWorldParameter("ChunkSize"), 
+			(Vector2I) _world.GetWorldParameter("Offset"), 
+			(int) _world.GetWorldParameter("NTiers"));
 		var thresholdTierValue = int.Parse(args[1].StripEdges());
-		var layer = int.Parse(args[2].StripEdges());
-		_tileMap.ClearLayer(layer);
-		_world.GetWorldGenerator(generatorName).ThresholdValueMatrixByTier(thresholdTierValue);
-		_tileMap.RenderChunks(generatorName, layer);
+		maskGenerator.SetValueMatrix(_world.GetWorldGenerator(args[0].StripEdges()).GetValueMatrix());
+		maskGenerator.ThresholdByTier(thresholdTierValue);
+		_world.RemoveWorldGenerator("InverseThresholdGenerator");
+		_world.AddWorldGenerator("InverseThresholdGenerator", maskGenerator);
+		_tileMap.ClearLayer(0);
+		_world.GetWorldGenerator("InverseThresholdGenerator").InverseThresholdByTier(thresholdTierValue);
+		_tileMap.RenderChunks("InverseThresholdGenerator", 0);
 	}
 	
 	private void InverseThreshold(string[] args)
 	{
-		// TODO: mejorar: hacer más flexible, comprobar que existe, capa por defecto, podemos indicar máximo, etc.
-		var generatorName = args[0].StripEdges();
+		var maskGenerator = new MaskGenerator((Vector2I) _world.GetWorldParameter("WorldSize"), 
+			(Vector2I) _world.GetWorldParameter("ChunkSize"), 
+			(Vector2I) _world.GetWorldParameter("Offset"), 
+			(int) _world.GetWorldParameter("NTiers"));
 		var thresholdTierValue = int.Parse(args[1].StripEdges());
-		var layer = int.Parse(args[2].StripEdges());
-		_tileMap.ClearLayer(layer);
-		_world.GetWorldGenerator(generatorName).InverseThresholdByTier(thresholdTierValue);
-		_tileMap.RenderChunks(generatorName, layer);
+		maskGenerator.SetValueMatrix(_world.GetWorldGenerator(args[0].StripEdges()).GetValueMatrix());
+		maskGenerator.InverseThresholdByTier(thresholdTierValue);
+		_world.RemoveWorldGenerator("InverseThresholdGenerator");
+		_world.AddWorldGenerator("InverseThresholdGenerator", maskGenerator);
+		_tileMap.ClearLayer(0);
+		_world.GetWorldGenerator("InverseThresholdGenerator").InverseThresholdByTier(thresholdTierValue);
+		_tileMap.RenderChunks("InverseThresholdGenerator", 0);
 	}
 
 	private void RangeThresholdByTier(string[] args)
@@ -123,6 +133,9 @@ public partial class TCommandLine : LineEdit
 		_world.AddWorldGenerator("RangeThresholdGenerator", maskGenerator);
 		_tileMap.ClearLayer(0);
 		_tileMap.RenderChunks("RangeThresholdGenerator", 0);
+		
+		
+		
 	}
 	
 	// Mask
@@ -140,7 +153,7 @@ public partial class TCommandLine : LineEdit
 		_world.AddWorldGenerator(method, maskGenerator);
 		
 		_tileMap.ClearLayer(0);
-		_world.GetWorldGenerator("Elevation").ThresholdValueMatrixByTier(0);
+		_world.GetWorldGenerator("Elevation").ThresholdByTier(0);
 		_tileMap.RenderChunks(method, 0);
 	}
 	
@@ -188,9 +201,13 @@ public partial class TCommandLine : LineEdit
 		_tileMap.RenderChunks(noiseName, 0);
 	}
 
-	private void GetIslands(string[] _args)
+	private void GetIslands(string[] args)
 	{
-		//((Elevation)_world.GetWorldGenerator("Elevation")).GetConnectedRegions();
+		var regions = _world.GetWorldGenerator(args[0])
+			.GetConnectedRegions(int.Parse(args[1].StripEdges()), int.Parse(args[2].StripEdges()), 
+				int.Parse(args[3].StripEdges()));
+		foreach (var region in regions)
+			region.ComputeCentroid();
 	}
 
 	private void Sobel(string[] _args)

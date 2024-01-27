@@ -3,6 +3,7 @@ using System.Linq;
 using Godot;
 using MathNet.Numerics.LinearAlgebra;
 using Tartheside.mono.utilities.math;
+using Tartheside.mono.world.entities;
 
 namespace Tartheside.mono.world.generators;
 
@@ -57,7 +58,7 @@ public partial class BaseGenerator : GodotObject
 
 	
 	// Thresholding
-	public void ThresholdValueMatrixByTier(int minTier)
+	public void ThresholdByTier(int minTier)
 	{
 		for (var i = Offset.X; i < WorldSize.X + Offset.X; i++)
 		for (var j = Offset.Y; j < WorldSize.Y + Offset.Y; j++)
@@ -75,7 +76,7 @@ public partial class BaseGenerator : GodotObject
 
 	public void RangeThresholdByTier(int minTier, int maxTier)
 	{
-		ThresholdValueMatrixByTier(minTier);
+		ThresholdByTier(minTier);
 		InverseThresholdByTier(maxTier);
 	}
 	
@@ -95,28 +96,38 @@ public partial class BaseGenerator : GodotObject
 	
 	
 	// ConnectedRegionEntity detection
-	public void GetConnectedRegions(float minValue, float maxValue)
+	public List<ConnectedRegionEntity> GetConnectedRegions(int minTier, int maxTier, int minimumRegionSize = 25)	// TODO: de momento, nos basamos en tiers mínimo y máximo. Puede ser cualquier condition(x, y), incluso una función lambda que pasemos como parámetro.
 	{
-		const int minimumRegionSize = 5; // TODO: parametrizar
+		// TODO: tiene el problema de que necesita que el generador esté umbralizado para no petar.
+		var toReturn = new List<ConnectedRegionEntity>();
+		
 		var visited = new int[valueMatrix.RowCount, valueMatrix.ColumnCount];
-		var regionCount = 0;
 
 		for (var i = 0; i < valueMatrix.RowCount; i++)
 		{
 			for (var j = 0; j < valueMatrix.ColumnCount; j++)
 			{
-				var ijValue = GetValueAt(i, j);
-				var condition = ijValue >= minValue && ijValue <= maxValue;
-				if (condition || visited[i, j] != 0) continue;
+				var ijValue = GetValueTierAt(i, j);
+				var condition = ijValue >= minTier && ijValue <= maxTier;
+				if (!condition || visited[i, j] != 0) continue;
 				
+				var region = new ConnectedRegionEntity();
 				var islandCoordinates = new List<Vector2I>();
-				var islandSize = GetConnectedRegionDetectionDFS(visited, i, j, islandCoordinates);
-				if (islandSize > minimumRegionSize) regionCount++;
+				var islandSize = ConnectRegionDFS(visited, i, j, islandCoordinates);
+
+				if (islandSize <= minimumRegionSize) continue;
+				
+				region.SetPositions(islandCoordinates);
+				region.SetIslandSize(islandSize);
+				toReturn.Add(region);
 			}			
 		}
+
+		return toReturn;
 	}
 	
-	private int GetConnectedRegionDetectionDFS(int[,] visited, int row, int col, ICollection<Vector2I> islandCoordinates)
+	private int ConnectRegionDFS(int[,] visited, int row, int col, 
+		List<Vector2I> islandCoordinates)
 	{
 		if (row < 0 || row >= valueMatrix.RowCount || col < 0 || col >= valueMatrix.ColumnCount 
 		    || valueMatrix[row, col] == 0 || visited[row, col] == 1) return 0;	
@@ -124,12 +135,12 @@ public partial class BaseGenerator : GodotObject
 		visited[row, col] = 1;
 		var size = 1;
 		
-		islandCoordinates.Add(new Vector2I(row, col));
+		islandCoordinates.Add(new Vector2I(row+Offset.X, col+Offset.Y));
 		
-		size += GetConnectedRegionDetectionDFS(visited, row - 1, col, islandCoordinates); 
-		size += GetConnectedRegionDetectionDFS(visited, row + 1, col, islandCoordinates); 
-		size += GetConnectedRegionDetectionDFS(visited, row, col - 1, islandCoordinates); 
-		size += GetConnectedRegionDetectionDFS(visited, row, col + 1, islandCoordinates); 
+		size += ConnectRegionDFS(visited, row - 1, col, islandCoordinates); 
+		size += ConnectRegionDFS(visited, row + 1, col, islandCoordinates); 
+		size += ConnectRegionDFS(visited, row, col - 1, islandCoordinates); 
+		size += ConnectRegionDFS(visited, row, col + 1, islandCoordinates); 
 		// no se computan las diagonales
 		
 		return size;
