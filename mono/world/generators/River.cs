@@ -79,16 +79,68 @@ public partial class River : BaseGenerator
             new Vector2I(87465, 1101),
         };
 
-        // Podemos obtener ríos de forma determinista si almacenamos en vectores los valores de iterations y r que queremos para cada chunk del río
-        var maxChunks = 256;
-        //foreach (var seed in seeds)
-        //    GenerateRiver(seed, maxChunks);
+        SpawnHighRivers();
+        SpawnMediumRivers();
+        SpawnLowRivers();
     }
 
-    public void GenerateRiver(Vector2I birthPos, int maxChunks = 10)
+    public void SpawnHighRivers()
+    {
+        // TODO: parámetros
+        var minTier = 11;
+        var maxTier = 16;
+        var maxChunks = 384;
+        var minRegionSize = 25;
+            
+        MaskGenerator maskGenerator = new MaskGenerator(WorldSize, ChunkSize, Offset, NTiers);
+        maskGenerator.SetValueMatrix(_elevation.GetValueMatrix());
+        maskGenerator.RangeThresholdByTier(minTier, maxTier);
+
+        var connectedRegions = maskGenerator.GetConnectedRegions(minTier, maxTier, minRegionSize);
+        foreach (var region in connectedRegions)
+            if (region.GetRegionSize() >= minRegionSize)
+                GenerateRiver(region.GetCentroid(), maxChunks);
+    }
+    
+    public void SpawnMediumRivers()
+    {
+        // TODO: parámetros
+        var minTier = 8;
+        var maxTier = 12;
+        var maxChunks = 384;
+        var minRegionSize = 25;
+            
+        MaskGenerator maskGenerator = new MaskGenerator(WorldSize, ChunkSize, Offset, NTiers);
+        maskGenerator.SetValueMatrix(_elevation.GetValueMatrix());
+        maskGenerator.RangeThresholdByTier(minTier, maxTier);
+
+        var connectedRegions = maskGenerator.GetConnectedRegions(minTier, maxTier, minRegionSize);
+        foreach (var region in connectedRegions)
+            if (region.GetRegionSize() >= minRegionSize)
+                GenerateRiver(region.GetCentroid(), maxChunks);
+    }
+    
+    public void SpawnLowRivers()
+    {
+        // TODO: parámetros
+        var minTier = 6;
+        var maxTier = 7;
+        var maxChunks = 128;
+        var minRegionSize = 25;
+            
+        MaskGenerator maskGenerator = new MaskGenerator(WorldSize, ChunkSize, Offset, NTiers);
+        maskGenerator.SetValueMatrix(_elevation.GetValueMatrix());
+        maskGenerator.RangeThresholdByTier(minTier, maxTier);
+
+        var connectedRegions = maskGenerator.GetConnectedRegions(minTier, maxTier, minRegionSize);
+        foreach (var region in connectedRegions)
+            if (region.GetRegionSize() >= minRegionSize)
+                GenerateRiver(region.GetCentroid(), maxChunks);
+    }
+    
+    public void GenerateRiver(Vector2I birthPos, int maxChunks)
     {
         var currentChunkPosition = birthPos;
-        
         for (int i = 0; i < maxChunks; i++)
         {
             var iterations = MathDotNetHelper.GetRandomIntInRange(3, 8);
@@ -102,7 +154,8 @@ public partial class River : BaseGenerator
         }
     }
     
-    public void GenerateRiver(int birthPosX, int birthPosY) => GenerateRiver(new Vector2I(birthPosX, birthPosY));
+    public void GenerateRiver(int birthPosX, int birthPosY, int maxCunks) => 
+        GenerateRiver(new Vector2I(birthPosX, birthPosY), maxCunks);
 
     private RiverEntity GetRiverChunk(int r, int iterations, Vector2I initPosition)
     {
@@ -314,8 +367,7 @@ public partial class River : BaseGenerator
         
         var positionToValidate = position - Offset;
         return !Biome.IsSea(_elevation, positionToValidate.X, positionToValidate.Y)
-               && !Biome.IsVolcanicIsland(_elevation, positionToValidate.X, positionToValidate.Y)
-               && _elevation.GetValueTierAt(positionToValidate.X, positionToValidate.Y) >= minBirthElevationTier;
+               && !Biome.IsVolcanicIsland(_elevation, positionToValidate.X, positionToValidate.Y);
                //&& _continentalnessNoise.GetValueTierAt(positionToValidate.X, positionToValidate.Y) <= maxBirthContinentalnessTier;
         
         // TODO: comprobar cercanía a otros nacimientos con GetRiverBirthPositions
@@ -350,11 +402,9 @@ public partial class River : BaseGenerator
         // TODO: usar semilla
         // TODO: conociendo la posición de nacimiento de todos los ríos de _rivers, los volvemos a generar, de forma
         // que r y alpha serán distintos.
-        var currentRivers = _rivers.Duplicate(); 
         _rivers.Clear();
         SetClearMatrix(WorldSize);
-        foreach (var river in currentRivers)
-            GenerateRiver(river.GetBirthPosition());
+        SpawnRivers();
     }
     
     // TODO: necesitamos implementar de alguna manera persistencia para los ríos.

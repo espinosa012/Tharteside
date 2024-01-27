@@ -12,9 +12,9 @@ public partial class BaseGenerator : GodotObject
 	protected int Seed;	// TODO: para persistencia. Usar en Randomize() 
 	
 	protected Vector2I WorldSize;
-	private Vector2I ChunkSize;    
+	protected Vector2I ChunkSize;    
 	protected Vector2I Offset;
-	private int NTiers;
+	protected int NTiers;
 	protected Matrix<float> valueMatrix;	
 	
 	private const float InitValue = -1.0f;
@@ -118,6 +118,7 @@ public partial class BaseGenerator : GodotObject
 				if (islandSize <= minimumRegionSize) continue;
 				
 				region.SetPositions(islandCoordinates);
+				region.ComputeCentroid();
 				region.SetIslandSize(islandSize);
 				toReturn.Add(region);
 			}			

@@ -120,7 +120,7 @@ public partial class TCommandLine : LineEdit
 		_tileMap.RenderChunks("InverseThresholdGenerator", 0);
 	}
 
-	private void RangeThresholdByTier(string[] args)
+	private void RangeThreshold(string[] args)
 	{
 		// TODO: mejorar: hacer más flexible, comprobar que existe, capa por defecto, podemos indicar máximo, etc.
 		var maskGenerator = new MaskGenerator((Vector2I) _world.GetWorldParameter("WorldSize"), 
@@ -172,7 +172,8 @@ public partial class TCommandLine : LineEdit
 	{
 		var x = int.Parse(args[0].StripEdges());
 		var y = int.Parse(args[1].StripEdges());
-		((River)_world.GetWorldGenerator("River")).GenerateRiver(new Vector2I(x, y));
+		var maxChunks = int.Parse(args[2].StripEdges());
+		((River)_world.GetWorldGenerator("River")).GenerateRiver(new Vector2I(x, y), maxChunks);
 		_tileMap.ClearLayer(1);
 		_tileMap.RenderChunks("River", 1);
 	}
@@ -207,7 +208,11 @@ public partial class TCommandLine : LineEdit
 			.GetConnectedRegions(int.Parse(args[1].StripEdges()), int.Parse(args[2].StripEdges()), 
 				int.Parse(args[3].StripEdges()));
 		foreach (var region in regions)
+		{
 			region.ComputeCentroid();
+			GD.Print(region.GetCentroid());
+		}
+
 	}
 
 	private void Sobel(string[] _args)

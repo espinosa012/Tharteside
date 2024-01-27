@@ -16,7 +16,7 @@ public partial class ConnectedRegionEntity : BaseEntity
     public List<Vector2I> GetPositions() => _positions;
 
     public void SetIslandSize(int size) => _islandSize = size;
-    public int GetIslandSize() => _islandSize;
+    public int GetRegionSize() => _islandSize;
 
 
     public void ComputeCentroid() => _centroid = new Vector2I(_positions.Sum(v => v.X) / _positions.Count, 
